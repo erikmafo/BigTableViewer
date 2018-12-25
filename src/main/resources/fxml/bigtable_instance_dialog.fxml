@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="DialogPane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         headerText="Add Bigtable Instance"
+         prefHeight="250.0" prefWidth="450.0">
+
+    <content>
+        <GridPane vgap="20" hgap="10">
+            <Label text="Project ID:"/>
+            <Label text="Instance ID:" GridPane.rowIndex="1"/>
+            <TextField fx:id="projectIdTextField" GridPane.columnIndex="1"/>
+            <TextField fx:id="instanceIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+    </content>
+
+    <buttonTypes>
+        <ButtonType text="OK" buttonData="OK_DONE"/>
+        <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
+    </buttonTypes>
+</fx:root>

@@ -1,0 +1,33 @@
+
+.root {
+    -fx-pref-height: 600.0;
+    -fx-pref-width: 700.0;
+}
+
+.title {
+    -fx-font-size: 14;
+    -fx-font-name: "System Bold";
+    -fx-alignment: "CENTER";
+    -fx-padding: 10 20 10 20;
+}
+
+.tableTitleHBox {
+    -fx-alignment: "CENTER";
+    -fx-spacing: 3;
+}
+
+.tableTitleHBox .button {
+    -fx-font-size: 9;
+}
+
+.scanTableControls {
+    -fx-alignment: "CENTER";
+    -fx-hgap: 5;
+    -fx-vgap: 5;
+}
+
+.scanTableControls .hBox {
+    -fx-spacing: 0
+}
+
+
