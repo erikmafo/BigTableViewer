@@ -3,7 +3,7 @@ os:
 - osx
 - windows
 - linux
-script: mvn jfx:build-native
+script: mvn jfx:native
 deploy:
   provider: releases
   api_key:
