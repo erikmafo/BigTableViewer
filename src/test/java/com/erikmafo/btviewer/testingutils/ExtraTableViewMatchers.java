@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class ExtraTableViewMatchers {
 
-
     public static Matcher<TableView> hasColumnWithText(String text) {
 
         return new TypeSafeDiagnosingMatcher<TableView>() {
@@ -19,7 +18,6 @@ public class ExtraTableViewMatchers {
             protected boolean matchesSafely(TableView item, Description mismatchDescription) {
 
                 List<String> columns = new ArrayList<>();
-
                 for (Object obj : item.getColumns()) {
                     String columnText = ((TableColumn)obj).getText();
                     if (columnText.equals(text)) {
@@ -30,7 +28,6 @@ public class ExtraTableViewMatchers {
 
                 mismatchDescription.appendText("was a table view containing columns with text: ");
                 mismatchDescription.appendValueList("[", ",", "]", columns);
-
                 return false;
             }
 
@@ -39,8 +36,5 @@ public class ExtraTableViewMatchers {
                 description.appendText("A table view containing a column with the text: ").appendText(text);
             }
         };
-
     }
-
-
 }

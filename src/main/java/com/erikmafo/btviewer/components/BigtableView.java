@@ -1,25 +1,19 @@
 package com.erikmafo.btviewer.components;
 
-import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableRow;
 import com.erikmafo.btviewer.services.BigtableResultScanner;
-import com.google.cloud.bigtable.grpc.BigtableTableName;
-import com.sun.javafx.collections.ObservableSetWrapper;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.*;

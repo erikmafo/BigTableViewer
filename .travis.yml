@@ -1,17 +1,16 @@
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 os:
 - osx
 - windows
 - linux
-script: mvn jfx:native
 deploy:
   provider: releases
   api_key:
     secure: fb0fc9XePMiJjYI9TuhbmubYEAuFFRIuyz7oTbmeqZ1vqt6hLFpTmQHo5keHxPv1O/XYscydwOCAP220Fw/a7LW1sG4QLBOP4o/096r9fBSIguH0PAvpmwh0C8VlpQyn5HK8Qm8L+ALz85j7jUXsH0DJoGTLvdrvG+qcSfs/fBrVPoM5QdNSERhk6vVMgD82VUBXEraBfCrqjotInuRN87RqRLuPiBJ5aLfeKkeeUC8893X+U7HdcJ8JRzdzBDketBzb04zNvekY/oizNmYB/06r3kayuIW+SfYSLysyVU1dsPcRNEl2moTOoIuSKWDB5GladSv8VbvVzt8bvz8sCul3RtNWNZRyKy0o3ks7snOUcXoH5U0Z8231mtZ4nD25CBptvYxzYNhapeO/hVZBB3GrgBYxo1m7wiBrLotPLRiSRvZGNdPqwAszq0q14v/e6pWRvCUrlpf+5gKURN2Hwswy/jW19Oy8cutZisIilV9iF7P5xJU2mFD76TehJJoOvZWIJ0BcJ6m25l4cRzHtKOh5N8Bsiv15vYpajI3/BqQJ3ZMKFFFKgtxusCLSbSn2wkPpkC1DpfwsIFsH53/EBz/HPFYpD2qhHJhK14nmzCLhk0i2Q4caJReBsVIBioWqPrPwvVnfa3oBJzxOJ7OCBYNtAC++SM9sl1tsYwlR98Y=
   file_glob: true
-  file: target/jfx/native/*
+  file: target/release/bundles/*
   skip_cleanup: true
   draft: true
   on:

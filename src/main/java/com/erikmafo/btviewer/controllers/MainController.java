@@ -8,8 +8,8 @@ import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.BigtableClient;
 import com.erikmafo.btviewer.services.BigtableResultScanner;
 import com.erikmafo.btviewer.services.UserConfigurationService;
-import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -63,14 +63,14 @@ public class MainController {
 
     private  final FetchBigtableRowsService fetchBigtableRowsService;
     private final UserConfigurationService userConfigurationService;
-    private final ObservableList<BigtableRow> bigtableRows = new ObservableListWrapper<>(new ArrayList<>());
+    private final ObservableList<BigtableRow> bigtableRows = FXCollections.observableArrayList(new ArrayList<>());
     private final BigtableClient bigtableClient;
 
     @Inject
-    public MainController(BigtableClient bigtableClient, UserConfigurationService userConfigurationService) {
+    public MainController() {
+        this.userConfigurationService = new UserConfigurationService();
+        this.bigtableClient = new BigtableClient();
         this.fetchBigtableRowsService = new FetchBigtableRowsService(bigtableClient);
-        this.userConfigurationService = userConfigurationService;
-        this.bigtableClient = bigtableClient;
     }
 
     public void initialize() {
