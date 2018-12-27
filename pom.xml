@@ -47,7 +47,7 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <version>3.1.1</version>
             <configuration>
-                <excludeScope>provided</excludeScope>
+                <includeScope>runtime</includeScope>
                 <outputDirectory>${project.build.directory}/app</outputDirectory>
                 <stripVersion>true</stripVersion>
             </configuration>
@@ -66,34 +66,56 @@
             <version>1.6.0</version>
             <executions>
                 <execution>
+                    <id>runtimeImage</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>${java.home}/bin/jlink</executable>
+                        <arguments>
+                            <argument>--module-path=javafx-jmods-11.0.1/</argument>
+                            <argument>--add-modules=java.base </argument>
+                            <argument>--add-modules=java.prefs</argument>
+                            <argument>--add-modules=java.desktop</argument>
+                            <argument>--add-modules=java.net.http</argument>
+                            <argument>--add-modules=java.xml</argument>
+                            <argument>--add-modules=java.prefs </argument>
+                            <argument>--add-modules=java.logging</argument>
+                            <argument>--add-modules=java.sql</argument>
+                            <argument>--add-modules=javafx.base</argument>
+                            <argument>--add-modules=javafx.controls</argument>
+                            <argument>--add-modules=javafx.fxml</argument>
+                            <argument>--add-modules=javafx.graphics</argument>
+                            <argument>--add-modules=javafx.web</argument>
+                            <argument>--add-modules=javafx.media</argument>
+                            <argument>--add-modules=java.management</argument>
+                            <argument>--output=${project.build.directory}/image</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+                <execution>
                     <id>installer</id>
                     <phase>install</phase>
                     <goals>
                         <goal>exec</goal>
                     </goals>
                     <configuration>
-                        <executable>javapackager</executable>
+                        <executable>jpackager</executable>
                         <arguments>
-                            <argument>-deploy</argument>
-                            <argument>-native</argument>
-                            <argument>-outdir</argument>
+                            <argument>create-installer</argument>
+                            <argument>--runtime-image</argument>
+                            <argument>${project.build.directory}/image</argument>
+                            <argument>--output</argument>
                             <argument>${project.build.directory}/release</argument>
-                            <argument>-outfile</argument>
-                            <argument>${project.name}</argument>
-                            <argument>-srcdir</argument>
+                            <argument>--input</argument>
                             <argument>${project.build.directory}/app</argument>
-                            <argument>-srcfiles</argument>
+                            <argument>--main-jar</argument>
                             <argument>bigtableviewer-${project.version}.jar</argument>
-                            <argument>-appclass</argument>
+                            <argument>--class</argument>
                             <argument>${mainClass}</argument>
-                            <argument>-name</argument>
+                            <argument>--name</argument>
                             <argument>${project.name}</argument>
-                            <argument>-title</argument>
-                            <argument>${project.name}</argument>
-                            <argument>-vendor</argument>
-                            <argument>${project.organization.name}</argument>
-                            <argument>-BappVersion=${project.version}</argument>
-                            <argument>-Bidentifier=${project.groupId}.${project.artifactId}</argument>
                         </arguments>
                     </configuration>
                 </execution>
@@ -179,5 +201,4 @@
         <scope>test</scope>
     </dependency>
 </dependencies>
-
 </project>

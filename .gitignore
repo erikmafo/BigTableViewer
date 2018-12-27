@@ -3,3 +3,5 @@ target/
 .idea/
 bigtableviewer.iml
 
+jdk.packager.jar
+javafxmods.zip
