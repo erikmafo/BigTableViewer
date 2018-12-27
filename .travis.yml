@@ -5,6 +5,7 @@ os:
 - osx
 - linux
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then sudo apt-get install fakeroot ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_linux-x64_bin-jmods.zip ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]] ; then curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip ; fi
