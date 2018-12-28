@@ -24,7 +24,7 @@
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.1.1</version>
             <configuration>
-                <outputDirectory>${project.build.directory}/app</outputDirectory>
+                <outputDirectory>${project.build.directory}${path.separator}app</outputDirectory>
                 <archive>
                     <manifest>
                         <addClasspath>true</addClasspath>
@@ -47,7 +47,7 @@
             <version>3.1.1</version>
             <configuration>
                 <includeScope>runtime</includeScope>
-                <outputDirectory>${project.build.directory}/app</outputDirectory>
+                <outputDirectory>${project.build.directory}${path.separator}app</outputDirectory>
                 <stripVersion>true</stripVersion>
             </configuration>
             <executions>
@@ -71,7 +71,7 @@
                     </goals>
 
                     <configuration>
-                        <outputDirectory>${project.build.directory}/app</outputDirectory>
+                        <outputDirectory>${project.build.directory}${path.separator}app</outputDirectory>
                         <resources>
                             <resource>
                                 <directory>.</directory>
@@ -96,9 +96,9 @@
                         <goal>exec</goal>
                     </goals>
                     <configuration>
-                        <executable>${java.home}/bin/jlink</executable>
+                        <executable>${java.home}${path.separator}bin${path.separator}jlink</executable>
                         <arguments>
-                            <argument>--module-path=javafx-jmods-11.0.1/</argument>
+                            <argument>--module-path=javafx-jmods-11.0.1</argument>
                             <argument>--add-modules=java.base </argument>
                             <argument>--add-modules=java.prefs</argument>
                             <argument>--add-modules=java.desktop</argument>
@@ -114,7 +114,7 @@
                             <argument>--add-modules=javafx.web</argument>
                             <argument>--add-modules=javafx.media</argument>
                             <argument>--add-modules=java.management</argument>
-                            <argument>--output=${project.build.directory}/image</argument>
+                            <argument>--output=${project.build.directory}${path.separator}image</argument>
                         </arguments>
                     </configuration>
                 </execution>
@@ -129,11 +129,11 @@
                         <arguments>
                             <argument>create-installer</argument>
                             <argument>--runtime-image</argument>
-                            <argument>${project.build.directory}/image</argument>
+                            <argument>${project.build.directory}${path.separator}image</argument>
                             <argument>--output</argument>
-                            <argument>${project.build.directory}/release</argument>
+                            <argument>${project.build.directory}${path.separator}release</argument>
                             <argument>--input</argument>
-                            <argument>${project.build.directory}/app</argument>
+                            <argument>${project.build.directory}${path.separator}app</argument>
                             <argument>--main-jar</argument>
                             <argument>bigtableviewer-${project.version}.jar</argument>
                             <argument>--class</argument>
@@ -155,7 +155,7 @@
                         <goal>exec</goal>
                     </goals>
                     <configuration>
-                        <executable>${java.home}/bin/java</executable>
+                        <executable>${java.home}${path.separator}bin${path.separator}java</executable>
                     </configuration>
                 </execution>
                 <execution>
