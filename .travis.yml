@@ -10,6 +10,7 @@ before_install:
   - unzip javafxmods.zip
   - pwd
   - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
+  - export PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
   - echo $JAVA_HOME
   - echo $PATH
   - java.exe -version
