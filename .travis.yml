@@ -8,7 +8,7 @@ before_install:
   - unzip jpackager.zip
   - unzip javafxmods.zip
   - pwd
-  - export JAVA_HOME "/c/Program Files/OpenJDK/jdk-11"
+  - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
   - echo $JAVA_HOME
   - mv jpackager.exe $JAVA_HOME/bin
   - mv jdk.packager.jar $JAVA_HOME/jmods
