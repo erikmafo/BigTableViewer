@@ -16,6 +16,15 @@ before_install:
   - java.exe -version
 script:
   - mvn install -X
+  - jpackager create-installer \
+    --input target/app/ \
+    --output target/release/ \
+    --runtime-image target/image/ \
+    --verbose \
+    --echo-mode \
+    --main-jar bigtableviewer-0.1-SNAPSHOT.jar \
+    --class com.erikmafo.btviewer.MainApp \
+    --name bigtableviewer
 deploy:
   provider: releases
   api_key:

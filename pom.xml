@@ -119,37 +119,6 @@
                     </configuration>
                 </execution>
                 <execution>
-                    <id>installer</id>
-                    <phase>install</phase>
-                    <goals>
-                        <goal>exec</goal>
-                    </goals>
-                    <configuration>
-                        <executable>jpackager</executable>
-                        <arguments>
-                            <argument>create-installer</argument>
-                            <argument>--runtime-image</argument>
-                            <argument>${project.build.directory}${file.separator}image</argument>
-                            <argument>--output</argument>
-                            <argument>${project.build.directory}${file.separator}release</argument>
-                            <argument>--input</argument>
-                            <argument>${project.build.directory}${file.separator}app</argument>
-                            <argument>--main-jar</argument>
-                            <argument>bigtableviewer-${project.version}.jar</argument>
-                            <argument>--class</argument>
-                            <argument>${mainClass}</argument>
-                            <argument>--name</argument>
-                            <argument>${project.name}</argument>
-                            <argument>--license-file</argument>
-                            <argument>LICENSE</argument>
-                            <argument>--identifier</argument>
-                            <argument>${project.groupId}.${project.artifactId}</argument>
-                            <argument>--version</argument>
-                            <argument>${project.version}</argument>
-                        </arguments>
-                    </configuration>
-                </execution>
-                <execution>
                     <id>default-cli</id>
                     <goals>
                         <goal>exec</goal>
