@@ -7,8 +7,8 @@ before_install:
   - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
   - unzip jpackager.zip
   - unzip javafxmods.zip
-  - export JAVA_HOME c/Program Files/OpenJDK/jdk-11
   - pwd
+  - export JAVA_HOME /c/Program Files/OpenJDK/jdk-11
   - echo $JAVA_HOME
   - mv jpackager.exe $JAVA_HOME/bin
   - mv jdk.packager.jar $JAVA_HOME/jmods
