@@ -15,7 +15,7 @@ before_install:
   - echo $PATH
   - java.exe -version
 script:
-  - mvn install -e
+  - mvn install -X
 deploy:
   provider: releases
   api_key:
