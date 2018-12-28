@@ -11,7 +11,8 @@ before_install:
   - pwd
   - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
   - echo $JAVA_HOME
-  - java -version
+  - echo $PATH
+  - java.exe -version
 script:
   - mvn install -e
 deploy:
