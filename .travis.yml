@@ -11,7 +11,7 @@ before_install:
   - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
   - echo $JAVA_HOME
 script:
-  - mvn install
+  - mvn install -e
 deploy:
   provider: releases
   api_key:
