@@ -1,8 +1,7 @@
 os: windows
 language: bash
 env:
-  - JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
-  - PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
+  - JAVA_HOME="/c/Program Files/OpenJDK/jdk-11" PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
 before_install:
   - choco install vcredist2015
   - choco install -y openjdk --version 11.0
