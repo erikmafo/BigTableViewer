@@ -1,6 +1,7 @@
 os: windows
 language: bash
 before_install:
+  - choco install vcredist2015
   - choco install -y openjdk --version 11.0
   - choco install maven --version 3.5.0
   - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip
