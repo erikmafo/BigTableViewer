@@ -1,34 +1,23 @@
-os: windows
-language: bash
-env:
-  - JAVA_HOME="/c/Program Files/OpenJDK/jdk-11" PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
+language: java
+jdk:
+  - openjdk11
+os:
+  - osx
+  - linux
 before_install:
-  - choco install vcredist2015
-  - choco install -y openjdk --version 11.0
-  - choco install maven --version 3.5.0
-  - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip
-  - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then sudo apt-get install fakeroot ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_linux-x64_bin-jmods.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] ; then curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]] ; then curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_osx-x64_bin-jmods.zip ; fi
   - unzip jpackager.zip
   - unzip javafxmods.zip
-  - echo $PATH
-  - java.exe -version
-script:
-  - mvn install -X
-  - ./jpackager.exe create-installer \
-    --input target/app/ \
-    --output target/release/ \
-    --runtime-image target/image/ \
-    --verbose \
-    --echo-mode \
-    --main-jar bigtableviewer-0.1-SNAPSHOT.jar \
-    --class com.erikmafo.btviewer.MainApp \
-    --name bigtableviewer
 deploy:
   provider: releases
   api_key:
     secure: fb0fc9XePMiJjYI9TuhbmubYEAuFFRIuyz7oTbmeqZ1vqt6hLFpTmQHo5keHxPv1O/XYscydwOCAP220Fw/a7LW1sG4QLBOP4o/096r9fBSIguH0PAvpmwh0C8VlpQyn5HK8Qm8L+ALz85j7jUXsH0DJoGTLvdrvG+qcSfs/fBrVPoM5QdNSERhk6vVMgD82VUBXEraBfCrqjotInuRN87RqRLuPiBJ5aLfeKkeeUC8893X+U7HdcJ8JRzdzBDketBzb04zNvekY/oizNmYB/06r3kayuIW+SfYSLysyVU1dsPcRNEl2moTOoIuSKWDB5GladSv8VbvVzt8bvz8sCul3RtNWNZRyKy0o3ks7snOUcXoH5U0Z8231mtZ4nD25CBptvYxzYNhapeO/hVZBB3GrgBYxo1m7wiBrLotPLRiSRvZGNdPqwAszq0q14v/e6pWRvCUrlpf+5gKURN2Hwswy/jW19Oy8cutZisIilV9iF7P5xJU2mFD76TehJJoOvZWIJ0BcJ6m25l4cRzHtKOh5N8Bsiv15vYpajI3/BqQJ3ZMKFFFKgtxusCLSbSn2wkPpkC1DpfwsIFsH53/EBz/HPFYpD2qhHJhK14nmzCLhk0i2Q4caJReBsVIBioWqPrPwvVnfa3oBJzxOJ7OCBYNtAC++SM9sl1tsYwlR98Y=
   file_glob: true
-  file: target/release/*
+  file: target/release/bundles/*
   skip_cleanup: true
   draft: true
   on:
