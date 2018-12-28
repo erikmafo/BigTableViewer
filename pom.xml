@@ -2,11 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
 
-<groupId>com.erikmafo.bigtableviewer</groupId>
+<groupId>com.erikmafo</groupId>
 <artifactId>bigtableviewer</artifactId>
 <version>0.1-SNAPSHOT</version>
 <packaging>jar</packaging>
-
 <name>bigtableviewer</name>
 
 <properties>
@@ -57,6 +56,31 @@
                     <goals>
                         <goal>copy-dependencies</goal>
                     </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.7</version>
+            <executions>
+                <execution>
+                    <id>resources</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/app</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>.</directory>
+                                <includes>
+                                    <include>LICENSE</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
                 </execution>
             </executions>
         </plugin>
@@ -116,6 +140,12 @@
                             <argument>${mainClass}</argument>
                             <argument>--name</argument>
                             <argument>${project.name}</argument>
+                            <argument>--license-file</argument>
+                            <argument>LICENSE</argument>
+                            <argument>--identifier</argument>
+                            <argument>${project.groupId}.${project.artifactId}</argument>
+                            <argument>--version</argument>
+                            <argument>${project.version}</argument>
                         </arguments>
                     </configuration>
                 </execution>
