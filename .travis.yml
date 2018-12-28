@@ -1,5 +1,8 @@
 os: windows
 language: bash
+env:
+  - JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
+  - PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
 before_install:
   - choco install vcredist2015
   - choco install -y openjdk --version 11.0
@@ -8,8 +11,6 @@ before_install:
   - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
   - unzip jpackager.zip
   - unzip javafxmods.zip
-  - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
-  - export PATH="/c/Program Files/OpenJDK/jdk-11/bin:$PATH"
   - echo $PATH
   - java.exe -version
 script:
