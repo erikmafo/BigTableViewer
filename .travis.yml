@@ -10,8 +10,8 @@ before_install:
   - pwd
   - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
   - echo $JAVA_HOME
-  - mv jpackager.exe $JAVA_HOME/bin
-  - mv jdk.packager.jar $JAVA_HOME/jmods
+  - mv jpackager.exe "$JAVA_HOME/bin"
+  - mv jdk.packager.jar "$JAVA_HOME/jmods"
 script:
   - mvn install
 deploy:
