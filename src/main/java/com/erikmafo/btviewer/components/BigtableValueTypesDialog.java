@@ -4,7 +4,6 @@ import com.erikmafo.btviewer.model.BigtableValueParser;
 import com.erikmafo.btviewer.model.CellDefinition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +31,6 @@ public class BigtableValueTypesDialog extends DialogPane {
     private BigtableValueTypesDialog() {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_value_types_dialog.fxml"));
-
         loader.setRoot(this);
         loader.setController(this);
 

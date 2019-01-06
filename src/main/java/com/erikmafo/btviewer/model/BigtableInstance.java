@@ -6,6 +6,8 @@ public class BigtableInstance {
 
     private String projectId;
 
+    public BigtableInstance() {}
+
     public BigtableInstance(String name)
     {
         String[] parts = name.split("/");
@@ -18,6 +20,13 @@ public class BigtableInstance {
         this.instanceId = instanceId;
     }
 
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 
     public String getProjectId() {
         return projectId;

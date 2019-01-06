@@ -1,22 +1,24 @@
 package com.erikmafo.btviewer.model;
 
+import java.nio.file.Path;
+
 public class BigtableReadRequestBuilder {
 
     private BigtableTable bigtableTable;
-    private String credentialsPath;
+    private Path credentialsPath;
     private BigtableRowRange scan;
 
-    public BigtableReadRequestBuilder setBigtableTable(BigtableTable bigtableTable) {
+    public BigtableReadRequestBuilder setTable(BigtableTable bigtableTable) {
         this.bigtableTable = bigtableTable;
         return this;
     }
 
-    public BigtableReadRequestBuilder setCredentialsPath(String credentialsPath) {
+    public BigtableReadRequestBuilder setCredentialsPath(Path credentialsPath) {
         this.credentialsPath = credentialsPath;
         return this;
     }
 
-    public BigtableReadRequestBuilder setScan(BigtableRowRange scan) {
+    public BigtableReadRequestBuilder setRowRange(BigtableRowRange scan) {
         this.scan = scan;
         return this;
     }

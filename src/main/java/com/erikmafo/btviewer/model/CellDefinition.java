@@ -3,11 +3,6 @@ package com.erikmafo.btviewer.model;
 
 public class CellDefinition {
 
-
-    public CellDefinition() {
-
-    }
-
     public CellDefinition(String valueType, String family, String qualifier) {
         this.valueType = valueType;
         this.family = family;
@@ -17,7 +12,6 @@ public class CellDefinition {
     private String valueType;
     private String family;
     private String qualifier;
-
 
     public String getValueType() {
         return valueType;

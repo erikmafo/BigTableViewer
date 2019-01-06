@@ -3,9 +3,9 @@ package com.erikmafo.btviewer.services;
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableRow;
 import com.erikmafo.btviewer.model.CellDefinition;
-import com.google.cloud.bigtable.grpc.BigtableSession;
-import com.google.cloud.bigtable.grpc.scanner.FlatRow;
-import com.google.cloud.bigtable.grpc.scanner.ResultScanner;
+import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.BigtableSession;
+import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.scanner.FlatRow;
+import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.scanner.ResultScanner;
 
 import java.io.Closeable;
 import java.io.IOException;

@@ -2,18 +2,19 @@ package com.erikmafo.btviewer.components;
 
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableRow;
-import com.erikmafo.btviewer.services.BigtableResultScanner;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,18 +23,19 @@ import java.util.stream.Collectors;
 /**
  * Created by erikmafo on 12.12.17.
  */
-public class BigtableView extends GridPane {
+public class BigtableTableView extends VBox {
 
-    public static final String ROWKEY = "rowkey";
+    private static final String ROWKEY = "rowkey";
+
+    @FXML
+    private Button configureRowValueTypesButton;
 
     @FXML
     private TableView<BigtableRow> tableView;
 
-    private BigtableResultScanner scanner;
+    public BigtableTableView() {
 
-    public BigtableView() {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_table_view.fxml"));
         loader.setRoot(this);
         loader.setController(this);
 
@@ -44,10 +46,7 @@ public class BigtableView extends GridPane {
         }
 
         tableView.getColumns().add(createRowKeyColumn());
-        tableView.setOnScroll(event -> {
-            ScrollBar bar = getVerticalScrollbar();
-            Platform.runLater(() -> addRows((int)bar.getMax()));
-        });
+        configureRowValueTypesButton.setVisible(false); // TODO: enable this feature
     }
 
     private ScrollBar getVerticalScrollbar() {
@@ -72,6 +71,19 @@ public class BigtableView extends GridPane {
         return tableColumn;
     }
 
+    public int getMaxRows() {
+        ScrollBar bar = getVerticalScrollbar();
+        return (int)bar.getMax();
+    }
+
+    public void setOnConfigureRowValuesTypes(EventHandler<ActionEvent> eventHandler) {
+        configureRowValueTypesButton.setOnAction(eventHandler);
+    }
+
+    public void setOnScrollEvent(EventHandler<ScrollEvent> eventHandler) {
+        getVerticalScrollbar().setOnScroll(eventHandler);
+    }
+
     public List<BigtableColumn> getColumns() {
         return tableView.getColumns()
                 .stream()
@@ -82,24 +94,13 @@ public class BigtableView extends GridPane {
                 .collect(Collectors.toList());
     }
 
-    public void setBigtableScanner(BigtableResultScanner scanner)
-    {
-        if (this.scanner != null)
-        {
-            BigtableResultScanner prevScanner = this.scanner;
-            Platform.runLater(() ->
-            {
-                try {
-                    prevScanner.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        this.scanner = scanner;
+    public void clear() {
         tableView.getColumns().removeIf(t -> !t.getText().equals(ROWKEY));
         setBigTableRows(FXCollections.observableArrayList());
-        Platform.runLater(() -> addRows(20));
+    }
+
+    public void add(BigtableRow row) {
+        tableView.getItems().add(row);
     }
 
     private void addColumn(String family, String qualifier) {
@@ -115,7 +116,6 @@ public class BigtableView extends GridPane {
             BigtableRow bigtableRow = param.getValue();
             return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier));
         });
-
 
         if (familyColumn == null) {
             familyColumn = new TableColumn<>(family);
@@ -136,23 +136,5 @@ public class BigtableView extends GridPane {
                         .forEach(cell -> addColumn(cell.getFamily(), cell.getQualifier()));
             }
         });
-    }
-
-    private void addRows(int maxRows) {
-        int count = 0;
-
-        BigtableRow row;
-        do {
-            try {
-                row = scanner.next();
-                if (row == null) {
-                    break;
-                }
-                tableView.getItems().add(row);
-                count++;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } while (count < maxRows);
     }
 }

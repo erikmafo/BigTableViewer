@@ -1,22 +1,23 @@
 package com.erikmafo.btviewer.components;
+import com.erikmafo.btviewer.events.BigtableProjectTreeItemExpanded;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class BigtableTablesListView extends GridPane {
+public class BigtableTablesListView extends VBox {
 
     @FXML
     private Button addInstanceButton;
@@ -26,9 +27,7 @@ public class BigtableTablesListView extends GridPane {
 
     private SimpleObjectProperty<BigtableTable> selectedTableProperty;
 
-    private SimpleObjectProperty<BigtableInstance> selectedInstanceProperty = new SimpleObjectProperty<>();
-
-    private SimpleStringProperty selectedProjectProperty = new SimpleStringProperty();
+    private EventHandler<BigtableProjectTreeItemExpanded> treeItemExpandedEventHandler;
 
     public BigtableTablesListView(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_tables_list_view.fxml"));
@@ -62,11 +61,15 @@ public class BigtableTablesListView extends GridPane {
         return 1 + countParents(treeItem.getParent());
     }
 
-    public void setOnAddBigtableInstance(EventHandler<ActionEvent> eventHandler) {
+    public void setOnCreateNewBigtableInstance(EventHandler<ActionEvent> eventHandler) {
         addInstanceButton.setOnAction(eventHandler);
     }
 
-    public void addBigtableInstance(BigtableInstance instance, ChangeListener<Boolean> expandedListener) {
+    public void addBigtableInstances(List<BigtableInstance> bigtableInstances) {
+        bigtableInstances.forEach(this::addBigtableInstance);
+    }
+
+    public void addBigtableInstance(BigtableInstance instance) {
 
         TreeItem<String> projectTreeItem = treeView.getRoot()
                 .getChildren()
@@ -75,7 +78,21 @@ public class BigtableTablesListView extends GridPane {
                 .orElse(null);
 
         if (projectTreeItem == null) {
-            projectTreeItem = new TreeItem<>(instance.getProjectId());
+            final TreeItem<String> projectTreeItemFinal = new TreeItem<>(instance.getProjectId());
+
+            projectTreeItemFinal.expandedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean wasExpanded, Boolean isExpanded) {
+                    if (isExpanded && treeItemExpandedEventHandler != null) {
+                        List<BigtableInstance> bigtableInstances = projectTreeItemFinal.getChildren()
+                                .stream()
+                                .map(i -> new BigtableInstance(instance.getProjectId(), i.getValue()))
+                                .collect(Collectors.toList());
+                        treeItemExpandedEventHandler.handle(new BigtableProjectTreeItemExpanded(bigtableInstances));
+                    }
+                }
+            });
+            projectTreeItem = projectTreeItemFinal;
         }
 
         TreeItem<String> instanceTreeItem = new TreeItem<>(instance.getInstanceId());
@@ -103,21 +120,10 @@ public class BigtableTablesListView extends GridPane {
                             instance.getChildren().add(new TreeItem<>(table.getTableId()));
                         }
             });
-
         }
     }
 
-    private MenuItem getMenuItem(BigtableInstance instance) {
-        MenuItem menuItem = new MenuItem(instance.getInstanceId());
-        menuItem.setUserData(instance);
-        return menuItem;
-    }
-
-    public ReadOnlyObjectProperty<BigtableInstance> selectedInstanceProperty() {
-        return selectedInstanceProperty;
-    }
-
-    public ReadOnlyStringProperty selectedProjectProperty() {
-        return selectedProjectProperty;
+    public void setTreeItemExpandedEventHandler(EventHandler<BigtableProjectTreeItemExpanded> treeItemExpandedEventHandler) {
+        this.treeItemExpandedEventHandler = treeItemExpandedEventHandler;
     }
 }

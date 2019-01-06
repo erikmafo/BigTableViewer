@@ -3,7 +3,6 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root type="DialogPane"
-         xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          headerText="Add Bigtable Instance"
          prefHeight="250.0" prefWidth="450.0">

@@ -4,16 +4,13 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 
-<MenuBar xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="com.erikmafo.btviewer.controllers.BigtableMenuBarController">
-
-
+<MenuBar xmlns:fx="http://javafx.com/fxml"
+         fx:id="menuBar"
+         fx:controller="com.erikmafo.btviewer.controllers.MenuBarController">
     <menus>
         <Menu text="File">
             <items>
-                <MenuItem onAction="#handleCreateNewTableAction" text="Add table"/>
-                <Menu fx:id="selectTableMenu" text="Tables"/>
-                <MenuItem fx:id="credentialsMenu" onAction="#handleManageCredentialsAction" text="Credentials"/>
+                <MenuItem fx:id="credentialsMenu" onAction="#onManageCredentialsAction" text="Credentials"/>
             </items>
         </Menu>
 
@@ -22,8 +19,6 @@
                 <MenuItem text="About"/>
             </items>
         </Menu>
-
     </menus>
-
 </MenuBar>
 

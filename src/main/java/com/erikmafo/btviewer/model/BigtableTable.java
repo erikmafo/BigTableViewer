@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.model;
-import com.google.cloud.bigtable.grpc.BigtableTableName;
+import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.BigtableTableName;
+
 import java.util.Collections;
 import java.util.List;
 

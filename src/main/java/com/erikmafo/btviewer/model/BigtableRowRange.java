@@ -5,12 +5,14 @@ package com.erikmafo.btviewer.model;
  */
 public class BigtableRowRange {
 
+    public static BigtableRowRange DEFAULT = new BigtableRowRange("", "~", 1000);
+
     private final String from;
     private final String to;
     private final int maxRows;
 
     public BigtableRowRange(String from, String to) {
-        this(from, to, 0);
+        this(from, to, 1000);
     }
 
     public BigtableRowRange(String from, String to, int maxRows) {

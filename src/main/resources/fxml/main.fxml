@@ -1,65 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import com.erikmafo.btviewer.components.BigtableView?>
-<?import com.erikmafo.btviewer.components.BigtableTablesListView?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
 
-<?import javafx.scene.control.ProgressBar?>
-
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121"
-            xmlns:fx="http://javafx.com/fxml/1"
+<?import com.erikmafo.btviewer.components.RowSelectionView?>
+<?import com.erikmafo.btviewer.components.BigtableTableView?>
+<?import com.erikmafo.btviewer.components.BigtableTablesListView?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.controllers.MainController"
             stylesheets="/css/main.css">
-
     <top>
         <VBox>
-            <fx:include source="bigtable_menu_bar.fxml" fx:id="bigtableMenuBar"/>
-            <HBox styleClass="tableTitleHBox">
-                <Label fx:id="tableNameLabel" styleClass="title" text="test">
-                </Label>
-                <Button mnemonicParsing="false" onAction="#handleConfigureValueParserAction" text="Configure value types"/>
-            </HBox>
-            <GridPane styleClass="scanTableControls">
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">From:</Label>
-                <TextField fx:id="fromTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">To:</Label>
-                <TextField fx:id="toTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-                <HBox styleClass="hBox" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <Button text="Scan table" onAction="#handleScanTableAction"/>
-                    <ProgressBar fx:id="progressBar"/>
-                </HBox>
-                <columnConstraints>
-                    <ColumnConstraints/>
-                    <ColumnConstraints/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                    <RowConstraints/>
-                </rowConstraints>
-            </GridPane>
+            <fx:include source="bigtable_menu_bar.fxml" fx:id="menuBar"/>
+            <Label fx:id="tableNameLabel" styleClass="title" text="test" alignment="CENTER"/>
         </VBox>
     </top>
-
     <left>
         <BigtableTablesListView fx:id="tablesListView"/>
     </left>
-
     <center>
-        <VBox fx:id="mainView" styleClass="mainContentVBox">
-            <BigtableView fx:id="bigtableView"/>
-        </VBox>
-
+        <BigtableTableView fx:id="bigtableTableView"/>
     </center>
-
-
+    <bottom>
+        <RowSelectionView fx:id="rowSelectionView"
+                          BorderPane.alignment="BOTTOM_CENTER" alignment="CENTER"/>
+    </bottom>
 </BorderPane>
