@@ -11,7 +11,6 @@ install:
   - unzip jpackager.zip
   - unzip javafxmods.zip
   - mv jpackager.exe ${JAVA_HOME}/bin
-  - mv jdk.packager.jar ${JAVA_HOME}/jmods
   - jpackager.exe --help
 script:
   - mvn install -e
