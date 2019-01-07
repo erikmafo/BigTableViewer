@@ -10,8 +10,9 @@ install:
   - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
   - unzip jpackager.zip
   - unzip javafxmods.zip
+  - ./jpackager.exe --help
 script:
-  - mvn install -X
+  - mvn install -e
 deploy:
   provider: releases
   api_key:
