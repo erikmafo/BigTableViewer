@@ -2,6 +2,8 @@ language: shell
 os:
   - windows
 install:
+  - choco install wixtoolset --version 3.11.1
+  - echo $PATH
   - choco install maven --version 3.5.0
   - cinst jdk11 -params 'installdir=C:\\jdk11'
   - export JAVA_HOME="C:\jdk11"
