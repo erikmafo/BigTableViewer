@@ -17,8 +17,16 @@ matrix:
         - mv jpackager.exe ${JAVA_HOME}/bin
         - mv jdk.packager.jar ${JAVA_HOME}/bin
         - jpackager.exe --help
-script:
-  - mvn install -e
+      script:
+        - mvn install -e
+    - os: osx
+      language: java
+      jdk: openjdk11
+      before_install:
+        - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip
+        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_osx-x64_bin-jmods.zip
+        - unzip jpackager.zip
+        - unzip javafxmods.zip
 deploy:
   provider: releases
   api_key:
