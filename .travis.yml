@@ -1,8 +1,4 @@
 language: shell
-os:
-  - windows
-  - linux
-  - osx
 matrix:
   include:
     - os: windows
