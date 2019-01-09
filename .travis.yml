@@ -1,10 +1,9 @@
-language: shell
 matrix:
   include:
     - os: windows
-      install:
+      language: shell
+      before_install:
         - choco install wixtoolset --version 3.10.3.300701
-        - echo $PATH
         - choco install maven --version 3.5.0
         - cinst jdk11 -params 'installdir=C:\\jdk11'
         - export JAVA_HOME="C:\jdk11"
@@ -13,10 +12,8 @@ matrix:
         - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
         - unzip jpackager.zip
         - unzip javafxmods.zip
-        - ls
         - mv jpackager.exe ${JAVA_HOME}/bin
         - mv jdk.packager.jar ${JAVA_HOME}/bin
-        - jpackager.exe --help
       script:
         - mvn install -e
     - os: osx
@@ -25,6 +22,14 @@ matrix:
       before_install:
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip
         - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_osx-x64_bin-jmods.zip
+        - unzip jpackager.zip
+        - unzip javafxmods.zip
+    - os: linux
+      language: java
+      jdk: openjdk11
+      before_install:
+        - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip
+        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_linux-x64_bin-jmods.zip
         - unzip jpackager.zip
         - unzip javafxmods.zip
 deploy:
