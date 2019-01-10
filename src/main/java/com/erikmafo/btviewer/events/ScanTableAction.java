@@ -4,7 +4,7 @@ import javafx.event.EventType;
 
 public class ScanTableAction extends Event {
 
-    public static final EventType<ScanTableAction> SCAN_TABLE = new EventType<>(EventType.ROOT);
+    public static final EventType<ScanTableAction> SCAN_TABLE = new EventType<>(EventType.ROOT, "ScanTableAction");
 
     private final String from;
     private final String to;
