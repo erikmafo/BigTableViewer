@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BigtableProjectTreeItemExpanded extends Event {
 
-    public static final EventType<BigtableProjectTreeItemExpanded> PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE = new EventType<>(EventType.ROOT);
+    public static final EventType<BigtableProjectTreeItemExpanded> PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE = new EventType<>(EventType.ROOT, "BigtableProjectTreeItemExpanded");
 
     private final List<BigtableInstance> bigtableInstances;
 
