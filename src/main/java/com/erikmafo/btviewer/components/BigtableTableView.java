@@ -2,6 +2,7 @@ package com.erikmafo.btviewer.components;
 
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableRow;
+import com.erikmafo.btviewer.model.BigtableValueConverter;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -33,6 +34,8 @@ public class BigtableTableView extends VBox {
     @FXML
     private TableView<BigtableRow> tableView;
 
+    private BigtableValueConverter valueConverter;
+
     public BigtableTableView() {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_table_view.fxml"));
@@ -46,7 +49,7 @@ public class BigtableTableView extends VBox {
         }
 
         tableView.getColumns().add(createRowKeyColumn());
-        configureRowValueTypesButton.setVisible(false); // TODO: enable this feature
+        //configureRowValueTypesButton.setVisible(false); // TODO: enable this feature
     }
 
     private ScrollBar getVerticalScrollbar() {
@@ -114,7 +117,7 @@ public class BigtableTableView extends VBox {
         TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
         qualifierColumn.setCellValueFactory(param -> {
             BigtableRow bigtableRow = param.getValue();
-            return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier));
+            return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier, valueConverter));
         });
 
         if (familyColumn == null) {
@@ -136,5 +139,9 @@ public class BigtableTableView extends VBox {
                         .forEach(cell -> addColumn(cell.getFamily(), cell.getQualifier()));
             }
         });
+    }
+
+    public void setValueConverter(BigtableValueConverter valueConverter) {
+        this.valueConverter = valueConverter;
     }
 }

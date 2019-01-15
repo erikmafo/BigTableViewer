@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.components;
 import com.erikmafo.btviewer.model.BigtableColumn;
-import com.erikmafo.btviewer.model.BigtableValueParser;
+import com.erikmafo.btviewer.model.BigtableTableConfiguration;
 import com.erikmafo.btviewer.model.CellDefinition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -41,17 +41,16 @@ public class BigtableValueTypesDialog extends DialogPane {
         }
     }
 
-    private BigtableValueParser getBigtableValueParser() {
+    private BigtableTableConfiguration getBigtableTableConfiguration() {
 
-        BigtableValueParser bigtableDefinition = new BigtableValueParser();
-
+        BigtableTableConfiguration configuration = new BigtableTableConfiguration();
         List<CellDefinition> cellDefinitionList = observableCells
                 .stream()
                 .map(cell -> new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier()))
                 .collect(Collectors.toList());
 
-        bigtableDefinition.setCellDefinitions(cellDefinitionList);
-        return bigtableDefinition;
+        configuration.setCellDefinitions(cellDefinitionList);
+        return configuration;
 
     }
 
@@ -64,7 +63,7 @@ public class BigtableValueTypesDialog extends DialogPane {
 
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setValue("String");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float"));
+        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
         TextField familyTextField = new TextField(column.getFamily());
         TextField qualifierTextField = new TextField(column.getQualifier());
 
@@ -146,11 +145,11 @@ public class BigtableValueTypesDialog extends DialogPane {
         }
     }
 
-    public static CompletableFuture<BigtableValueParser> displayAndAwaitResult(List<BigtableColumn> columns) {
-        CompletableFuture<BigtableValueParser> future = new CompletableFuture<>();
+    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(List<BigtableColumn> columns) {
+        CompletableFuture<BigtableTableConfiguration> future = new CompletableFuture<>();
 
         try {
-            Dialog<BigtableValueParser> dialog = new Dialog<>();
+            Dialog<BigtableTableConfiguration> dialog = new Dialog<>();
             BigtableValueTypesDialog pane = new BigtableValueTypesDialog();
 
             if (columns.size() == 0) {
@@ -164,14 +163,14 @@ public class BigtableValueTypesDialog extends DialogPane {
             dialog.getResult();
             dialog.setResultConverter(buttonType -> {
                 if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
-                    return pane.getBigtableValueParser();
+                    return pane.getBigtableTableConfiguration();
                 }
                 return null;
             });
 
             dialog.setOnHidden(event -> {
-                BigtableValueParser options = dialog.getResult();
-                future.complete(options);
+                BigtableTableConfiguration configuration = dialog.getResult();
+                future.complete(configuration);
             });
 
             dialog.show();
