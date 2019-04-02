@@ -23,7 +23,7 @@ public class BigtableRow {
         return cells;
     }
 
-    public Object getCellValue(String family, String qualifier) {
+    public Object getCellValue(String family, String qualifier, BigtableValueConverter converter) {
 
         BigtableCell cell = cells
                 .stream()
@@ -31,10 +31,15 @@ public class BigtableRow {
                 .findFirst()
                 .orElse(null);
 
-        if (cell != null) {
+        if (cell == null) {
+            return null;
+        }
+
+        if (converter == null) {
             return cell.getValueAsString();
         }
-        return null;
+
+        return converter.convert(cell);
     }
 
 }

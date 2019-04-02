@@ -7,8 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
 public class BigtableInstanceManager {
@@ -16,8 +14,6 @@ public class BigtableInstanceManager {
     private static final Type LIST_TYPE = new TypeToken<List<BigtableInstance>>() {}.getType();
     private static final String PREFERENCES_USER_ROOT_NODE_NAME = "bigtable-viewer-configs";
     private static final String INSTANCES = "instances";
-
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final Object mutex = new Object();
 
     private final Gson gson = new Gson();
@@ -43,10 +39,8 @@ public class BigtableInstanceManager {
 
         synchronized (mutex) {
             this.bigtableInstances = instances;
-            executorService.submit(() -> {
-                String json = gson.toJson(instances, LIST_TYPE);
-                getPreferences().put(INSTANCES, json);
-            });
+            String json = gson.toJson(instances, LIST_TYPE);
+            getPreferences().put(INSTANCES, json);
         }
     }
 

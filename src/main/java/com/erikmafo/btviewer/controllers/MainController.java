@@ -33,14 +33,17 @@ public class MainController {
 
     private final CredentialsManager credentialsManager;
     private final BigtableInstanceManager bigtableInstanceManager;
+    private final TableConfigurationManager tableConfigurationManager;
     private final BigtableClient bigtableClient;
 
     @Inject
     public MainController(CredentialsManager credentialsManager,
                           BigtableInstanceManager bigtableInstanceManager,
+                          TableConfigurationManager tableConfigurationManager,
                           BigtableClient bigtableClient) {
         this.credentialsManager = credentialsManager;
         this.bigtableInstanceManager = bigtableInstanceManager;
+        this.tableConfigurationManager = tableConfigurationManager;
         this.bigtableClient = bigtableClient;
     }
 
@@ -99,7 +102,14 @@ public class MainController {
     }
 
     private void onConfigureRowValueTypes(ActionEvent event) {
-        BigtableValueTypesDialog.displayAndAwaitResult(bigtableTableView.getColumns());
+        BigtableValueTypesDialog.displayAndAwaitResult(bigtableTableView.getColumns())
+                .whenComplete((configuration, throwable) ->
+                {
+                    bigtableTableView.setValueConverter(new BigtableValueConverter(configuration.getCellDefinitions()));
+                    tableConfigurationManager.saveTableConfiguration(
+                            tablesListView.selectedTableProperty().get(),
+                            configuration);
+                });
     }
 
     private void onBigtableTableSelected(ObservableValue<? extends BigtableTable> observable, BigtableTable oldValue, BigtableTable newValue) {

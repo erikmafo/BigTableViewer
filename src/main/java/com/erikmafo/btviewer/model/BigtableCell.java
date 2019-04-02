@@ -23,4 +23,8 @@ public class BigtableCell {
     }
 
     public String getValueAsString() { return bytes.toStringUtf8(); }
+
+    public byte[] getBytes() {
+        return bytes.toByteArray();
+    }
 }
