@@ -4,9 +4,9 @@ matrix:
       language: shell
       before_install:
         - choco install wixtoolset --version 3.10.3.300701
-        - export JAVA_HOME=${JAVA_HOME:-/c/jdk}
-        - export PATH=${JAVA_HOME}/bin:${PATH}
-        - choco install openjdk --version 11.0.1 --installdir=c:\\jdk
+        - choco install -y openjdk --version 11.0.1
+        - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
+        - export PATH="$JAVA_HOME/bin:$PATH"
         - java --version
         - choco install maven --version 3.5.0
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip
