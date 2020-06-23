@@ -7,7 +7,6 @@ matrix:
         - choco install -y openjdk --version 11.0.1
         - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11"
         - export PATH="$JAVA_HOME/bin:$PATH"
-        - java --version
         - choco install maven --version 3.5.0
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip
         - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
