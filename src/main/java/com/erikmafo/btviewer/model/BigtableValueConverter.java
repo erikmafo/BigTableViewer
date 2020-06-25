@@ -3,7 +3,6 @@ package com.erikmafo.btviewer.model;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by erikmafo on 23.12.17.

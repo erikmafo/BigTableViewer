@@ -1,7 +1,11 @@
 package com.erikmafo.btviewer;
-import com.erikmafo.btviewer.services.BigtableClient;
-import com.erikmafo.btviewer.services.BigtableInstanceManager;
-import com.erikmafo.btviewer.services.CredentialsManager;
+import com.erikmafo.btviewer.config.AppConfig;
+import com.erikmafo.btviewer.config.ApplicationEnvironment;
+import com.erikmafo.btviewer.services.*;
+import com.erikmafo.btviewer.services.inmemory.InMemoryBigtableClient;
+import com.erikmafo.btviewer.services.inmemory.InMemoryInstanceManager;
+import com.erikmafo.btviewer.services.inmemory.InMemoryTableConfigManager;
+import com.erikmafo.btviewer.services.inmemory.TestDataUtil;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -10,7 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 
 /**
  * Created by erikmafo on 12.12.17.
@@ -38,8 +41,34 @@ public class MainApp extends Application implements Module {
 
     @Override
     public void configure(Binder binder) {
-        binder.bind(BigtableClient.class).toInstance(new BigtableClient());
+
+        var config = AppConfig.load(ApplicationEnvironment.get());
+
+        if (config.useInMemoryBigtableClient()) {
+            var inMemoryBigtableClient = new InMemoryBigtableClient();
+            TestDataUtil.injectWithTestData(inMemoryBigtableClient);
+            binder.bind(BigtableClient.class).toInstance(inMemoryBigtableClient);
+        }
+        else {
+            binder.bind(BigtableClient.class).toInstance(new BigtableClientImpl());
+        }
+
+        if (config.useInMemoryTableConfigManager()) {
+            var inMemoryTableConfigManager = new InMemoryTableConfigManager();
+            binder.bind(TableConfigManager.class).toInstance(inMemoryTableConfigManager);
+        }
+        else {
+            binder.bind(TableConfigManager.class).toInstance(new TableConfigManagerImpl());
+        }
+
+        if (config.useInMemoryInstanceManager()) {
+            var inMemoryInstanceManager = new InMemoryInstanceManager();
+            TestDataUtil.injectWithTestData(inMemoryInstanceManager);
+            binder.bind(BigtableInstanceManager.class).toInstance(inMemoryInstanceManager);
+        } else {
+            binder.bind(BigtableInstanceManager.class).toInstance(new BigtableInstanceManagerImpl());
+        }
+
         binder.bind(CredentialsManager.class).toInstance(new CredentialsManager());
-        binder.bind(BigtableInstanceManager.class).toInstance(new BigtableInstanceManager());
     }
 }

@@ -3,6 +3,7 @@ import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.BigtableTab
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BigtableTable {
 
@@ -10,21 +11,17 @@ public class BigtableTable {
     private final String instanceId;
     private final String tableId;
 
-    private final List<CellDefinition> cellDefinitions;
-
     public BigtableTable(String name) {
         BigtableTableName tableName = new BigtableTableName(name);
         projectId = tableName.getProjectId();
         instanceId = tableName.getInstanceId();
         tableId = tableName.getTableId();
-        cellDefinitions = Collections.emptyList();
     }
 
     public BigtableTable(String projectId, String instanceId, String tableId) {
         this.projectId = projectId;
         this.instanceId = instanceId;
         this.tableId = tableId;
-        cellDefinitions = Collections.emptyList();
     }
 
     public String getName() {
@@ -32,10 +29,6 @@ public class BigtableTable {
     }
 
     public String getSimpleName() { return tableId; }
-
-    public List<CellDefinition> getCellDefinitions() {
-        return cellDefinitions;
-    }
 
     public String getProjectId() {
         return projectId;
@@ -47,5 +40,21 @@ public class BigtableTable {
 
     public String getTableId() {
         return tableId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BigtableTable that = (BigtableTable) o;
+        return Objects.equals(projectId, that.projectId) &&
+                Objects.equals(instanceId, that.instanceId) &&
+                Objects.equals(tableId, that.tableId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectId, instanceId, tableId);
     }
 }

@@ -143,5 +143,10 @@ public class BigtableTableView extends VBox {
 
     public void setValueConverter(BigtableValueConverter valueConverter) {
         this.valueConverter = valueConverter;
+        var rows = this.tableView.getItems();
+        clear();
+        for (var row : rows) {
+           add(row);
+        }
     }
 }

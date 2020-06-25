@@ -5,3 +5,5 @@ bigtableviewer.iml
 
 jdk.packager.jar
 javafxmods.zip
+
+**/resources/config.development.properties
