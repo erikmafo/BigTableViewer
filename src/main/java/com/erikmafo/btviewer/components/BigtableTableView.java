@@ -16,7 +16,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class BigtableTableView extends VBox {
 
-    private static final String ROWKEY = "rowkey";
+    private static final String ROW_KEY = "rowkey";
 
     @FXML
     private Button configureRowValueTypesButton;
@@ -66,7 +65,7 @@ public class BigtableTableView extends VBox {
     }
 
     private TableColumn<BigtableRow, ?> createRowKeyColumn() {
-        TableColumn<BigtableRow, Object> tableColumn = new TableColumn<>(ROWKEY);
+        TableColumn<BigtableRow, Object> tableColumn = new TableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> {
             BigtableRow bigtableRow = param.getValue();
             return new ReadOnlyObjectWrapper<>(bigtableRow.getRowKey());
@@ -90,15 +89,16 @@ public class BigtableTableView extends VBox {
     public List<BigtableColumn> getColumns() {
         return tableView.getColumns()
                 .stream()
-                .filter(c -> !c.getText().equals(ROWKEY))
-                .flatMap(f -> f.getColumns()
+                .filter(c -> !c.getText().equals(ROW_KEY))
+                .flatMap(f -> f
+                        .getColumns()
                         .stream()
                         .map(q -> new BigtableColumn(f.getText(), q.getText())))
                 .collect(Collectors.toList());
     }
 
     public void clear() {
-        tableView.getColumns().removeIf(t -> !t.getText().equals(ROWKEY));
+        tableView.getColumns().removeIf(t -> !t.getText().equals(ROW_KEY));
         setBigTableRows(FXCollections.observableArrayList());
     }
 
@@ -108,17 +108,8 @@ public class BigtableTableView extends VBox {
 
     private void addColumn(String family, String qualifier) {
 
-        TableColumn<BigtableRow, ?> familyColumn = tableView.getColumns()
-                .stream()
-                .filter(c -> c.getText().equals(family))
-                .findFirst()
-                .orElse(null);
-
-        TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
-        qualifierColumn.setCellValueFactory(param -> {
-            BigtableRow bigtableRow = param.getValue();
-            return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier, valueConverter));
-        });
+        var familyColumn = getFamilyTableColumn(family);
+        var qualifierColumn = getQualifierTableColumn(family, qualifier);
 
         if (familyColumn == null) {
             familyColumn = new TableColumn<>(family);
@@ -127,6 +118,23 @@ public class BigtableTableView extends VBox {
         } else if (familyColumn.getColumns().stream().noneMatch(c -> c.getText().equals(qualifier))) {
             familyColumn.getColumns().add(qualifierColumn);
         }
+    }
+
+    private TableColumn<BigtableRow, Object> getQualifierTableColumn(String family, String qualifier) {
+        TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
+        qualifierColumn.setCellValueFactory(param -> {
+            BigtableRow bigtableRow = param.getValue();
+            return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier, valueConverter));
+        });
+        return qualifierColumn;
+    }
+
+    private TableColumn<BigtableRow, ?> getFamilyTableColumn(String family) {
+        return tableView.getColumns()
+                    .stream()
+                    .filter(c -> c.getText().equals(family))
+                    .findFirst()
+                    .orElse(null);
     }
 
     private void setBigTableRows(ObservableList<BigtableRow> bigtableRows) {
