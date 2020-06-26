@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer.services;
+
 import java.nio.file.Path;
 import java.util.prefs.Preferences;
 
@@ -7,8 +8,9 @@ import java.util.prefs.Preferences;
  */
 public class CredentialsManager {
 
-    private static final String PREFERENCES_USER_ROOT_NODE_NAME = "btviewer";
+    private static final String BIGTABLE_VIEWER = "BigtableViewer";
     private static final String CREDENTIALS_PATH = "credentials-path";
+    private static final String GOOGLE_APPLICATION_CREDENTIALS = "GOOGLE_APPLICATION_CREDENTIALS";
 
     private Path credentialsPath;
 
@@ -44,10 +46,10 @@ public class CredentialsManager {
     }
 
     private String getDefaultCredentialsPath() {
-        return System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+        return System.getenv(GOOGLE_APPLICATION_CREDENTIALS);
     }
 
     private Preferences getPreferences() {
-        return Preferences.userRoot().node(PREFERENCES_USER_ROOT_NODE_NAME);
+        return Preferences.userRoot().node(BIGTABLE_VIEWER);
     }
 }

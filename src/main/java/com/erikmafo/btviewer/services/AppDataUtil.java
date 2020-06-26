@@ -5,20 +5,20 @@ import java.nio.file.Path;
 
 public class AppDataUtil {
 
-    private static final String BT_VIEWER = "btviewer";
+    private static final String BIGTABLE_VIEWER = "BigtableViewer";
 
     public static Path getStorageFolder() {
         Path appDataFolder;
 
         if (PlatformUtil.isWindows()) {
-            appDataFolder = Path.of(System.getenv("APPDATA"), BT_VIEWER);
+            appDataFolder = Path.of(System.getenv("APPDATA"), BIGTABLE_VIEWER);
         }
         else if (PlatformUtil.isMac()) {
             appDataFolder = Path.of(
-                    System.getProperty("user.home") + "/Library/Application Support", BT_VIEWER);
+                    System.getProperty("user.home") + "/Library/Application Support", BIGTABLE_VIEWER);
         }
         else {
-            appDataFolder = Path.of(System.getProperty("user.home"), "." + BT_VIEWER);
+            appDataFolder = Path.of(System.getProperty("user.home"), "." + BIGTABLE_VIEWER);
         }
         return appDataFolder;
     }
