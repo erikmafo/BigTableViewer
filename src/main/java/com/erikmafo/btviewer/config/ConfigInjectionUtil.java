@@ -22,7 +22,7 @@ class ConfigInjectionUtil {
                         e.printStackTrace();
                     }
                 } else {
-                    System.out.println("Could not find config file " + configName);
+                    System.out.printf("Could not find config file %s%n", configName);
                 }
 
                 Names.bindProperties(binder(), props);
