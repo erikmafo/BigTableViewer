@@ -2,6 +2,7 @@ package com.erikmafo.btviewer.controllers;
 
 import com.erikmafo.btviewer.components.SpecifyCredentialsPathDialog;
 import com.erikmafo.btviewer.services.CredentialsManager;
+import com.sun.javafx.PlatformUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
@@ -25,8 +26,7 @@ public class MenuBarController {
     private MenuBar menuBar;
 
     public void initialize() {
-        final String os = System.getProperty("os.name");
-        if (os != null && os.startsWith("Mac")) {
+        if (PlatformUtil.isMac()) {
             menuBar.useSystemMenuBarProperty().set(true);
         }
     }

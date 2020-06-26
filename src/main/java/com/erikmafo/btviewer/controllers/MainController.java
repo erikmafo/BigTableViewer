@@ -7,6 +7,8 @@ import com.erikmafo.btviewer.services.*;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javax.inject.Inject;
 import java.io.IOException;
@@ -63,7 +65,7 @@ public class MainController {
             tablesListView.addBigtableInstances(bigtableInstanceManager.getInstances());
         } catch (IOException e) {
             e.printStackTrace();
-            // TODO: display error
+            displayErrorInfo("Unable to load bigtable instances");
         }
     }
 
@@ -83,7 +85,7 @@ public class MainController {
             bigtableInstanceManager.setInstances(allInstances);
         } catch (IOException e) {
             e.printStackTrace();
-            // TODO: display error
+            displayErrorInfo(String.format("Unable to save bigtable instance %s", instance.getInstanceId()));
         }
     }
 
@@ -109,12 +111,9 @@ public class MainController {
     }
 
     private void loadTableConfiguration(BigtableTable currentTable) {
-        try {
-            var tableConfiguration = tableConfigManager.getTableConfiguration(currentTable);
+        var tableConfiguration = getTableConfiguration(currentTable);
+        if (tableConfiguration != null) {
             bigtableTableView.setValueConverter(new BigtableValueConverter(tableConfiguration.getCellDefinitions()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: display error
         }
     }
 
@@ -134,7 +133,7 @@ public class MainController {
             currentTableConfig = tableConfigManager.getTableConfiguration(table);
         } catch (IOException e) {
             e.printStackTrace();
-            //TODO: display error
+            displayErrorInfo(String.format("Unable load table configuration for table %s", table.getName()));
         }
         return currentTableConfig;
     }
@@ -144,8 +143,13 @@ public class MainController {
             tableConfigManager.saveTableConfiguration(table, configuration);
         } catch (IOException e) {
             e.printStackTrace();
-            //TODO: display error
+            displayErrorInfo("Unable to save table configuration");
         }
+    }
+
+    private void displayErrorInfo(String errorText) {
+        var alert = new Alert(Alert.AlertType.ERROR, errorText, ButtonType.CLOSE);
+        alert.showAndWait();
     }
 
     private void onBigtableTableSelected(ObservableValue<? extends BigtableTable> observable, BigtableTable oldValue, BigtableTable newValue) {
@@ -153,25 +157,27 @@ public class MainController {
         tableNameLabel.setText(newValue.getSimpleName());
         tableNameLabel.setVisible(true);
         rowSelectionView.setVisible(true);
+        readBigtableRows(createReadRequest(newValue));
+    }
 
-        BigtableReadRequest request = new BigtableReadRequestBuilder()
-                .setCredentialsPath(credentialsManager.getCredentialsPath())
-                .setTable(newValue)
-                .setRowRange(BigtableRowRange.DEFAULT)
-                .build();
-
-        readBigtableRows(request);
+    private BigtableReadRequest createReadRequest(BigtableTable newValue) {
+        return new BigtableReadRequestBuilder()
+                    .setCredentialsPath(credentialsManager.getCredentialsPath())
+                    .setTable(newValue)
+                    .setRowRange(BigtableRowRange.DEFAULT)
+                    .build();
     }
 
     private void readBigtableRows(BigtableReadRequest request) {
-        ReadBigtableRows readRowsService = new ReadBigtableRows(bigtableClient, request);
-        readRowsService.setOnSucceeded(workerStateEvent -> {
+        var readBigtableRows = new ReadBigtableRows(bigtableClient, request);
+        readBigtableRows.setOnSucceeded(workerStateEvent -> {
             bigtableTableView.setVisible(true);
             rowSelectionView.getProgressBar().setVisible(false);
-            readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
+            loadTableConfiguration(request.getBigtableTable());
+            readBigtableRows.getValue().forEach(row -> bigtableTableView.add(row));
         });
         rowSelectionView.getProgressBar().setVisible(true);
-        rowSelectionView.getProgressBar().progressProperty().bind(readRowsService.progressProperty());
-        readRowsService.start();
+        rowSelectionView.getProgressBar().progressProperty().bind(readBigtableRows.progressProperty());
+        readBigtableRows.start();
     }
 }

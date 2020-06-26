@@ -49,7 +49,7 @@ public class TableConfigManagerImpl implements TableConfigManager {
                 .resolve(TableConfigManagerImpl.TABLES)
                 .resolve(table.getProjectId())
                 .resolve(table.getInstanceId())
-                .resolve(table.getName() + ".json");
+                .resolve(table.getTableId() + ".json");
     }
 
 }
