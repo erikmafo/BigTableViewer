@@ -30,7 +30,7 @@ public class BigtableTablesListView extends VBox {
     private EventHandler<BigtableProjectTreeItemExpanded> treeItemExpandedEventHandler;
 
     public BigtableTablesListView(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_tables_list_view.fxml"));
+        var loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_tables_list_view.fxml"));
         loader.setRoot(this);
         loader.setController(this);
         try {
@@ -70,8 +70,7 @@ public class BigtableTablesListView extends VBox {
     }
 
     public void addBigtableInstance(BigtableInstance instance) {
-
-        TreeItem<String> projectTreeItem = treeView.getRoot()
+        var projectTreeItem = treeView.getRoot()
                 .getChildren()
                 .stream().filter(p -> p.getValue().equals(instance.getProjectId()))
                 .findFirst()
@@ -95,7 +94,7 @@ public class BigtableTablesListView extends VBox {
             projectTreeItem = projectTreeItemFinal;
         }
 
-        TreeItem<String> instanceTreeItem = new TreeItem<>(instance.getInstanceId());
+        var instanceTreeItem = new TreeItem<>(instance.getInstanceId());
         projectTreeItem.getChildren().add(instanceTreeItem);
         treeView.getRoot().getChildren().add(projectTreeItem);
         treeView.setVisible(true);

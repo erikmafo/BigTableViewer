@@ -60,9 +60,17 @@ public class BigtableValueTypesDialog extends DialogPane {
     }
 
     private void addSchemaRow(BigtableColumn column) {
+        addSchemaRow(column, null);
+    }
+
+    private void addSchemaRow(CellDefinition cellDefinition) {
+        addSchemaRow(new BigtableColumn(cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
+    }
+
+    private void addSchemaRow(BigtableColumn column, String valueType) {
 
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.setValue("String");
+        choiceBox.setValue(valueType != null ? valueType : "String");
         choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
         TextField familyTextField = new TextField(column.getFamily());
         TextField qualifierTextField = new TextField(column.getQualifier());
@@ -71,6 +79,7 @@ public class BigtableValueTypesDialog extends DialogPane {
         observableCell.familyProperty().bind(familyTextField.textProperty());
         observableCell.qualifierProperty().bind(qualifierTextField.textProperty());
         observableCell.valueTypeProperty().bind(choiceBox.valueProperty());
+
         observableCells.add(observableCell);
         schemaGridPane.addRow(currentSchemaRow, familyTextField, qualifierTextField, choiceBox);
         currentSchemaRow++;
@@ -145,7 +154,7 @@ public class BigtableValueTypesDialog extends DialogPane {
         }
     }
 
-    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(List<BigtableColumn> columns) {
+    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(List<BigtableColumn> columns, BigtableTableConfiguration current) {
         CompletableFuture<BigtableTableConfiguration> future = new CompletableFuture<>();
 
         try {
@@ -154,6 +163,9 @@ public class BigtableValueTypesDialog extends DialogPane {
 
             if (columns.size() == 0) {
                 pane.addSchemaRow();
+            }
+            else if (current != null) {
+                current.getCellDefinitions().forEach(pane::addSchemaRow);
             }
             else {
                 columns.forEach(pane::addSchemaRow);
@@ -180,6 +192,4 @@ public class BigtableValueTypesDialog extends DialogPane {
 
         return future;
     }
-
-
 }
