@@ -6,7 +6,7 @@ Bigtable viewer is an application that lets you view and query the contents of G
 
 ## Installation
 
-Download and run the [installer](https://github.com/erikmafo/BigtableViewer/releases/tag/v0.1.5) 
+Download and run the [installer](https://github.com/erikmafo/BigtableViewer/releases/latest) 
 for your operating system
 
 Set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of a file containing the 
