@@ -1,0 +1,39 @@
+package com.erikmafo.btviewer.services.internal;
+
+import com.erikmafo.btviewer.model.BigtableInstance;
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
+import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
+
+import javax.inject.Inject;
+import java.io.IOException;
+
+public class BigtableSettingsProviderImpl implements BigtableSettingsProvider {
+
+    private static final String BIGTABLE_VIEWER = "bigtable-viewer";
+    private final CredentialsProvider credentialsProvider;
+
+    @Inject
+    public BigtableSettingsProviderImpl(CredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
+    }
+
+    @Override
+    public BigtableTableAdminSettings getTableAdminSettings(BigtableInstance instance) throws IOException {
+        return BigtableTableAdminSettings.newBuilder()
+                .setCredentialsProvider(credentialsProvider)
+                .setProjectId(instance.getProjectId())
+                .setInstanceId(instance.getInstanceId())
+                .build();
+    }
+
+    @Override
+    public BigtableDataSettings getDataSettings(BigtableInstance instance) {
+        return BigtableDataSettings.newBuilder()
+                .setAppProfileId(BIGTABLE_VIEWER)
+                .setCredentialsProvider(credentialsProvider)
+                .setProjectId(instance.getProjectId())
+                .setInstanceId(instance.getInstanceId())
+                .build();
+    }
+}

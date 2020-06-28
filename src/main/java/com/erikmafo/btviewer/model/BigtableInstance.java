@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.model;
 
+import java.util.Objects;
+
 public class BigtableInstance {
 
     private String instanceId;
@@ -34,5 +36,19 @@ public class BigtableInstance {
 
     public String getInstanceId() {
         return instanceId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BigtableInstance that = (BigtableInstance) o;
+        return Objects.equals(instanceId, that.instanceId) &&
+                Objects.equals(projectId, that.projectId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(instanceId, projectId);
     }
 }

@@ -1,9 +1,8 @@
-package com.erikmafo.btviewer.services.inmemory;
+package com.erikmafo.btviewer.services.internal.inmemory;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
-import com.erikmafo.btviewer.services.BigtableInstanceManager;
+import com.erikmafo.btviewer.services.internal.BigtableInstanceManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.model;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by erikmafo on 23.12.17.
@@ -47,4 +48,16 @@ public class BigtableValueConverter {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BigtableValueConverter that = (BigtableValueConverter) o;
+        return Objects.equals(cellDefinitions, that.cellDefinitions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cellDefinitions);
+    }
 }

@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.services;
+package com.erikmafo.btviewer.services.internal;
 
 import java.nio.file.Path;
 import java.util.prefs.Preferences;

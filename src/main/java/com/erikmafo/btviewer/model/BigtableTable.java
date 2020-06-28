@@ -1,8 +1,7 @@
 package com.erikmafo.btviewer.model;
-import com.google.bigtable.repackaged.com.google.cloud.bigtable.grpc.BigtableTableName;
+import com.google.bigtable.admin.v2.Table;
+import com.google.bigtable.admin.v2.TableName;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 public class BigtableTable {
@@ -12,10 +11,10 @@ public class BigtableTable {
     private final String tableId;
 
     public BigtableTable(String name) {
-        BigtableTableName tableName = new BigtableTableName(name);
-        projectId = tableName.getProjectId();
-        instanceId = tableName.getInstanceId();
-        tableId = tableName.getTableId();
+        var tab = TableName.parse(name);
+        projectId = tab.getProject();
+        instanceId = tab.getInstance();
+        tableId = tab.getTable();
     }
 
     public BigtableTable(String projectId, String instanceId, String tableId) {

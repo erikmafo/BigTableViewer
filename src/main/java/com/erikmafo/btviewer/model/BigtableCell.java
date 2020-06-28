@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.model;
 
-import com.google.bigtable.repackaged.com.google.protobuf.ByteString;
+import com.google.protobuf.ByteString;
 
 public class BigtableCell {
 

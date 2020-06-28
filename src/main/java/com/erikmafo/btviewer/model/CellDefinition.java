@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.model;
 
+import java.util.Objects;
 
 public class CellDefinition {
 
@@ -35,5 +36,20 @@ public class CellDefinition {
 
     public void setQualifier(String qualifier) {
         this.qualifier = qualifier;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CellDefinition that = (CellDefinition) o;
+        return Objects.equals(valueType, that.valueType) &&
+                Objects.equals(family, that.family) &&
+                Objects.equals(qualifier, that.qualifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valueType, family, qualifier);
     }
 }

@@ -1,8 +1,8 @@
-package com.erikmafo.btviewer.services.inmemory;
+package com.erikmafo.btviewer.services.internal.inmemory;
 
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableConfiguration;
-import com.erikmafo.btviewer.services.TableConfigManager;
+import com.erikmafo.btviewer.services.internal.TableConfigManager;
 import java.util.HashMap;
 import java.util.Map;
 
