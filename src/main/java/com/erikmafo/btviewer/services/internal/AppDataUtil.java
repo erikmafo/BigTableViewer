@@ -1,9 +1,9 @@
-package com.erikmafo.btviewer.services;
+package com.erikmafo.btviewer.services.internal;
 
 import com.sun.javafx.PlatformUtil;
 import java.nio.file.Path;
 
-public class AppDataUtil {
+class AppDataUtil {
 
     private static final String BIGTABLE_VIEWER = "BigtableViewer";
 

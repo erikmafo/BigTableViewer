@@ -5,14 +5,14 @@ import com.erikmafo.btviewer.events.ScanTableAction;
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.*;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+
 import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by erikmafo on 23.12.17.
@@ -31,20 +31,30 @@ public class MainController {
     @FXML
     private BigtableTableView bigtableTableView;
 
-    private final CredentialsManager credentialsManager;
-    private final BigtableInstanceManager bigtableInstanceManager;
-    private final TableConfigManager tableConfigManager;
-    private final BigtableClient bigtableClient;
+    private final SaveCredentialsPathService saveCredentialsPathService;
+    private final SaveInstancesService saveInstancesService;
+    private final LoadInstancesService loadInstancesService;
+    private final SaveTableConfigurationService saveTableConfigurationService;
+    private final LoadTableConfigurationService loadTableConfigurationService;
+    private final ReadRowsService readRowsService;
+    private final ListTablesService listTablesService;
 
     @Inject
-    public MainController(CredentialsManager credentialsManager,
-                          BigtableInstanceManager bigtableInstanceManager,
-                          TableConfigManager tableConfigManager,
-                          BigtableClient bigtableClient) {
-        this.credentialsManager = credentialsManager;
-        this.bigtableInstanceManager = bigtableInstanceManager;
-        this.tableConfigManager = tableConfigManager;
-        this.bigtableClient = bigtableClient;
+    public MainController(
+            SaveCredentialsPathService saveCredentialsPathService,
+            SaveInstancesService saveInstancesService,
+            LoadInstancesService loadInstancesService,
+            SaveTableConfigurationService saveTableConfigurationService,
+            LoadTableConfigurationService loadTableConfigurationService,
+            ReadRowsService readRowsService,
+            ListTablesService listTablesService) {
+        this.saveCredentialsPathService = saveCredentialsPathService;
+        this.saveInstancesService = saveInstancesService;
+        this.loadInstancesService = loadInstancesService;
+        this.saveTableConfigurationService = saveTableConfigurationService;
+        this.loadTableConfigurationService = loadTableConfigurationService;
+        this.readRowsService = readRowsService;
+        this.listTablesService = listTablesService;
     }
 
     public void initialize() {
@@ -61,12 +71,10 @@ public class MainController {
     }
 
     private void loadBigtableInstances() {
-        try {
-            tablesListView.addBigtableInstances(bigtableInstanceManager.getInstances());
-        } catch (IOException e) {
-            e.printStackTrace();
-            displayErrorInfo("Unable to load bigtable instances");
-        }
+        loadInstancesService.setOnSucceeded(stateEvent ->
+                tablesListView.addBigtableInstances(loadInstancesService.getValue()));
+        loadInstancesService.setOnFailed(stateEvent -> displayErrorInfo("Failed to load instances", stateEvent));
+        loadInstancesService.restart();
     }
 
     private void onAddNewBigtableInstance(ActionEvent event) {
@@ -79,76 +87,66 @@ public class MainController {
     }
 
     private void saveInstance(BigtableInstance instance) {
-        try {
-            List<BigtableInstance> allInstances = bigtableInstanceManager.getInstances();
-            allInstances.add(instance);
-            bigtableInstanceManager.setInstances(allInstances);
-        } catch (IOException e) {
-            e.printStackTrace();
-            displayErrorInfo(String.format("Unable to save bigtable instance %s", instance.getInstanceId()));
-        }
+        saveInstancesService.addInstance(instance);
+        saveInstancesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to save instance", stateEvent));
+        saveInstancesService.restart();
     }
 
     private void listBigtableTables(BigtableInstance instance) {
-        ListBigtableTables listBigtableTables =
-                new ListBigtableTables(bigtableClient, instance, credentialsManager.getCredentialsPath());
-        listBigtableTables.setOnSucceeded(workerStateEvent ->
-                tablesListView.addBigtableTables(listBigtableTables.getValue()));
-        listBigtableTables.start();
+        listTablesService.setInstance(instance);
+        listTablesService.setOnSucceeded(workerStateEvent ->
+                tablesListView.addBigtableTables(listTablesService.getValue()));
+        listTablesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to list tables", stateEvent));
+        listTablesService.restart();
     }
 
     private void onScanTableAction(ScanTableAction actionEvent) {
         bigtableTableView.clear();
-        BigtableTable currentTable = tablesListView.selectedTableProperty().get();
+        var currentTable = tablesListView.selectedTableProperty().get();
         loadTableConfiguration(currentTable);
-        BigtableReadRequest request = new BigtableReadRequestBuilder()
-                .setCredentialsPath(credentialsManager.getCredentialsPath())
+        var request = new BigtableReadRequestBuilder()
                 .setTable(currentTable)
                 .setRowRange(new BigtableRowRange(actionEvent.getFrom(), actionEvent.getTo()))
                 .build();
-
         readBigtableRows(request);
     }
 
     private void loadTableConfiguration(BigtableTable currentTable) {
-        var tableConfiguration = getTableConfiguration(currentTable);
-        if (tableConfiguration != null) {
-            bigtableTableView.setValueConverter(new BigtableValueConverter(tableConfiguration.getCellDefinitions()));
-        }
+        loadTableConfigurationService.setTable(currentTable);
+        loadTableConfigurationService.setOnSucceeded(event -> bigtableTableView.setValueConverter(
+                new BigtableValueConverter(loadTableConfigurationService.getValue().getCellDefinitions())));
+        loadTableConfigurationService.setOnFailed(event -> displayErrorInfo("Unable to load table configuration", event));
+        loadTableConfigurationService.restart();
     }
 
     private void onConfigureRowValueTypes(ActionEvent event) {
         var table = tablesListView.selectedTableProperty().get();
-        var currentTableConfig = getTableConfiguration(table);
-        BigtableValueTypesDialog.displayAndAwaitResult(bigtableTableView.getColumns(), currentTableConfig)
-                .whenComplete((configuration, throwable) -> {
-                    bigtableTableView.setValueConverter(new BigtableValueConverter(configuration.getCellDefinitions()));
-                    saveTableConfiguration(table, configuration);
-                });
+        loadTableConfigurationService.setTable(table);
+        loadTableConfigurationService.setOnSucceeded(e -> BigtableValueTypesDialog
+                .displayAndAwaitResult(bigtableTableView.getColumns(), loadTableConfigurationService.getValue())
+                .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
+        );
+        loadTableConfigurationService.setOnFailed(e -> BigtableValueTypesDialog
+                .displayAndAwaitResult(bigtableTableView.getColumns(), null)
+                .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
+        );
+        loadTableConfigurationService.restart();
     }
 
-    private BigtableTableConfiguration getTableConfiguration(BigtableTable table) {
-        BigtableTableConfiguration currentTableConfig = null;
-        try {
-            currentTableConfig = tableConfigManager.getTableConfiguration(table);
-        } catch (IOException e) {
-            e.printStackTrace();
-            displayErrorInfo(String.format("Unable load table configuration for table %s", table.getName()));
-        }
-        return currentTableConfig;
+    private void updateTableConfiguration(BigtableTable table, BigtableTableConfiguration configuration) {
+        bigtableTableView.setValueConverter(new BigtableValueConverter(configuration.getCellDefinitions()));
+        saveTableConfiguration(table, configuration);
     }
 
     private void saveTableConfiguration(BigtableTable table, BigtableTableConfiguration configuration) {
-        try {
-            tableConfigManager.saveTableConfiguration(table, configuration);
-        } catch (IOException e) {
-            e.printStackTrace();
-            displayErrorInfo("Unable to save table configuration");
-        }
+        saveTableConfigurationService.setTableConfiguration(table, configuration);
+        saveTableConfigurationService.setOnFailed(event -> displayErrorInfo("Failed to save table configuration", event));
+        saveTableConfigurationService.restart();
     }
 
-    private void displayErrorInfo(String errorText) {
-        var alert = new Alert(Alert.AlertType.ERROR, errorText, ButtonType.CLOSE);
+    private void displayErrorInfo(String errorText, WorkerStateEvent event) {
+        var exception = event.getSource().getException();
+        var alert = new Alert(Alert.AlertType.ERROR, errorText + " " + exception.getLocalizedMessage(), ButtonType.CLOSE);
         alert.showAndWait();
     }
 
@@ -162,22 +160,22 @@ public class MainController {
 
     private BigtableReadRequest createReadRequest(BigtableTable newValue) {
         return new BigtableReadRequestBuilder()
-                    .setCredentialsPath(credentialsManager.getCredentialsPath())
                     .setTable(newValue)
                     .setRowRange(BigtableRowRange.DEFAULT)
                     .build();
     }
 
     private void readBigtableRows(BigtableReadRequest request) {
-        var readBigtableRows = new ReadBigtableRows(bigtableClient, request);
-        readBigtableRows.setOnSucceeded(workerStateEvent -> {
+        readRowsService.setReadRequest(request);
+        readRowsService.setOnSucceeded(workerStateEvent -> {
             bigtableTableView.setVisible(true);
             rowSelectionView.getProgressBar().setVisible(false);
             loadTableConfiguration(request.getBigtableTable());
-            readBigtableRows.getValue().forEach(row -> bigtableTableView.add(row));
+            readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
         });
+        readRowsService.setOnFailed(stateEvent -> displayErrorInfo("Unable to read bigtable rows", stateEvent));
         rowSelectionView.getProgressBar().setVisible(true);
-        rowSelectionView.getProgressBar().progressProperty().bind(readBigtableRows.progressProperty());
-        readBigtableRows.start();
+        rowSelectionView.getProgressBar().progressProperty().bind(readRowsService.progressProperty());
+        readRowsService.restart();
     }
 }

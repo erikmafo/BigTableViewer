@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.services;
+package com.erikmafo.btviewer.services.internal;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.google.gson.Gson;

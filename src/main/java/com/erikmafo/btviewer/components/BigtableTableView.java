@@ -123,8 +123,8 @@ public class BigtableTableView extends VBox {
     private TableColumn<BigtableRow, Object> getQualifierTableColumn(String family, String qualifier) {
         TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
         qualifierColumn.setCellValueFactory(param -> {
-            BigtableRow bigtableRow = param.getValue();
-            return new ReadOnlyObjectWrapper<>(bigtableRow.getCellValue(family, qualifier, valueConverter));
+            var row = param.getValue();
+            return new ReadOnlyObjectWrapper<>(row.getCellValue(family, qualifier, valueConverter));
         });
         return qualifierColumn;
     }
@@ -150,6 +150,10 @@ public class BigtableTableView extends VBox {
     }
 
     public void setValueConverter(BigtableValueConverter valueConverter) {
+        if (valueConverter.equals(this.valueConverter)) {
+            return;
+        }
+
         this.valueConverter = valueConverter;
         var rows = this.tableView.getItems();
         clear();
