@@ -145,8 +145,8 @@ public class MainController {
     }
 
     private void displayErrorInfo(String errorText, WorkerStateEvent event) {
-        event.getSource().getException().printStackTrace();
-        var alert = new Alert(Alert.AlertType.ERROR, errorText, ButtonType.CLOSE);
+        var exception = event.getSource().getException();
+        var alert = new Alert(Alert.AlertType.ERROR, errorText + " " + exception.getLocalizedMessage(), ButtonType.CLOSE);
         alert.showAndWait();
     }
 
