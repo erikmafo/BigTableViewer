@@ -23,12 +23,21 @@ public class BigtableRow {
         return cells;
     }
 
+    public BigtableCell getLatestCell(String family, String qualifier) {
+        return cells.stream()
+                .filter(c -> family.equals(c.getFamily()) && qualifier.equals(c.getQualifier()))
+                .sorted(Comparator.comparingLong(BigtableCell::getTimestamp))
+                .reduce((c1, c2) -> c2)
+                .orElse(null);
+    }
+
     public Object getCellValue(String family, String qualifier, BigtableValueConverter converter) {
 
         BigtableCell cell = cells
                 .stream()
                 .filter(c -> family.equals(c.getFamily()) && qualifier.equals(c.getQualifier()))
-                .findFirst()
+                .sorted(Comparator.comparingLong(BigtableCell::getTimestamp))
+                .reduce((c1, c2) -> c2)
                 .orElse(null);
 
         if (cell == null) {

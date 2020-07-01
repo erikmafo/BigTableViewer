@@ -7,11 +7,13 @@ public class BigtableCell {
     private final String family;
     private final String qualifier;
     private final ByteString bytes;
+    private final long timestamp;
 
-    public BigtableCell(String family, String qualifier, ByteString bytes) {
+    public BigtableCell(String family, String qualifier, ByteString bytes, long timestamp) {
         this.family = family;
         this.qualifier = qualifier;
         this.bytes = bytes;
+        this.timestamp = timestamp;
     }
 
     public String getFamily() {
@@ -27,4 +29,6 @@ public class BigtableCell {
     public byte[] getBytes() {
         return bytes.toByteArray();
     }
+
+    public long getTimestamp() { return timestamp; }
 }

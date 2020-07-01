@@ -20,15 +20,19 @@ public class BigtableValueConverter {
         return cellDefinitions;
     }
 
-    public Object convert(BigtableCell bigtableCell) {
-        CellDefinition cellDefinition = cellDefinitions.stream()
-                .filter(c -> c.getFamily().equals(bigtableCell.getFamily())
-                        && c.getQualifier().equals(bigtableCell.getQualifier()))
+    public Object convert(BigtableCell cell) {
+        if (cell == null) {
+            return null;
+        }
+
+        var cellDefinition = cellDefinitions.stream()
+                .filter(c -> c.getFamily().equals(cell.getFamily())
+                        && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
-                .orElse(new CellDefinition("string", bigtableCell.getFamily(), bigtableCell.getQualifier()));
+                .orElse(new CellDefinition("string", cell.getFamily(), cell.getQualifier()));
 
         try {
-            return convertUsingValueType(bigtableCell, cellDefinition.getValueType());
+            return convertUsingValueType(cell, cellDefinition.getValueType());
         } catch (BufferUnderflowException ex) {
             return String.format("not a %s", cellDefinition.getValueType());
         }

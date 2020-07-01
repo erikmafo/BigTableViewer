@@ -48,7 +48,6 @@ public class BigtableTableView extends VBox {
         }
 
         tableView.getColumns().add(createRowKeyColumn());
-        //configureRowValueTypesButton.setVisible(false); // TODO: enable this feature
     }
 
     private ScrollBar getVerticalScrollbar() {
@@ -90,10 +89,10 @@ public class BigtableTableView extends VBox {
         return tableView.getColumns()
                 .stream()
                 .filter(c -> !c.getText().equals(ROW_KEY))
-                .flatMap(f -> f
+                .flatMap(c -> c
                         .getColumns()
                         .stream()
-                        .map(q -> new BigtableColumn(f.getText(), q.getText())))
+                        .map(q -> new BigtableColumn(c.getText(), q.getText())))
                 .collect(Collectors.toList());
     }
 
@@ -123,8 +122,8 @@ public class BigtableTableView extends VBox {
     private TableColumn<BigtableRow, Object> getQualifierTableColumn(String family, String qualifier) {
         TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
         qualifierColumn.setCellValueFactory(param -> {
-            var row = param.getValue();
-            return new ReadOnlyObjectWrapper<>(row.getCellValue(family, qualifier, valueConverter));
+            var cell = param.getValue().getLatestCell(family, qualifier);
+            return new ReadOnlyObjectWrapper<>(valueConverter.convert(cell));
         });
         return qualifierColumn;
     }
