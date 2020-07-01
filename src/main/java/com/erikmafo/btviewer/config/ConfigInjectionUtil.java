@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 

@@ -20,6 +20,9 @@ public class RowSelectionView extends VBox {
     private ProgressBar progressBar;
 
     @FXML
+    private TextField prefixTextField;
+
+    @FXML
     private TextField fromTextField;
 
     @FXML
@@ -40,7 +43,8 @@ public class RowSelectionView extends VBox {
 
     public void setOnScanTable(EventHandler<ScanTableAction> eventHandler) {
         scanTableButton.setOnAction(actionEvent ->
-                eventHandler.handle(new ScanTableAction(fromTextField.getText(), toTextField.getText())));
+                eventHandler.handle(new ScanTableAction(
+                        prefixTextField.getText(), fromTextField.getText(), toTextField.getText())));
     }
 
     public ProgressBar getProgressBar() {

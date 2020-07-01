@@ -21,7 +21,7 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         loader.setControllerFactory(Guice.createInjector(new ServicesModule())::getInstance);
         Parent root = loader.load();
-        primaryStage.setTitle("Bigtable viewer");
+        primaryStage.setTitle("Bigtable Viewer");
         primaryStage.setScene(new Scene(root, 800, 700));
         primaryStage.show();
     }

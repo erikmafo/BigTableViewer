@@ -31,7 +31,6 @@ public class MainController {
     @FXML
     private BigtableTableView bigtableTableView;
 
-    private final SaveCredentialsPathService saveCredentialsPathService;
     private final SaveInstancesService saveInstancesService;
     private final LoadInstancesService loadInstancesService;
     private final SaveTableConfigurationService saveTableConfigurationService;
@@ -41,14 +40,12 @@ public class MainController {
 
     @Inject
     public MainController(
-            SaveCredentialsPathService saveCredentialsPathService,
             SaveInstancesService saveInstancesService,
             LoadInstancesService loadInstancesService,
             SaveTableConfigurationService saveTableConfigurationService,
             LoadTableConfigurationService loadTableConfigurationService,
             ReadRowsService readRowsService,
             ListTablesService listTablesService) {
-        this.saveCredentialsPathService = saveCredentialsPathService;
         this.saveInstancesService = saveInstancesService;
         this.loadInstancesService = loadInstancesService;
         this.saveTableConfigurationService = saveTableConfigurationService;
@@ -106,6 +103,7 @@ public class MainController {
         loadTableConfiguration(currentTable);
         var request = new BigtableReadRequestBuilder()
                 .setTable(currentTable)
+                .setPrefix(actionEvent.getPrefix())
                 .setRowRange(new BigtableRowRange(actionEvent.getFrom(), actionEvent.getTo()))
                 .build();
         readBigtableRows(request);
@@ -170,7 +168,7 @@ public class MainController {
         readRowsService.setOnSucceeded(workerStateEvent -> {
             bigtableTableView.setVisible(true);
             rowSelectionView.getProgressBar().setVisible(false);
-            loadTableConfiguration(request.getBigtableTable());
+            loadTableConfiguration(request.getTable());
             readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
         });
         readRowsService.setOnFailed(stateEvent -> displayErrorInfo("Unable to read bigtable rows", stateEvent));

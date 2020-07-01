@@ -41,7 +41,7 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
                 var bigtableRows = new ArrayList<BigtableRow>();
                 while (rowIterator.hasNext()) {
                     bigtableRows.add(toBigtableRow(rowIterator.next()));
-                    updateProgress(bigtableRows.size(), readRequest.getScan().getMaxRows());
+                    updateProgress(bigtableRows.size(), readRequest.getMaxRows());
                 }
                 return bigtableRows;
             }
@@ -54,9 +54,10 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
 
     private static Query createQuery(BigtableReadRequest request) {
         return Query
-                .create(request.getBigtableTable().getTableId())
-                .range(request.getScan().getFrom(), request.getScan().getTo())
-                .limit(request.getScan().getMaxRows());
+                .create(request.getTable().getTableId())
+                .prefix(request.getPrefix())
+                .range(request.getRange().getFrom(), request.getRange().getTo())
+                .limit(request.getMaxRows());
     }
 
     private static BigtableRow toBigtableRow(Row row) {
@@ -84,8 +85,8 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         }
 
         var instance = new BigtableInstance(
-                readRequest.getBigtableTable().getProjectId(),
-                readRequest.getBigtableTable().getInstanceId());
+                readRequest.getTable().getProjectId(),
+                readRequest.getTable().getInstanceId());
 
         if (instance.equals(getClientInstance())) {
             return client;
