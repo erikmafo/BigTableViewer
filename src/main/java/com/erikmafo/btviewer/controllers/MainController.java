@@ -1,9 +1,10 @@
 package com.erikmafo.btviewer.controllers;
 
 import com.erikmafo.btviewer.components.*;
-import com.erikmafo.btviewer.events.ScanTableAction;
+import com.erikmafo.btviewer.events.ExecuteQueryAction;
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.*;
+import com.erikmafo.btviewer.sql.Query;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -20,7 +21,7 @@ import javax.inject.Inject;
 public class MainController {
 
     @FXML
-    private RowSelectionView rowSelectionView;
+    private QueryBox queryBox;
 
     @FXML
     private BigtableTablesListView tablesListView;
@@ -55,7 +56,7 @@ public class MainController {
     }
 
     public void initialize() {
-        rowSelectionView.setVisible(false);
+        queryBox.setVisible(false);
         bigtableTableView.setVisible(false);
         tableNameLabel.setVisible(false);
         bigtableTableView.setOnConfigureRowValuesTypes(this::onConfigureRowValueTypes);
@@ -63,7 +64,7 @@ public class MainController {
         tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
         tablesListView.setTreeItemExpandedEventHandler(event ->
                 event.getBigtableInstances().forEach(MainController.this::listBigtableTables));
-        rowSelectionView.setOnScanTable(this::onScanTableAction);
+        queryBox.setOnScanTable(this::onExecuteQuery);
         loadBigtableInstances();
     }
 
@@ -97,14 +98,13 @@ public class MainController {
         listTablesService.restart();
     }
 
-    private void onScanTableAction(ScanTableAction actionEvent) {
+    private void onExecuteQuery(ExecuteQueryAction queryAction) {
         bigtableTableView.clear();
         var currentTable = tablesListView.selectedTableProperty().get();
         loadTableConfiguration(currentTable);
         var request = new BigtableReadRequestBuilder()
                 .setTable(currentTable)
-                .setPrefix(actionEvent.getPrefix())
-                .setRowRange(new BigtableRowRange(actionEvent.getFrom(), actionEvent.getTo()))
+                .setSql(queryAction.getSql())
                 .build();
         readBigtableRows(request);
     }
@@ -152,28 +152,21 @@ public class MainController {
         bigtableTableView.clear();
         tableNameLabel.setText(newValue.getSimpleName());
         tableNameLabel.setVisible(true);
-        rowSelectionView.setVisible(true);
-        readBigtableRows(createReadRequest(newValue));
-    }
-
-    private BigtableReadRequest createReadRequest(BigtableTable newValue) {
-        return new BigtableReadRequestBuilder()
-                    .setTable(newValue)
-                    .setRowRange(BigtableRowRange.DEFAULT)
-                    .build();
+        queryBox.setVisible(true);
+        queryBox.setQuery(Query.getDefaultSql(newValue.getTableId()));
     }
 
     private void readBigtableRows(BigtableReadRequest request) {
         readRowsService.setReadRequest(request);
         readRowsService.setOnSucceeded(workerStateEvent -> {
             bigtableTableView.setVisible(true);
-            rowSelectionView.getProgressBar().setVisible(false);
+            queryBox.getProgressBar().setVisible(false);
             loadTableConfiguration(request.getTable());
             readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
         });
         readRowsService.setOnFailed(stateEvent -> displayErrorInfo("Unable to read bigtable rows", stateEvent));
-        rowSelectionView.getProgressBar().setVisible(true);
-        rowSelectionView.getProgressBar().progressProperty().bind(readRowsService.progressProperty());
+        queryBox.getProgressBar().setVisible(true);
+        queryBox.getProgressBar().progressProperty().bind(readRowsService.progressProperty());
         readRowsService.restart();
     }
 }

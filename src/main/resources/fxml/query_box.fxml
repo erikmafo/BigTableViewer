@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.fxmisc.richtext.CodeArea?>
+
+<fx:root type="VBox"
+         styleClass="queryBox"
+         stylesheets="/css/query_box.css"
+         xmlns:fx="http://javafx.com/fxml"
+         fillWidth="true">
+
+    <CodeArea fx:id="codeArea"/>
+    <HBox>
+        <Button fx:id="executeQueryButton" text="Execute query"/>
+        <ProgressBar fx:id="progressBar"/>
+    </HBox>
+
+</fx:root>

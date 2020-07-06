@@ -5,7 +5,8 @@
 <fx:root type="VBox"
          styleClass="scanTableControls"
          stylesheets="/css/main.css"
-         xmlns:fx="http://javafx.com/fxml" fillWidth="false">
+         xmlns:fx="http://javafx.com/fxml"
+         fillWidth="false">
     <GridPane>
         <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Prefix:</Label>
         <TextField fx:id="prefixTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>

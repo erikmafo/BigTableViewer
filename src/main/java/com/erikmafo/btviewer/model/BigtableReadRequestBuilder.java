@@ -6,6 +6,7 @@ public class BigtableReadRequestBuilder {
     private BigtableRowRange rowRange;
     private String prefix = "";
     private int limit = 1000;
+    private String sql;
 
     public BigtableReadRequestBuilder setTable(BigtableTable bigtableTable) {
         this.bigtableTable = bigtableTable;
@@ -27,7 +28,17 @@ public class BigtableReadRequestBuilder {
         return this;
     }
 
+    public BigtableReadRequestBuilder setSql(String sql) {
+        this.sql = sql;
+        return this;
+    }
+
     public BigtableReadRequest build() {
-        return new BigtableReadRequest(bigtableTable, rowRange, prefix, limit);
+
+        return new BigtableReadRequest(bigtableTable, rowRange, prefix, limit, sql);
+    }
+
+    public String getSql() {
+        return sql;
     }
 }

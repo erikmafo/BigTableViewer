@@ -2,6 +2,7 @@ package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
+import com.erikmafo.btviewer.sql.SqlParser;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Query;
@@ -53,11 +54,9 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
     }
 
     private static Query createQuery(BigtableReadRequest request) {
-        return Query
-                .create(request.getTable().getTableId())
-                .prefix(request.getPrefix())
-                .range(request.getRange().getFrom(), request.getRange().getTo())
-                .limit(request.getMaxRows());
+        return new SqlParser()
+                .parse(request.getSql())
+                .toBigtableQuery();
     }
 
     private static BigtableRow toBigtableRow(Row row) {
@@ -76,7 +75,8 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         return new BigtableCell(
                 cell.getFamily(),
                 cell.getQualifier().toStringUtf8(),
-                cell.getValue());
+                cell.getValue(),
+                cell.getTimestamp());
     }
 
     private BigtableDataClient getOrCreateNewClient() throws IOException {

@@ -6,6 +6,7 @@
 <?import com.erikmafo.btviewer.components.RowSelectionView?>
 <?import com.erikmafo.btviewer.components.BigtableTableView?>
 <?import com.erikmafo.btviewer.components.BigtableTablesListView?>
+<?import com.erikmafo.btviewer.components.QueryBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.controllers.MainController"
             stylesheets="/css/main.css">
@@ -22,7 +23,7 @@
         <BigtableTableView fx:id="bigtableTableView"/>
     </center>
     <bottom>
-        <RowSelectionView fx:id="rowSelectionView"
+        <QueryBox fx:id="queryBox"
                           BorderPane.alignment="BOTTOM_CENTER" alignment="CENTER"/>
     </bottom>
 </BorderPane>
