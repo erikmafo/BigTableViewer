@@ -66,7 +66,9 @@ public class BigtableTablesListView extends VBox {
     }
 
     public void addBigtableInstances(List<BigtableInstance> bigtableInstances) {
-        bigtableInstances.forEach(this::addBigtableInstance);
+        for (var instance : bigtableInstances) {
+            addBigtableInstance(instance);
+        }
     }
 
     public void addBigtableInstance(BigtableInstance instance) {

@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
  */
 public class BigtableTableView extends VBox {
 
-    private static final String ROW_KEY = "rowkey";
+    private static final String ROW_KEY = "key";
 
     @FXML
-    private Button configureRowValueTypesButton;
+    private Button tableSettingsButton;
 
     @FXML
     private TableView<BigtableRow> tableView;
@@ -77,12 +77,8 @@ public class BigtableTableView extends VBox {
         return (int)bar.getMax();
     }
 
-    public void setOnConfigureRowValuesTypes(EventHandler<ActionEvent> eventHandler) {
-        configureRowValueTypesButton.setOnAction(eventHandler);
-    }
-
-    public void setOnScrollEvent(EventHandler<ScrollEvent> eventHandler) {
-        getVerticalScrollbar().setOnScroll(eventHandler);
+    public void setOnTableSettingsChanged(EventHandler<ActionEvent> eventHandler) {
+        tableSettingsButton.setOnAction(eventHandler);
     }
 
     public List<BigtableColumn> getColumns() {

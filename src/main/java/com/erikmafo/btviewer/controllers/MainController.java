@@ -11,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -25,9 +24,6 @@ public class MainController {
 
     @FXML
     private BigtableTablesListView tablesListView;
-
-    @FXML
-    private Label tableNameLabel;
 
     @FXML
     private BigtableTableView bigtableTableView;
@@ -58,8 +54,7 @@ public class MainController {
     public void initialize() {
         queryBox.setVisible(false);
         bigtableTableView.setVisible(false);
-        tableNameLabel.setVisible(false);
-        bigtableTableView.setOnConfigureRowValuesTypes(this::onConfigureRowValueTypes);
+        bigtableTableView.setOnTableSettingsChanged(this::onTableSettingsChanged);
         tablesListView.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
         tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
         tablesListView.setTreeItemExpandedEventHandler(event ->
@@ -117,14 +112,14 @@ public class MainController {
         loadTableConfigurationService.restart();
     }
 
-    private void onConfigureRowValueTypes(ActionEvent event) {
+    private void onTableSettingsChanged(ActionEvent event) {
         var table = tablesListView.selectedTableProperty().get();
         loadTableConfigurationService.setTable(table);
-        loadTableConfigurationService.setOnSucceeded(e -> BigtableValueTypesDialog
+        loadTableConfigurationService.setOnSucceeded(e -> TableSettingsDialog
                 .displayAndAwaitResult(bigtableTableView.getColumns(), loadTableConfigurationService.getValue())
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
-        loadTableConfigurationService.setOnFailed(e -> BigtableValueTypesDialog
+        loadTableConfigurationService.setOnFailed(e -> TableSettingsDialog
                 .displayAndAwaitResult(bigtableTableView.getColumns(), null)
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
@@ -150,8 +145,6 @@ public class MainController {
 
     private void onBigtableTableSelected(ObservableValue<? extends BigtableTable> observable, BigtableTable oldValue, BigtableTable newValue) {
         bigtableTableView.clear();
-        tableNameLabel.setText(newValue.getSimpleName());
-        tableNameLabel.setVisible(true);
         queryBox.setVisible(true);
         queryBox.setQuery(Query.getDefaultSql(newValue.getTableId()));
     }

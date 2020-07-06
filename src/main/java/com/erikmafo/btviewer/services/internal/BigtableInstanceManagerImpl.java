@@ -50,6 +50,10 @@ public class BigtableInstanceManagerImpl implements BigtableInstanceManager {
     @Override
     public void setInstances(List<BigtableInstance> instances) throws IOException {
 
+        if (instances == null) {
+            throw new NullPointerException("parameter 'instances' cannot be null");
+        }
+
         synchronized (mutex) {
             this.bigtableInstances = instances;
             var file = getConfigurationFile();

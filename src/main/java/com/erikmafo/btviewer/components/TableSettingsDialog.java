@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by erikmafo on 24.12.17.
  */
-public class BigtableValueTypesDialog extends DialogPane {
+public class TableSettingsDialog extends DialogPane {
 
     @FXML
     private GridPane schemaGridPane;
@@ -28,9 +28,9 @@ public class BigtableValueTypesDialog extends DialogPane {
 
     private int currentSchemaRow = 1;
 
-    private BigtableValueTypesDialog() {
+    private TableSettingsDialog() {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_value_types_dialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/table_settings_dialog.fxml"));
         loader.setRoot(this);
         loader.setController(this);
 
@@ -159,7 +159,7 @@ public class BigtableValueTypesDialog extends DialogPane {
 
         try {
             Dialog<BigtableTableConfiguration> dialog = new Dialog<>();
-            BigtableValueTypesDialog pane = new BigtableValueTypesDialog();
+            TableSettingsDialog pane = new TableSettingsDialog();
 
             if (columns.size() == 0) {
                 pane.addSchemaRow();

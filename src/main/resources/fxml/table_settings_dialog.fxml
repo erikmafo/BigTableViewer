@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root headerText="Add table"
+<fx:root headerText="Table settings"
          maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"
          minHeight="500.0"
@@ -75,7 +75,7 @@
                 </ScrollPane>
 
 
-                <Button onAction="#onAddTableRow" text="Add row" />
+                <Button onAction="#onAddTableRow" text="Add row" styleClass="btn-primary"/>
 
             </children>
         </VBox>

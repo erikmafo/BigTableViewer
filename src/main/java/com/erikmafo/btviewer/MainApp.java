@@ -23,6 +23,7 @@ public class MainApp extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("Bigtable Viewer");
         primaryStage.setScene(new Scene(root, 800, 700));
+        primaryStage.getScene().getStylesheets().add("org/kordamp/bootstrapfx/bootstrapfx.css");
         primaryStage.show();
     }
 

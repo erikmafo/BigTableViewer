@@ -4,15 +4,20 @@
 <?import org.fxmisc.richtext.CodeArea?>
 
 <fx:root type="VBox"
-         styleClass="queryBox"
+         styleClass="queryBox, has-spacing"
          stylesheets="/css/query_box.css"
-         xmlns:fx="http://javafx.com/fxml"
-         fillWidth="true">
+         xmlns:fx="http://javafx.com/fxml">
 
     <CodeArea fx:id="codeArea"/>
-    <HBox>
-        <Button fx:id="executeQueryButton" text="Execute query"/>
-        <ProgressBar fx:id="progressBar"/>
+    <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
+        <Button
+                fx:id="executeQueryButton"
+                text="Execute query"
+                styleClass="btn-success"/>
+
+        <ProgressBar
+                fx:id="progressBar"
+                styleClass="progress-bar-success"/>
     </HBox>
 
 </fx:root>

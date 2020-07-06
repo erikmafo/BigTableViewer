@@ -5,10 +5,12 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root type="javafx.scene.layout.VBox"
+         stylesheets="/css/main.css"
          xmlns:fx="http://javafx.com/fxml">
 
-    <Button fx:id="configureRowValueTypesButton"
+    <Button fx:id="tableSettingsButton"
             mnemonicParsing="false"
-            text="Configure value types"/>
+            text="Table Settings"
+            styleClass="btn"/>
     <TableView fx:id="tableView" VBox.vgrow="ALWAYS"/>
 </fx:root>

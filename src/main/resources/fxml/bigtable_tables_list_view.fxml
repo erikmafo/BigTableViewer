@@ -2,7 +2,8 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.Button?>
 <fx:root type="javafx.scene.layout.VBox"
-         xmlns:fx="http://javafx.com/fxml">
-        <Button fx:id="addInstanceButton">Add Bigtable Instance</Button>
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/main.css">
+        <Button fx:id="addInstanceButton" styleClass="btn">Add Instance</Button>
         <TreeView fx:id="treeView" visible="false" VBox.vgrow="ALWAYS"/>
 </fx:root>
