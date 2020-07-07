@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.components;
 
+import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableRow;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
@@ -37,44 +38,18 @@ public class BigtableTableView extends VBox {
 
     public BigtableTableView() {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_table_view.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load fxml", e);
-        }
+        FXMLLoaderUtil.loadFxml("/fxml/bigtable_table_view.fxml", this);
 
         tableView.getColumns().add(createRowKeyColumn());
-    }
-
-    private ScrollBar getVerticalScrollbar() {
-        ScrollBar result = null;
-        for (Node n : tableView.lookupAll(".scroll-bar")) {
-            if (n instanceof ScrollBar) {
-                ScrollBar bar = (ScrollBar) n;
-                if (bar.getOrientation().equals(Orientation.VERTICAL)) {
-                    result = bar;
-                }
-            }
-        }
-        return result;
     }
 
     private TableColumn<BigtableRow, ?> createRowKeyColumn() {
         TableColumn<BigtableRow, Object> tableColumn = new TableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> {
-            BigtableRow bigtableRow = param.getValue();
+            var bigtableRow = param.getValue();
             return new ReadOnlyObjectWrapper<>(bigtableRow.getRowKey());
         });
         return tableColumn;
-    }
-
-    public int getMaxRows() {
-        ScrollBar bar = getVerticalScrollbar();
-        return (int)bar.getMax();
     }
 
     public void setOnTableSettingsChanged(EventHandler<ActionEvent> eventHandler) {

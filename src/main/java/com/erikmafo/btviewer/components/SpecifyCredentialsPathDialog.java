@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.components;
 
+import com.erikmafo.btviewer.FXMLLoaderUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,17 +20,8 @@ public class SpecifyCredentialsPathDialog extends DialogPane {
     private TextField credentialsPathTextField;
 
     public SpecifyCredentialsPathDialog() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/specify_credentials_path_dialog.fxml"));
-
-        loader.setController(this);
-        loader.setRoot(this);
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FXMLLoaderUtil.loadFxml("/fxml/specify_credentials_path_dialog.fxml", this);
     }
-
 
     @FXML
     private void handleEditCredentialsPathAction(ActionEvent event) {

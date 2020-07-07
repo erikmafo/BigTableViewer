@@ -15,6 +15,7 @@
  */
 package com.erikmafo.btviewer.components;
 
+import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.events.ExecuteQueryAction;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -69,20 +70,11 @@ public class QueryBox extends VBox {
     private Subscription codeAreaSubscription;
 
     public QueryBox() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/query_box.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
 
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load fxml", e);
-        }
+        FXMLLoaderUtil.loadFxml("/fxml/query_box.fxml", this);
 
         progressBar.setVisible(false);
-
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-
         codeAreaSubscription = codeArea
                 .multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))

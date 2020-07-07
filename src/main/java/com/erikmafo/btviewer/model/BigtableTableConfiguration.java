@@ -9,6 +9,10 @@ public class BigtableTableConfiguration {
     public BigtableTableConfiguration() {
     }
 
+    public BigtableTableConfiguration(List<CellDefinition> cellDefinitions) {
+        this.cellDefinitions = cellDefinitions;
+    }
+
     public List<CellDefinition> getCellDefinitions() {
         return cellDefinitions;
     }

@@ -57,8 +57,8 @@ public class MainController {
         bigtableTableView.setOnTableSettingsChanged(this::onTableSettingsChanged);
         tablesListView.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
         tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
-        tablesListView.setTreeItemExpandedEventHandler(event ->
-                event.getBigtableInstances().forEach(MainController.this::listBigtableTables));
+        tablesListView.setTreeItemExpandedHandler(event ->
+                event.getInstances().forEach(MainController.this::listBigtableTables));
         queryBox.setOnScanTable(this::onExecuteQuery);
         loadBigtableInstances();
     }
@@ -157,7 +157,10 @@ public class MainController {
             loadTableConfiguration(request.getTable());
             readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
         });
-        readRowsService.setOnFailed(stateEvent -> displayErrorInfo("Unable to read bigtable rows", stateEvent));
+        readRowsService.setOnFailed(stateEvent -> {
+            queryBox.getProgressBar().setVisible(false);
+            displayErrorInfo("Failed to execute query: ", stateEvent);
+        });
         queryBox.getProgressBar().setVisible(true);
         queryBox.getProgressBar().progressProperty().bind(readRowsService.progressProperty());
         readRowsService.restart();

@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer.components;
+import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableTableConfiguration;
 import com.erikmafo.btviewer.model.CellDefinition;
@@ -29,67 +30,14 @@ public class TableSettingsDialog extends DialogPane {
     private int currentSchemaRow = 1;
 
     private TableSettingsDialog() {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/table_settings_dialog.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private BigtableTableConfiguration getBigtableTableConfiguration() {
-
-        BigtableTableConfiguration configuration = new BigtableTableConfiguration();
-        List<CellDefinition> cellDefinitionList = observableCells
-                .stream()
-                .map(cell -> new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier()))
-                .collect(Collectors.toList());
-
-        configuration.setCellDefinitions(cellDefinitionList);
-        return configuration;
-
-    }
-
-    private void addSchemaRow() {
-
-        addSchemaRow(new BigtableColumn("", ""));
-    }
-
-    private void addSchemaRow(BigtableColumn column) {
-        addSchemaRow(column, null);
-    }
-
-    private void addSchemaRow(CellDefinition cellDefinition) {
-        addSchemaRow(new BigtableColumn(cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
-    }
-
-    private void addSchemaRow(BigtableColumn column, String valueType) {
-
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.setValue(valueType != null ? valueType : "String");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
-        TextField familyTextField = new TextField(column.getFamily());
-        TextField qualifierTextField = new TextField(column.getQualifier());
-
-        ObservableCell observableCell = new ObservableCell();
-        observableCell.familyProperty().bind(familyTextField.textProperty());
-        observableCell.qualifierProperty().bind(qualifierTextField.textProperty());
-        observableCell.valueTypeProperty().bind(choiceBox.valueProperty());
-
-        observableCells.add(observableCell);
-        schemaGridPane.addRow(currentSchemaRow, familyTextField, qualifierTextField, choiceBox);
-        currentSchemaRow++;
+        FXMLLoaderUtil.loadFxml("/fxml/table_settings_dialog.fxml", this);
     }
 
     public void onAddTableRow(ActionEvent event) {
         addSchemaRow();
     }
 
-    static void deleteRow(GridPane grid, final int row) {
+    private void deleteRow(GridPane grid, final int row) {
         Set<Node> deleteNodes = new HashSet<>();
         for (Node child : grid.getChildren()) {
             // get index from child
@@ -109,6 +57,48 @@ public class TableSettingsDialog extends DialogPane {
 
         // remove nodes from row
         grid.getChildren().removeAll(deleteNodes);
+    }
+
+    private BigtableTableConfiguration getBigtableTableConfiguration() {
+        var cellDefinitionList = observableCells
+                .stream()
+                .map(this::toCellDefinition)
+                .collect(Collectors.toList());
+        return new BigtableTableConfiguration(cellDefinitionList);
+    }
+
+    private CellDefinition toCellDefinition(ObservableCell cell) {
+        return new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier());
+    }
+
+    private void addSchemaRow() {
+        addSchemaRow(new BigtableColumn("", ""));
+    }
+
+    private void addSchemaRow(BigtableColumn column) {
+        addSchemaRow(column, null);
+    }
+
+    private void addSchemaRow(CellDefinition cellDefinition) {
+        addSchemaRow(new BigtableColumn(
+                cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
+    }
+
+    private void addSchemaRow(BigtableColumn column, String valueType) {
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.setValue(valueType != null ? valueType : "String");
+        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
+        TextField familyTextField = new TextField(column.getFamily());
+        TextField qualifierTextField = new TextField(column.getQualifier());
+
+        ObservableCell observableCell = new ObservableCell();
+        observableCell.familyProperty().bind(familyTextField.textProperty());
+        observableCell.qualifierProperty().bind(qualifierTextField.textProperty());
+        observableCell.valueTypeProperty().bind(choiceBox.valueProperty());
+
+        observableCells.add(observableCell);
+        schemaGridPane.addRow(currentSchemaRow, familyTextField, qualifierTextField, choiceBox);
+        currentSchemaRow++;
     }
 
     private static class ObservableCell {

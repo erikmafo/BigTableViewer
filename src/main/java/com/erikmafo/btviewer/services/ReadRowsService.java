@@ -14,6 +14,7 @@ import javafx.concurrent.Task;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,11 +36,8 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         return new Task<>() {
             @Override
             protected List<BigtableRow> call() throws Exception {
-                var rowIterator = getOrCreateNewClient()
-                        .readRows(createQuery(readRequest))
-                        .iterator();
-
-                var bigtableRows = new ArrayList<BigtableRow>();
+                var rowIterator = getOrCreateNewClient().readRows(createQuery(readRequest)).iterator();
+                var bigtableRows = new LinkedList<BigtableRow>();
                 while (rowIterator.hasNext()) {
                     bigtableRows.add(toBigtableRow(rowIterator.next()));
                     updateProgress(bigtableRows.size(), readRequest.getMaxRows());

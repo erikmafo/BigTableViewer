@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer.components;
+import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,16 +20,7 @@ public class BigtableInstanceDialog extends DialogPane {
     private TextField instanceIdTextField;
 
     private BigtableInstanceDialog() {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bigtable_instance_dialog.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FXMLLoaderUtil.loadFxml("/fxml/bigtable_instance_dialog.fxml", this);
     }
 
     private BigtableInstance getBigtableInstance() {

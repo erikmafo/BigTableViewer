@@ -14,7 +14,7 @@ public class SqlTokenizer {
     private int position;
 
     public SqlTokenizer(String sql) {
-        this.sql = sql;
+        this.sql = sql.trim();
     }
 
     public SqlToken next() {

@@ -6,18 +6,18 @@ import javafx.event.EventType;
 
 import java.util.List;
 
-public class BigtableProjectTreeItemExpanded extends Event {
+public class ProjectTreeItemExpanded extends Event {
 
-    public static final EventType<BigtableProjectTreeItemExpanded> PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE = new EventType<>(EventType.ROOT, "BigtableProjectTreeItemExpanded");
+    public static final EventType<ProjectTreeItemExpanded> PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE = new EventType<>(EventType.ROOT, "ProjectTreeItemExpanded");
 
     private final List<BigtableInstance> bigtableInstances;
 
-    public BigtableProjectTreeItemExpanded(List<BigtableInstance> instances) {
+    public ProjectTreeItemExpanded(List<BigtableInstance> instances) {
         super(PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE);
         bigtableInstances = instances;
     }
 
-    public List<BigtableInstance> getBigtableInstances() {
+    public List<BigtableInstance> getInstances() {
         return bigtableInstances;
     }
 }
