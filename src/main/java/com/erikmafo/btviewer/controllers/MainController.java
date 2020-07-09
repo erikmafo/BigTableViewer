@@ -2,6 +2,8 @@ package com.erikmafo.btviewer.controllers;
 
 import com.erikmafo.btviewer.components.*;
 import com.erikmafo.btviewer.events.ExecuteQueryAction;
+import com.erikmafo.btviewer.events.InstanceTreeItemExpanded;
+import com.erikmafo.btviewer.events.ProjectTreeItemExpanded;
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.*;
 import com.erikmafo.btviewer.sql.Query;
@@ -13,6 +15,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by erikmafo on 23.12.17.
@@ -23,7 +26,7 @@ public class MainController {
     private QueryBox queryBox;
 
     @FXML
-    private BigtableTablesListView tablesListView;
+    private BigtableInstanceExplorer tablesListView;
 
     @FXML
     private BigtableTableView bigtableTableView;
@@ -57,8 +60,8 @@ public class MainController {
         bigtableTableView.setOnTableSettingsChanged(this::onTableSettingsChanged);
         tablesListView.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
         tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
-        tablesListView.setTreeItemExpandedHandler(event ->
-                event.getInstances().forEach(MainController.this::listBigtableTables));
+        tablesListView.setProjectItemExpandedHandler(this::onProjectItemExpanded);
+        tablesListView.setInstanceItemExpandedHandler(this::onInstanceItemExpanded);
         queryBox.setOnScanTable(this::onExecuteQuery);
         loadBigtableInstances();
     }
@@ -85,8 +88,23 @@ public class MainController {
         saveInstancesService.restart();
     }
 
+    private void onInstanceItemExpanded(InstanceTreeItemExpanded event) {
+        listBigtableTables(event.getInstance());
+    }
+
+    private void onProjectItemExpanded(ProjectTreeItemExpanded event) {
+        listBigtableTables(event.getInstances());
+    }
+
     private void listBigtableTables(BigtableInstance instance) {
-        listTablesService.setInstance(instance);
+        listBigtableTables(List.of(instance));
+    }
+
+    private void listBigtableTables(List<BigtableInstance> instances) {
+        if (listTablesService.isRunning()) {
+            listTablesService.cancel();
+        }
+        listTablesService.addInstances(instances);
         listTablesService.setOnSucceeded(workerStateEvent ->
                 tablesListView.addBigtableTables(listTablesService.getValue()));
         listTablesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to list tables", stateEvent));
@@ -95,19 +113,22 @@ public class MainController {
 
     private void onExecuteQuery(ExecuteQueryAction queryAction) {
         bigtableTableView.clear();
-        var currentTable = tablesListView.selectedTableProperty().get();
-        loadTableConfiguration(currentTable);
+        var currentInstance = tablesListView.selectedInstanceProperty().get();
+        var query = queryAction.getSqlQuery();
         var request = new BigtableReadRequestBuilder()
-                .setTable(currentTable)
-                .setSql(queryAction.getSql())
+                .setInstance(currentInstance)
+                .setSql(query)
                 .build();
+        loadTableConfiguration(request.getTable());
         readBigtableRows(request);
     }
 
     private void loadTableConfiguration(BigtableTable currentTable) {
         loadTableConfigurationService.setTable(currentTable);
-        loadTableConfigurationService.setOnSucceeded(event -> bigtableTableView.setValueConverter(
-                new BigtableValueConverter(loadTableConfigurationService.getValue().getCellDefinitions())));
+        loadTableConfigurationService.setOnSucceeded(event -> {
+            var tableConfig = loadTableConfigurationService.getValue();
+            bigtableTableView.setValueConverter(BigtableValueConverter.from(tableConfig));
+        });
         loadTableConfigurationService.setOnFailed(event -> displayErrorInfo("Unable to load table configuration", event));
         loadTableConfigurationService.restart();
     }

@@ -2,10 +2,8 @@ package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
-import com.erikmafo.btviewer.sql.SqlParser;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
-import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import javafx.concurrent.Service;
@@ -13,7 +11,6 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,11 +33,15 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         return new Task<>() {
             @Override
             protected List<BigtableRow> call() throws Exception {
-                var rowIterator = getOrCreateNewClient().readRows(createQuery(readRequest)).iterator();
+                var sqlQuery = readRequest.getSqlQuery();
+                var rowIterator = getOrCreateNewClient().readRows(sqlQuery.toBigtableQuery()).iterator();
                 var bigtableRows = new LinkedList<BigtableRow>();
                 while (rowIterator.hasNext()) {
                     bigtableRows.add(toBigtableRow(rowIterator.next()));
-                    updateProgress(bigtableRows.size(), readRequest.getMaxRows());
+                    updateProgress(bigtableRows.size(), sqlQuery.getLimit());
+                    if (isCancelled()) {
+                        break;
+                    }
                 }
                 return bigtableRows;
             }
@@ -49,12 +50,6 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
 
     public void setReadRequest(BigtableReadRequest readRequest) {
         this.readRequest = readRequest;
-    }
-
-    private static Query createQuery(BigtableReadRequest request) {
-        return new SqlParser()
-                .parse(request.getSql())
-                .toBigtableQuery();
     }
 
     private static BigtableRow toBigtableRow(Row row) {
@@ -82,9 +77,7 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
             throw new IllegalStateException("Cannot list tables when read request is not specified");
         }
 
-        var instance = new BigtableInstance(
-                readRequest.getTable().getProjectId(),
-                readRequest.getTable().getInstanceId());
+        var instance = readRequest.getInstance();
 
         if (instance.equals(getClientInstance())) {
             return client;

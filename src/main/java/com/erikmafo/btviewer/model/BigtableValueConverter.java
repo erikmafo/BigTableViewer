@@ -2,6 +2,7 @@ package com.erikmafo.btviewer.model;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,14 @@ import java.util.Objects;
  * Created by erikmafo on 23.12.17.
  */
 public class BigtableValueConverter {
+
+    public static BigtableValueConverter from(BigtableTableConfiguration config) {
+        if (config == null) {
+            return new BigtableValueConverter(new LinkedList<>());
+        }
+
+        return new BigtableValueConverter(config.getCellDefinitions());
+    }
 
     private final List<CellDefinition> cellDefinitions;
 

@@ -17,10 +17,10 @@ package com.erikmafo.btviewer.components;
 
 import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.events.ExecuteQueryAction;
+import com.erikmafo.btviewer.sql.SqlParser;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
@@ -33,7 +33,6 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
 
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,7 +77,7 @@ public class QueryBox extends VBox {
         codeAreaSubscription = codeArea
                 .multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))
-                .subscribe(ignore -> codeArea.setStyleSpans(0, computeHighlighting(codeArea.getText())));
+                .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
 
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, this::moveCaretToCorrectPosition);
     }
@@ -95,12 +94,19 @@ public class QueryBox extends VBox {
     }
 
     public void setQuery(String sql) {
+        codeArea.clear();
         codeArea.replaceText(0, 0, sql);
     }
 
     public void setOnScanTable(EventHandler<ExecuteQueryAction> eventHandler) {
-        executeQueryButton.setOnAction(actionEvent ->
-                eventHandler.handle(new ExecuteQueryAction(codeArea.getText())));
+        executeQueryButton.setOnAction(actionEvent -> {
+            try {
+                var sqlQuery = new SqlParser().parse(codeArea.getText());
+                eventHandler.handle(new ExecuteQueryAction(sqlQuery));
+            } catch (Exception ex) {
+                // TODO: display error dialog
+            }
+        });
     }
 
     public ProgressBar getProgressBar() {
@@ -112,7 +118,7 @@ public class QueryBox extends VBox {
         codeAreaSubscription.unsubscribe();
     }
 
-    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+    private static StyleSpans<Collection<String>> computeSyntaxHighlighting(String text) {
         var matcher = HIGHLIGHT.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();

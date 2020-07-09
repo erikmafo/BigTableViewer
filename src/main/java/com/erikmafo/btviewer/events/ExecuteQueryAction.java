@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.events;
 
+import com.erikmafo.btviewer.sql.Query;
 import javafx.event.Event;
 import javafx.event.EventType;
 
@@ -7,12 +8,12 @@ public class ExecuteQueryAction extends Event {
 
     public static final EventType<ScanTableAction> EXECUTE_QUERY_ACTION = new EventType<>(EventType.ROOT, "ExecuteQueryAction");
 
-    private final String sql;
+    private final Query sqlQuery;
 
-    public ExecuteQueryAction(String sql) {
+    public ExecuteQueryAction(Query sqlQuery) {
         super(EXECUTE_QUERY_ACTION);
-        this.sql = sql;
+        this.sqlQuery = sqlQuery;
     }
 
-    public String getSql() { return sql; }
+    public Query getSqlQuery() { return sqlQuery; }
 }

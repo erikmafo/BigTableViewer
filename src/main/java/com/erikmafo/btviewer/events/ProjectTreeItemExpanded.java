@@ -10,14 +10,20 @@ public class ProjectTreeItemExpanded extends Event {
 
     public static final EventType<ProjectTreeItemExpanded> PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE = new EventType<>(EventType.ROOT, "ProjectTreeItemExpanded");
 
-    private final List<BigtableInstance> bigtableInstances;
+    private final String projectId;
+    private final List<BigtableInstance> instances;
 
-    public ProjectTreeItemExpanded(List<BigtableInstance> instances) {
+    public ProjectTreeItemExpanded(String projectId, List<BigtableInstance> instances) {
         super(PROJECT_TREE_ITEM_EXPANDED_EVENT_TYPE);
-        bigtableInstances = instances;
+        this.projectId = projectId;
+        this.instances = instances;
+    }
+
+    public String getProjectId() {
+        return projectId;
     }
 
     public List<BigtableInstance> getInstances() {
-        return bigtableInstances;
+        return instances;
     }
 }

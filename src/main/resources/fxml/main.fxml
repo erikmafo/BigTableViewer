@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import com.erikmafo.btviewer.components.BigtableTableView?>
-<?import com.erikmafo.btviewer.components.BigtableTablesListView?>
+<?import com.erikmafo.btviewer.components.BigtableInstanceExplorer?>
 <?import com.erikmafo.btviewer.components.QueryBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.controllers.MainController"
@@ -15,7 +15,7 @@
         </VBox>
     </top>
     <left>
-        <BigtableTablesListView fx:id="tablesListView" styleClass="has-spacing"/>
+        <BigtableInstanceExplorer fx:id="tablesListView" styleClass="has-spacing"/>
     </left>
     <center>
         <BigtableTableView fx:id="bigtableTableView" styleClass="has-spacing"/>

@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.controllers;
 
-import com.erikmafo.btviewer.components.SpecifyCredentialsPathDialog;
+import com.erikmafo.btviewer.components.CredentialsPathDialog;
 import com.erikmafo.btviewer.services.LoadCredentialsPathService;
 import com.erikmafo.btviewer.services.SaveCredentialsPathService;
 import com.sun.javafx.PlatformUtil;
@@ -49,7 +49,7 @@ public class MenuBarController {
     }
 
     private void displaySpecifyCredentialsDialog(Path currentPath) {
-        SpecifyCredentialsPathDialog.displayAndAwaitResult(currentPath)
+        CredentialsPathDialog.displayAndAwaitResult(currentPath)
                 .whenComplete(this::onCredentialsPathDialogComplete);
     }
 

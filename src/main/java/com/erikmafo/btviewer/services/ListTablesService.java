@@ -9,23 +9,35 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 public class ListTablesService extends Service<List<BigtableTable>> {
 
     private final BigtableSettingsProvider settingsProvider;
-
-    private BigtableTableAdminClient client;
-    private BigtableInstance instance;
+    private final Map<BigtableInstance, List<BigtableTable>> cache = new ConcurrentHashMap<>();
+    private final List<BigtableInstance> instances = new LinkedList<>();
 
     @Inject
     public ListTablesService(BigtableSettingsProvider settingsProvider) {
         this.settingsProvider = settingsProvider;
     }
 
-    public void setInstance(BigtableInstance instance) {
-        this.instance = instance;
+    public void addInstances(List<BigtableInstance> instances) {
+        for(var instance : instances) {
+            addInstance(instance);
+        }
+    }
+
+    public void addInstance(BigtableInstance instance) {
+        instances.add(instance);
+    }
+
+    public void removeCache(BigtableInstance instance) {
+        cache.remove(instance);
     }
 
     @Override
@@ -33,44 +45,48 @@ public class ListTablesService extends Service<List<BigtableTable>> {
         return new Task<>() {
             @Override
             protected List<BigtableTable> call() throws Exception {
-                return getOrCreateNewClient()
-                        .listTables()
-                        .stream()
-                        .map(ListTablesService.this::toBigtableTable)
-                        .collect(Collectors.toList());
+                var tables = new LinkedList<BigtableTable>();
+                var totalWork = instances.size();
+                var workDone = 0;
+                for (var instance : instances) {
+                    tables.addAll(getTables(instance));
+                    updateProgress(workDone, totalWork);
+                    workDone += 1;
+                    if (isCancelled()) {
+                        break;
+                    }
+                }
+                return tables;
             }
         };
     }
 
-    private BigtableTable toBigtableTable(String tableId) {
+    private List<BigtableTable> getTables(BigtableInstance instance) throws IOException {
+        var tables = cache.getOrDefault(instance, null);
+        if (tables != null) {
+            return tables;
+        }
+
+        try(var client = createClient(instance)) {
+            tables = client
+                    .listTables()
+                    .stream()
+                    .map(tableId -> toBigtableTable(instance, tableId))
+                    .collect(Collectors.toList());
+            cache.put(instance, tables);
+        }
+
+        return tables;
+    }
+
+    private BigtableTable toBigtableTable(BigtableInstance instance, String tableId) {
         return new BigtableTable(instance.getProjectId(), instance.getInstanceId(), tableId);
     }
 
-    private BigtableTableAdminClient getOrCreateNewClient() throws IOException {
+    private BigtableTableAdminClient createClient(BigtableInstance instance) throws IOException {
         if (instance == null) {
             throw new IllegalStateException("Cannot list tables when bigtable instance is not specified");
         }
-
-        if (instance.equals(getClientInstance())) {
-            return client;
-        }
-
-        closeClient();
-        client = BigtableTableAdminClient.create(settingsProvider.getTableAdminSettings(instance));
-        return client;
-    }
-
-    private void closeClient() {
-        if (client != null) {
-            client.close();
-        }
-    }
-
-    private BigtableInstance getClientInstance() {
-        if (client == null) {
-            return null;
-        }
-
-        return new BigtableInstance(client.getProjectId(), client.getInstanceId());
+        return BigtableTableAdminClient.create(settingsProvider.getTableAdminSettings(instance));
     }
 }
