@@ -26,7 +26,7 @@ public class MainController {
     private QueryBox queryBox;
 
     @FXML
-    private BigtableInstanceExplorer tablesListView;
+    private InstanceExplorer tablesListView;
 
     @FXML
     private BigtableTableView bigtableTableView;
@@ -74,7 +74,7 @@ public class MainController {
     }
 
     private void onAddNewBigtableInstance(ActionEvent event) {
-        BigtableInstanceDialog.displayAndAwaitResult()
+        AddInstanceDialog.displayAndAwaitResult()
                 .whenComplete((instance, throwable) -> {
                     saveInstance(instance);
                     tablesListView.addBigtableInstance(instance);
@@ -141,7 +141,7 @@ public class MainController {
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
         loadTableConfigurationService.setOnFailed(e -> TableSettingsDialog
-                .displayAndAwaitResult(bigtableTableView.getColumns(), null)
+                .displayAndAwaitResult(bigtableTableView.getColumns(), new BigtableTableConfiguration(table))
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
         loadTableConfigurationService.restart();

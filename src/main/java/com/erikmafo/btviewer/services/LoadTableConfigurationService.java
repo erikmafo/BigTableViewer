@@ -7,6 +7,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
+import java.util.LinkedList;
 
 public class LoadTableConfigurationService extends Service<BigtableTableConfiguration> {
 
@@ -27,7 +28,11 @@ public class LoadTableConfigurationService extends Service<BigtableTableConfigur
         return new Task<>() {
             @Override
             protected BigtableTableConfiguration call() throws Exception {
-                return tableConfigManager.getTableConfiguration(table);
+                var tableConfig = tableConfigManager.getTableConfiguration(table);
+                if (tableConfig == null) {
+                    tableConfig = new BigtableTableConfiguration(table);
+                }
+                return tableConfig;
             }
         };
     }

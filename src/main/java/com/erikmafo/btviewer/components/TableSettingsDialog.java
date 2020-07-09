@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.components;
 import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableColumn;
+import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableConfiguration;
 import com.erikmafo.btviewer.model.CellDefinition;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,12 +23,51 @@ import java.util.stream.Collectors;
  */
 public class TableSettingsDialog extends DialogPane {
 
+    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(
+            List<BigtableColumn> columns,
+            BigtableTableConfiguration current) {
+
+        CompletableFuture<BigtableTableConfiguration> future = new CompletableFuture<>();
+        try {
+            Dialog<BigtableTableConfiguration> dialog = new Dialog<>();
+            TableSettingsDialog settingsDialog = new TableSettingsDialog();
+            settingsDialog.setBigtableTable(current.getTable());
+            current.getCellDefinitions().forEach(settingsDialog::addSchemaRow);
+            columns.forEach(settingsDialog::addSchemaRow);
+            if (settingsDialog.observableCells.isEmpty()) {
+                settingsDialog.addSchemaRow();
+            }
+
+            dialog.setDialogPane(settingsDialog);
+            dialog.getResult();
+            dialog.setResultConverter(buttonType -> {
+                if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
+                    return settingsDialog.getBigtableTableConfiguration();
+                }
+                return null;
+            });
+
+            dialog.setOnHidden(event -> {
+                BigtableTableConfiguration configuration = dialog.getResult();
+                future.complete(configuration);
+            });
+
+            dialog.show();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return future;
+    }
+
     @FXML
     private GridPane schemaGridPane;
 
     private List<ObservableCell> observableCells = new ArrayList<>();
 
     private int currentSchemaRow = 1;
+
+    private BigtableTable table;
 
     private TableSettingsDialog() {
         FXMLLoaderUtil.loadFxml("/fxml/table_settings_dialog.fxml", this);
@@ -59,12 +99,16 @@ public class TableSettingsDialog extends DialogPane {
         grid.getChildren().removeAll(deleteNodes);
     }
 
+    private void setBigtableTable(BigtableTable table) {
+        this.table = table;
+    }
+
     private BigtableTableConfiguration getBigtableTableConfiguration() {
         var cellDefinitionList = observableCells
                 .stream()
                 .map(this::toCellDefinition)
                 .collect(Collectors.toList());
-        return new BigtableTableConfiguration(cellDefinitionList);
+        return new BigtableTableConfiguration(table, cellDefinitionList);
     }
 
     private CellDefinition toCellDefinition(ObservableCell cell) {
@@ -85,6 +129,14 @@ public class TableSettingsDialog extends DialogPane {
     }
 
     private void addSchemaRow(BigtableColumn column, String valueType) {
+        var alreadyAdded = observableCells.stream().anyMatch(cell ->
+                cell.getFamily().equals(column.getFamily()) &&
+                cell.getQualifier().equals(column.getQualifier()));
+
+        if (alreadyAdded) {
+            return;
+        }
+
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setValue(valueType != null ? valueType : "String");
         choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
@@ -142,44 +194,5 @@ public class TableSettingsDialog extends DialogPane {
         public void setQualifier(String qualifier) {
             this.qualifier.set(qualifier);
         }
-    }
-
-    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(List<BigtableColumn> columns, BigtableTableConfiguration current) {
-        CompletableFuture<BigtableTableConfiguration> future = new CompletableFuture<>();
-
-        try {
-            Dialog<BigtableTableConfiguration> dialog = new Dialog<>();
-            TableSettingsDialog pane = new TableSettingsDialog();
-
-            if (columns.size() == 0) {
-                pane.addSchemaRow();
-            }
-            else if (current != null) {
-                current.getCellDefinitions().forEach(pane::addSchemaRow);
-            }
-            else {
-                columns.forEach(pane::addSchemaRow);
-            }
-
-            dialog.setDialogPane(pane);
-            dialog.getResult();
-            dialog.setResultConverter(buttonType -> {
-                if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
-                    return pane.getBigtableTableConfiguration();
-                }
-                return null;
-            });
-
-            dialog.setOnHidden(event -> {
-                BigtableTableConfiguration configuration = dialog.getResult();
-                future.complete(configuration);
-            });
-
-            dialog.show();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return future;
     }
 }

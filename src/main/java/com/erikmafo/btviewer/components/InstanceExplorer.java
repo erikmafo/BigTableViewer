@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BigtableInstanceExplorer extends VBox {
+public class InstanceExplorer extends VBox {
 
     private static final String PROJECTS = "Projects";
 
@@ -27,16 +27,13 @@ public class BigtableInstanceExplorer extends VBox {
     private TreeView<String> treeView;
 
     private SimpleObjectProperty<BigtableTable> selectedTableProperty;
-
     private SimpleObjectProperty<BigtableInstance> selectedInstanceProperty;
-
     private EventHandler<ProjectTreeItemExpanded> projectItemExpandedHandler;
-
     private EventHandler<InstanceTreeItemExpanded> instanceItemExpandedHandler;
 
-    public BigtableInstanceExplorer(){
+    public InstanceExplorer(){
 
-        FXMLLoaderUtil.loadFxml("/fxml/bigtable_instance_explorer.fxml", this);
+        FXMLLoaderUtil.loadFxml("/fxml/instance_explorer.fxml", this);
 
         treeView.setRoot(new TreeItem<>(PROJECTS));
         treeView.getRoot().setExpanded(true);
@@ -49,8 +46,6 @@ public class BigtableInstanceExplorer extends VBox {
                 var instanceId = selectedItem.getParent().getValue();
                 var projectId = selectedItem.getParent().getParent().getValue();
                 var instanceItem = findTreeItem(findTreeItem(projectId).get(), instanceId);
-                var index = treeView.getRow(instanceItem.get());
-                treeView.getFocusModel().focus(index);
                 selectedInstanceProperty.set(new BigtableInstance(projectId, instanceId));
                 selectedTableProperty.set(new BigtableTable(projectId, instanceId, tableId));
             } else if(isInstance(selectedItem)) {

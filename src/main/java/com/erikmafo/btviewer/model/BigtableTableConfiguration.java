@@ -1,15 +1,23 @@
 package com.erikmafo.btviewer.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class BigtableTableConfiguration {
 
+    private BigtableTable table;
     private List<CellDefinition> cellDefinitions;
 
     public BigtableTableConfiguration() {
     }
 
-    public BigtableTableConfiguration(List<CellDefinition> cellDefinitions) {
+    public BigtableTableConfiguration(BigtableTable table) {
+        this.table = table;
+        this.cellDefinitions = new LinkedList<>();
+    }
+
+    public BigtableTableConfiguration(BigtableTable table, List<CellDefinition> cellDefinitions) {
+        this.table = table;
         this.cellDefinitions = cellDefinitions;
     }
 
@@ -28,5 +36,13 @@ public class BigtableTableConfiguration {
                                 cellDefinition.getQualifier().equals(qualifier))
                 .findFirst()
                 .orElse(new CellDefinition("String", family, qualifier));
+    }
+
+    public BigtableTable getTable() {
+        return table;
+    }
+
+    public void setTable(BigtableTable table) {
+        this.table = table;
     }
 }

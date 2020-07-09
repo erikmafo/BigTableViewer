@@ -2,16 +2,14 @@ package com.erikmafo.btviewer.components;
 import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-public class BigtableInstanceDialog extends DialogPane {
+public class AddInstanceDialog extends DialogPane {
 
     @FXML
     private TextField projectIdTextField;
@@ -19,8 +17,8 @@ public class BigtableInstanceDialog extends DialogPane {
     @FXML
     private TextField instanceIdTextField;
 
-    private BigtableInstanceDialog() {
-        FXMLLoaderUtil.loadFxml("/fxml/bigtable_instance_dialog.fxml", this);
+    private AddInstanceDialog() {
+        FXMLLoaderUtil.loadFxml("/fxml/add_instance_dialog.fxml", this);
     }
 
     private BigtableInstance getBigtableInstance() {
@@ -34,7 +32,7 @@ public class BigtableInstanceDialog extends DialogPane {
 
         try {
             Dialog<BigtableInstance> dialog = new Dialog<>();
-            BigtableInstanceDialog pane = new BigtableInstanceDialog();
+            AddInstanceDialog pane = new AddInstanceDialog();
             dialog.setDialogPane(pane);
             dialog.setResultConverter(buttonType -> {
 
