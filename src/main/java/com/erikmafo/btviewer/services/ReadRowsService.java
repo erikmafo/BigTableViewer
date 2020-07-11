@@ -33,12 +33,11 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         return new Task<>() {
             @Override
             protected List<BigtableRow> call() throws Exception {
-                var sqlQuery = readRequest.getSqlQuery();
-                var rowIterator = getOrCreateNewClient().readRows(sqlQuery.toBigtableQuery()).iterator();
+                var rowIterator = getOrCreateNewClient().readRows(readRequest.getQuery()).iterator();
                 var bigtableRows = new LinkedList<BigtableRow>();
                 while (rowIterator.hasNext()) {
                     bigtableRows.add(toBigtableRow(rowIterator.next()));
-                    updateProgress(bigtableRows.size(), sqlQuery.getLimit());
+                    updateProgress(bigtableRows.size(), readRequest.getLimit());
                     if (isCancelled()) {
                         break;
                     }

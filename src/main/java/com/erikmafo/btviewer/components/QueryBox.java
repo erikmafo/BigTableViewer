@@ -98,7 +98,7 @@ public class QueryBox extends VBox {
         codeArea.replaceText(0, 0, sql);
     }
 
-    public void setOnScanTable(EventHandler<ExecuteQueryAction> eventHandler) {
+    public void setOnExecuteQuery(EventHandler<ExecuteQueryAction> eventHandler) {
         executeQueryButton.setOnAction(actionEvent -> {
             try {
                 var sqlQuery = new SqlParser().parse(codeArea.getText());

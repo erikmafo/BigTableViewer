@@ -2,7 +2,7 @@ package com.erikmafo.btviewer.sql;
 
 public class SqlParser {
 
-    public Query parse(String sql) {
+    public SqlQuery parse(String sql) {
 
         var tokenizer = new SqlTokenizer(sql);
         var queryBuilder = new QueryBuilder();
@@ -13,12 +13,12 @@ public class SqlParser {
             token = tokenizer.next();
         }
 
-        return queryBuilder.getQuery();
+        return queryBuilder.getSqlQuery();
     }
 
     private static class QueryBuilder {
 
-        private final Query query = new Query();
+        private final SqlQuery sqlQuery = new SqlQuery();
         private SqlParserStep step = SqlParserStep.QUERY_TYPE;
 
         private Field whereField;
@@ -33,15 +33,15 @@ public class SqlParser {
                     if (token.getTokenType() != SqlTokenType.SELECT) {
                         throw new IllegalArgumentException("Only SELECT queries are supported");
                     }
-                    query.setQueryType(QueryType.SELECT);
+                    sqlQuery.setQueryType(QueryType.SELECT);
                     step = SqlParserStep.SELECT_FIELD;
                     break;
                 case SELECT_FIELD:
                     if (token.getTokenType() == SqlTokenType.IDENTIFIER) {
-                        query.addField(new Field(token.getValue()));
+                        sqlQuery.addField(new Field(token.getValue()));
                         step = SqlParserStep.SELECT_COMMA;
                     } else if (token.getTokenType() == SqlTokenType.ASTERISK) {
-                        query.addField(new Field(token.getValue()));
+                        sqlQuery.addField(new Field(token.getValue()));
                         step = SqlParserStep.SELECT_FROM;
                     }
                     else {
@@ -65,9 +65,9 @@ public class SqlParser {
                     break;
                 case SELECT_FROM_TABLE:
                     if (token.getTokenType() == SqlTokenType.IDENTIFIER) {
-                        query.setTableName(token.getValue());
+                        sqlQuery.setTableName(token.getValue());
                     } else if (token.getTokenType() == SqlTokenType.QUOTED_STRING) {
-                        query.setTableName(token.getUnquotedValue());
+                        sqlQuery.setTableName(token.getUnquotedValue());
                     } else {
                         throw new IllegalArgumentException(String.format("Expected a table identifier but was '%s'", token.getValue()));
                     }
@@ -105,7 +105,7 @@ public class SqlParser {
                     } else {
                         throw new IllegalArgumentException(String.format("Expected a number or a string but was '%s'", token.getValue()));
                     }
-                    query.addWhereClause(new WhereClause(whereField, whereOperator, whereValue));
+                    sqlQuery.addWhereClause(new WhereClause(whereField, whereOperator, whereValue));
                     whereField = null;
                     whereOperator = null;
                     whereValue = null;
@@ -124,13 +124,13 @@ public class SqlParser {
                     if (token.getTokenType() != SqlTokenType.INTEGER) {
                         throw new IllegalArgumentException(String.format("Expected an integer but was '%s'", token.getValue()));
                     }
-                    query.setLimit(token.getValueAsInt());
+                    sqlQuery.setLimit(token.getValueAsInt());
                     break;
             }
         }
 
-        Query getQuery() {
-            return query;
+        SqlQuery getSqlQuery() {
+            return sqlQuery;
         }
     }
 

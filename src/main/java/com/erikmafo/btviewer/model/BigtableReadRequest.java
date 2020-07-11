@@ -1,26 +1,28 @@
 package com.erikmafo.btviewer.model;
 
-import com.erikmafo.btviewer.sql.Query;
+import com.google.cloud.bigtable.data.v2.models.Query;
 
 public class BigtableReadRequest {
 
     private final BigtableInstance instance;
-    private final Query sqlQuery;
+    private final Query query;
+    private final long limit;
 
-    BigtableReadRequest(BigtableInstance instance, Query sqlQuery) {
+    BigtableReadRequest(BigtableInstance instance, Query query, long limit) {
         this.instance = instance;
-        this.sqlQuery = sqlQuery;
+        this.query = query;
+        this.limit = limit;
     }
 
     public BigtableInstance getInstance() {
         return instance;
     }
 
-    public Query getSqlQuery() {
-        return sqlQuery;
+    public Query getQuery() {
+        return query;
     }
 
-    public BigtableTable getTable() {
-        return new BigtableTable(instance.getProjectId(), instance.getInstanceId(), sqlQuery.getTableName());
+    public long getLimit() {
+        return limit;
     }
 }

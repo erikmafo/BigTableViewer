@@ -12,7 +12,7 @@
     <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
         <Button
                 fx:id="executeQueryButton"
-                text="Execute query"
+                text="Execute sqlQuery"
                 styleClass="btn-success"/>
 
         <ProgressBar

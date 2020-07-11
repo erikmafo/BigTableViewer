@@ -1,9 +1,9 @@
 package com.erikmafo.btviewer.sql;
 
 import com.google.cloud.bigtable.data.v2.models.Filters;
+import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Range;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,71 +11,25 @@ import java.util.stream.Collectors;
 
 import static com.google.cloud.bigtable.data.v2.models.Filters.FILTERS;
 
-public class Query {
+public class QueryConverter {
+    private final ByteStringConverter byteStringConverter;
 
-    public static String getDefaultSql(String tableName) {
-        return String.format("SELECT * FROM '%s' LIMIT 1000", tableName);
+    public QueryConverter(ByteStringConverter byteStringConverter) {
+        this.byteStringConverter = byteStringConverter;
     }
 
-    private QueryType queryType;
-    private String tableName;
-    private final List<Field> fields = new ArrayList<>();
-    private final List<WhereClause> whereClauses = new ArrayList<>();
-    private int limit = 10_000;
-
-    public void addField(Field field) {
-        fields.add(field);
-    }
-
-    public void addWhereClause(WhereClause whereClause) {
-        whereClauses.add(whereClause);
-    }
-
-    public QueryType getQueryType() {
-        return queryType;
-    }
-
-    public void setQueryType(QueryType queryType) {
-        this.queryType = queryType;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-
-        this.tableName = tableName;
-    }
-
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    public List<WhereClause> getWhereClauses() {
-        return whereClauses;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public com.google.cloud.bigtable.data.v2.models.Query toBigtableQuery() {
-        var bigtableQuery = com.google.cloud.bigtable.data.v2.models.Query.create(tableName);
-        setRowRange(bigtableQuery);
-        bigtableQuery.filter(getFilter());
-        bigtableQuery.limit(getLimit());
+    public Query toBigtableQuery(SqlQuery sqlQuery) {
+        var bigtableQuery = Query.create(sqlQuery.getTableName());
+        setRowRange(bigtableQuery, sqlQuery);
+        bigtableQuery.filter(getFilter(sqlQuery));
+        bigtableQuery.limit(sqlQuery.getLimit());
         return bigtableQuery;
     }
 
-    private void setRowRange(com.google.cloud.bigtable.data.v2.models.Query bigtableQuery) {
+    private void setRowRange(Query bigtableQuery, SqlQuery sqlQuery) {
         WhereClause rowKeyEq = null;
         var rowRange = Range.ByteStringRange.unbounded();
-        for (var whereClause : filterRowKeyWhereClauses()) {
+        for (var whereClause : filterRowKeyWhereClauses(sqlQuery)) {
             switch (whereClause.getOperator()) {
                 case EQUAL:
                     rowKeyEq = whereClause;
@@ -104,30 +58,30 @@ public class Query {
         }
     }
 
-    private List<WhereClause> filterRowKeyWhereClauses() {
-        return whereClauses
+    private List<WhereClause> filterRowKeyWhereClauses(SqlQuery sqlQuery) {
+        return sqlQuery.getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isRowKey())
                 .collect(Collectors.toList());
     }
 
-    private List<WhereClause> filterTimestampWhereClauses() {
-        return whereClauses
+    private List<WhereClause> filterTimestampWhereClauses(SqlQuery sqlQuery) {
+        return sqlQuery.getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isTimestamp())
                 .collect(Collectors.toList());
     }
 
-    private Filters.Filter getFilter() {
+    private Filters.Filter getFilter(SqlQuery sqlQuery) {
         return chain(Arrays.asList(
-                getRowKeyRegexFilter(),
-                getTimestampFilter(),
-                getValueFilter(),
-                getFamilyQualifierFilter()));
+                getRowKeyRegexFilter(sqlQuery),
+                getTimestampFilter(sqlQuery),
+                getValueFilter(sqlQuery),
+                getFamilyQualifierFilter(sqlQuery)));
     }
 
-    private Filters.Filter getRowKeyRegexFilter() {
-        var filters = getWhereClauses().stream()
+    private Filters.Filter getRowKeyRegexFilter(SqlQuery sqlQuery) {
+        var filters = sqlQuery.getWhereClauses().stream()
                 .filter(w -> w.getField().isRowKey())
                 .filter(w -> w.getOperator().equals(Operator.LIKE))
                 .map(w -> FILTERS.key().regex(w.getValue().asString()))
@@ -135,11 +89,10 @@ public class Query {
         return chain(filters);
     }
 
-    private Filters.Filter getValueFilter() {
-        var filters = getWhereClauses().stream()
+    private Filters.Filter getValueFilter(SqlQuery sqlQuery) {
+        var filters = sqlQuery.getWhereClauses().stream()
                 .filter(w -> !w.getField().isTimestamp())
                 .filter(w -> !w.getField().isRowKey())
-                .filter(w -> w.getValue().getValueType().equals(ValueType.STRING))
                 .map(this::getValueFilter)
                 .collect(Collectors.toList());
         return chain(filters);
@@ -149,7 +102,7 @@ public class Query {
         var condition = FILTERS.chain()
                 .filter(FILTERS.chain()
                         .filter(getFamilyQualifierFilter(where.getField()))
-                        .filter(getValueFilter(where.getOperator(), where.getValue()))
+                        .filter(getValueFilterCore(where))
                         .filter(FILTERS.limit().cellsPerColumn(1)))
                 .filter(FILTERS.offset().cellsPerRow(1));
         return FILTERS
@@ -158,43 +111,44 @@ public class Query {
                 .otherwise(FILTERS.block());
     }
 
-    private Filters.Filter getValueFilter(Operator operator, Value value) {
-        switch (operator) {
+    private Filters.Filter getValueFilterCore(WhereClause where) {
+        var valueAsByteString = byteStringConverter.toByteString(where.getField(), where.getValue());
+        switch (where.getOperator()) {
             case EQUAL:
-                return FILTERS.value().exactMatch(value.asString());
+                return FILTERS.value().exactMatch(valueAsByteString);
             case LESS_THAN:
-                return FILTERS.value().range().endOpen(value.asString());
+                return FILTERS.value().range().endOpen(valueAsByteString);
             case LESS_THAN_OR_EQUAL:
-                return FILTERS.value().range().endClosed(value.asString());
+                return FILTERS.value().range().endClosed(valueAsByteString);
             case GREATER_THAN:
-                return FILTERS.value().range().startOpen(value.asString());
+                return FILTERS.value().range().startOpen(valueAsByteString);
             case GREATER_THAN_OR_EQUAL:
-                return FILTERS.value().range().startClosed(value.asString());
+                return FILTERS.value().range().startClosed(valueAsByteString);
             case LIKE:
-                return FILTERS.value().regex(value.asString());
+                return FILTERS.value().regex(where.getValue().asString());
             default:
                 throw new IllegalArgumentException(
-                        String.format("operator %s is not supported for filtering values", operator));
+                        String.format("operator %s is not supported for filtering values", where.getOperator()));
         }
     }
 
-    private Filters.Filter getFamilyQualifierFilter() {
+    private Filters.Filter getFamilyQualifierFilter(SqlQuery sqlQuery) {
         var filters = new LinkedList<Filters.Filter>();
-        filters.addAll(getFamilyFilters());
-        filters.addAll(getQualifierFilters());
+        filters.addAll(getFamilyFilters(sqlQuery));
+        filters.addAll(getQualifierFilters(sqlQuery));
         return interleave(filters);
     }
 
-    private List<Filters.Filter> getFamilyFilters() {
-        return fields.stream()
+    private List<Filters.Filter> getFamilyFilters(SqlQuery sqlQuery) {
+        return sqlQuery.getFields().stream()
                 .filter(f -> !f.isAsterisk())
                 .filter(f -> !f.hasQualifier())
                 .map(f -> FILTERS.family().exactMatch(f.getFamily()))
                 .collect(Collectors.toList());
     }
 
-    private List<Filters.Filter> getQualifierFilters() {
-        return fields
+    private List<Filters.Filter> getQualifierFilters(SqlQuery sqlQuery) {
+        return sqlQuery.getFields()
                 .stream()
                 .filter(f -> !f.isAsterisk())
                 .filter(Field::hasQualifier)
@@ -208,8 +162,8 @@ public class Query {
                 .filter(FILTERS.qualifier().exactMatch(field.getQualifier()));
     }
 
-    private Filters.Filter getTimestampFilter() {
-        return chain(getTimestampFilters());
+    private Filters.Filter getTimestampFilter(SqlQuery sqlQuery) {
+        return chain(getTimestampFilters(sqlQuery));
     }
 
     private Filters.Filter interleave(List<Filters.Filter> filters) {
@@ -240,9 +194,9 @@ public class Query {
         return filter;
     }
 
-    private List<Filters.Filter> getTimestampFilters() {
+    private List<Filters.Filter> getTimestampFilters(SqlQuery sqlQuery) {
         var filters = new LinkedList<Filters.Filter>();
-        for (var where : filterTimestampWhereClauses()) {
+        for (var where : filterTimestampWhereClauses(sqlQuery)) {
             var timestamp = toTimestamp(where.getValue());
             switch (where.getOperator()) {
                 case EQUAL:

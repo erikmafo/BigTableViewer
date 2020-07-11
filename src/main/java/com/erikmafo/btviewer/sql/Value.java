@@ -23,6 +23,22 @@ public class Value {
         return value;
     }
 
+    public double asDouble() {
+        return Double.parseDouble(value);
+    }
+
+    public float asFloat() {
+        return Float.parseFloat(value);
+    }
+
+    public int asInt() {
+        return Integer.parseInt(value);
+    }
+
+    public boolean asBool() {
+        return Boolean.parseBoolean(value);
+    }
+
     public long asLong() {
         return Long.parseLong(value);
     }

@@ -6,7 +6,9 @@ import com.erikmafo.btviewer.events.InstanceTreeItemExpanded;
 import com.erikmafo.btviewer.events.ProjectTreeItemExpanded;
 import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.*;
-import com.erikmafo.btviewer.sql.Query;
+import com.erikmafo.btviewer.sql.QueryConverter;
+import com.erikmafo.btviewer.sql.SqlQuery;
+import com.google.cloud.bigtable.data.v2.models.Query;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -16,6 +18,7 @@ import javafx.scene.control.ButtonType;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by erikmafo on 23.12.17.
@@ -62,7 +65,7 @@ public class MainController {
         tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
         tablesListView.setProjectItemExpandedHandler(this::onProjectItemExpanded);
         tablesListView.setInstanceItemExpandedHandler(this::onInstanceItemExpanded);
-        queryBox.setOnScanTable(this::onExecuteQuery);
+        queryBox.setOnExecuteQuery(this::onExecuteQuery);
         loadBigtableInstances();
     }
 
@@ -117,20 +120,33 @@ public class MainController {
     private void onExecuteQuery(ExecuteQueryAction queryAction) {
         bigtableTableView.clear();
         var currentInstance = tablesListView.selectedInstanceProperty().get();
-        var query = queryAction.getSqlQuery();
-        var request = new BigtableReadRequestBuilder()
-                .setInstance(currentInstance)
-                .setSql(query)
-                .build();
-        loadTableConfiguration(request.getTable());
-        readBigtableRows(request);
+        var sqlQuery = queryAction.getSqlQuery();
+        var table = new BigtableTable(currentInstance, sqlQuery.getTableName());
+        loadTableConfiguration(table, tableConfig -> {
+            try {
+                var queryConverter =
+                        new QueryConverter(new ByteStringConverterImpl(tableConfig.getCellDefinitions()));
+                var request = new BigtableReadRequestBuilder()
+                        .setInstance(currentInstance)
+                        .setQuery(queryConverter.toBigtableQuery(sqlQuery))
+                        .setLimit(sqlQuery.getLimit())
+                        .build();
+                readBigtableRows(request);
+            } catch (Exception ex) {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Failed to convert sql to Bigtable query");
+                alert.setContentText(ex.getLocalizedMessage());
+                alert.showAndWait();
+            }
+        });
     }
 
-    private void loadTableConfiguration(BigtableTable currentTable) {
+    private void loadTableConfiguration(BigtableTable currentTable, Consumer<BigtableTableConfiguration> configurationConsumer) {
         loadTableConfigurationService.setTable(currentTable);
         loadTableConfigurationService.setOnSucceeded(event -> {
             var tableConfig = loadTableConfigurationService.getValue();
             bigtableTableView.setValueConverter(BigtableValueConverter.from(tableConfig));
+            configurationConsumer.accept(tableConfig);
         });
         loadTableConfigurationService.setOnFailed(event -> displayErrorInfo("Unable to load table configuration", event));
         loadTableConfigurationService.restart();
@@ -170,7 +186,7 @@ public class MainController {
     private void onBigtableTableSelected(ObservableValue<? extends BigtableTable> observable, BigtableTable oldValue, BigtableTable newValue) {
         bigtableTableView.clear();
         queryBox.setVisible(true);
-        queryBox.setQuery(Query.getDefaultSql(newValue.getTableId()));
+        queryBox.setQuery(SqlQuery.getDefaultSql(newValue.getTableId()));
     }
 
     private void readBigtableRows(BigtableReadRequest request) {
@@ -178,7 +194,6 @@ public class MainController {
         readRowsService.setOnSucceeded(workerStateEvent -> {
             bigtableTableView.setVisible(true);
             queryBox.getProgressBar().setVisible(false);
-            loadTableConfiguration(request.getTable());
             readRowsService.getValue().forEach(row -> bigtableTableView.add(row));
         });
         readRowsService.setOnFailed(stateEvent -> {
