@@ -1,7 +1,10 @@
 package com.erikmafo.btviewer.sql;
 
 import org.junit.Test;
+import org.mockito.Matchers;
+
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.eq;
 
 public class SqlTokenizerTest {
 
@@ -9,7 +12,7 @@ public class SqlTokenizerTest {
     public void shouldReadSelectStatement() {
 
         var reader = new SqlTokenizer(
-                "SELECT firstVar, secondVar FROM 'table' WHERE firstVar > 0 AND secondVar = 'test' LIMIT 10");
+                "SELECT firstVar.foo, secondVar FROM 'table' WHERE firstVar > 0 AND secondVar = 'test' LIMIT 10");
 
         assertEquals(SqlTokenType.SELECT, reader.next().getTokenType());
         assertEquals(SqlTokenType.IDENTIFIER, reader.next().getTokenType());
@@ -28,5 +31,33 @@ public class SqlTokenizerTest {
         assertEquals(SqlTokenType.LIMIT, reader.next().getTokenType());
         assertEquals(SqlTokenType.INTEGER, reader.next().getTokenType());
         assertNull(reader.next());
+    }
+
+    @Test
+    public void shouldParseFieldWithFamilyAndQualifier() {
+
+        var reader = new SqlTokenizer("family.qualifier");
+        var token = reader.next();
+
+        assertEquals(SqlTokenType.IDENTIFIER, token.getTokenType());
+        assertEquals("family.qualifier", token.getValue());
+    }
+
+    @Test
+    public void shouldParseFieldWithFamily() {
+
+        var reader = new SqlTokenizer("family");
+        var token = reader.next();
+
+        assertEquals(SqlTokenType.IDENTIFIER, token.getTokenType());
+        assertEquals("family", token.getValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailIfInvalidIdentifier() {
+
+        var reader = new SqlTokenizer("family.");
+        reader.next();
+        reader.next();
     }
 }

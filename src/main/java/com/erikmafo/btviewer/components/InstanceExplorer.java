@@ -45,7 +45,6 @@ public class InstanceExplorer extends VBox {
                 var tableId = selectedItem.getValue();
                 var instanceId = selectedItem.getParent().getValue();
                 var projectId = selectedItem.getParent().getParent().getValue();
-                var instanceItem = findTreeItem(findTreeItem(projectId).get(), instanceId);
                 selectedInstanceProperty.set(new BigtableInstance(projectId, instanceId));
                 selectedTableProperty.set(new BigtableTable(projectId, instanceId, tableId));
             } else if(isInstance(selectedItem)) {

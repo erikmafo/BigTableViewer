@@ -74,16 +74,14 @@
                     </content>
                 </ScrollPane>
 
-
-                <Button onAction="#onAddTableRow" text="Add row" styleClass="btn-primary"/>
-
+                <Button onAction="#onAddTableRow" text="Add column" styleClass="btn-primary"/>
             </children>
         </VBox>
 
     </content>
 
     <buttonTypes>
-        <ButtonType buttonData="OK_DONE" text="OK" />
+        <ButtonType buttonData="OK_DONE" text="Ok" />
         <ButtonType buttonData="CANCEL_CLOSE" text="Cancel" />
     </buttonTypes>
 

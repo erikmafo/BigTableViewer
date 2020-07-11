@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 public class SqlTokenizer {
 
     private static final char QUOTE = '\'';
-    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^[A-Za-z]+\\b");
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("^(0|[1-9][0-9]*)\\b");
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^([A-Za-z]+\\w*)(\\.[A-Za-z]+\\w*)?\\b");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^(0|[1-9][0-9]*)\\b");
     private static final Pattern BOOL_PATTERN = Pattern.compile("^(?i)(true|false)\\b");
 
     private final String sql;
@@ -63,7 +63,7 @@ public class SqlTokenizer {
             return new SqlToken(token, SqlTokenType.BOOL);
         }
 
-        matcher = NUMBER_PATTERN.matcher(remainingSql);
+        matcher = INTEGER_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
             var token = remainingSql.substring(matcher.start(), matcher.end());
             position += token.length();

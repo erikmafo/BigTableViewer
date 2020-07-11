@@ -21,6 +21,7 @@ import com.erikmafo.btviewer.sql.SqlParser;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
@@ -41,11 +42,11 @@ import java.util.regex.Pattern;
 public class QueryBox extends VBox {
 
     private static final String[] KEYWORDS = new String[] {
-            "SELECT", "FROM", "WHERE", "LIKE", "AND", "LIMIT", "KEY",
+            "SELECT", "FROM", "WHERE", "LIKE", "AND", "LIMIT", "KEY", "TIMESTAMP"
     };
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    private static final String STRING_PATTERN = "\'([^\"\\\\]|\\\\.)*\'";
+    private static final String STRING_PATTERN = "([\"'])*?\\1"; // (["'])(?:(?=(\\?))\2.)*?\1
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
     private static final Pattern HIGHLIGHT = Pattern.compile(
@@ -66,7 +67,7 @@ public class QueryBox extends VBox {
     @FXML
     private CodeArea codeArea;
 
-    private Subscription codeAreaSubscription;
+    private final Subscription codeAreaSubscription;
 
     public QueryBox() {
 
@@ -74,12 +75,11 @@ public class QueryBox extends VBox {
 
         progressBar.setVisible(false);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, this::moveCaretToCorrectPosition);
         codeAreaSubscription = codeArea
                 .multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
-
-        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, this::moveCaretToCorrectPosition);
     }
 
     private void moveCaretToCorrectPosition(KeyEvent keyEvent) {
@@ -104,7 +104,10 @@ public class QueryBox extends VBox {
                 var sqlQuery = new SqlParser().parse(codeArea.getText());
                 eventHandler.handle(new ExecuteQueryAction(sqlQuery));
             } catch (Exception ex) {
-                // TODO: display error dialog
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid query");
+                alert.setContentText(ex.getLocalizedMessage());
+                alert.showAndWait();
             }
         });
     }

@@ -23,6 +23,10 @@ public class Value {
         return value;
     }
 
+    public long asLong() {
+        return Long.parseLong(value);
+    }
+
     public ValueType getValueType() {
         return valueType;
     }

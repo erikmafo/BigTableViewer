@@ -6,7 +6,7 @@ import javafx.event.EventType;
 
 public class ExecuteQueryAction extends Event {
 
-    public static final EventType<ScanTableAction> EXECUTE_QUERY_ACTION = new EventType<>(EventType.ROOT, "ExecuteQueryAction");
+    public static final EventType<ExecuteQueryAction> EXECUTE_QUERY_ACTION = new EventType<>(EventType.ROOT, "ExecuteQueryAction");
 
     private final Query sqlQuery;
 

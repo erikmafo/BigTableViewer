@@ -76,6 +76,9 @@ public class MainController {
     private void onAddNewBigtableInstance(ActionEvent event) {
         AddInstanceDialog.displayAndAwaitResult()
                 .whenComplete((instance, throwable) -> {
+                    if (instance == null) {
+                        return;
+                    }
                     saveInstance(instance);
                     tablesListView.addBigtableInstance(instance);
                     listBigtableTables(instance);
