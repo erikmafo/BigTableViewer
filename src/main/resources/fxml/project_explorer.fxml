@@ -1,9 +1,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.Button?>
-<fx:root type="javafx.scene.layout.VBox"
-         xmlns:fx="http://javafx.com/fxml"
-         stylesheets="/css/main.css">
+<?import javafx.scene.control.TreeItem?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.erikmafo.btviewer.projectexplorer.ProjectExplorer"
+      stylesheets="/css/main.css"
+      styleClass="has-spacing">
         <Button fx:id="addInstanceButton" styleClass="btn">Add Instance</Button>
         <TreeView fx:id="treeView" visible="false" VBox.vgrow="ALWAYS"/>
-</fx:root>
+</VBox>

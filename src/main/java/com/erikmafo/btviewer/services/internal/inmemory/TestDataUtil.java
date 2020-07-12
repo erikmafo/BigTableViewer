@@ -24,8 +24,8 @@ public class TestDataUtil {
     public static void injectWithTestData(BigtableEmulatorSettingsProvider settingsProvider) {
         try {
             createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_0);
-            createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_1);
-            createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_1), TABLE_0);
+            // createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_1);
+            // createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_1), TABLE_0);
         } catch (IOException e) {
             throw new RuntimeException("Unable to start emulator", e);
         }

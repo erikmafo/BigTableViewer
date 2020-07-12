@@ -18,12 +18,16 @@ import java.util.stream.Collectors;
 public class ListTablesService extends Service<List<BigtableTable>> {
 
     private final BigtableSettingsProvider settingsProvider;
-    private final Map<BigtableInstance, List<BigtableTable>> cache = new ConcurrentHashMap<>();
     private final List<BigtableInstance> instances = new LinkedList<>();
+    private BigtableInstance instance;
 
     @Inject
     public ListTablesService(BigtableSettingsProvider settingsProvider) {
         this.settingsProvider = settingsProvider;
+    }
+
+    public void setInstance(BigtableInstance instance) {
+        this.instance = instance;
     }
 
     public void addInstances(List<BigtableInstance> instances) {
@@ -36,47 +40,20 @@ public class ListTablesService extends Service<List<BigtableTable>> {
         instances.add(instance);
     }
 
-    public void removeCache(BigtableInstance instance) {
-        cache.remove(instance);
-    }
-
     @Override
     protected Task<List<BigtableTable>> createTask() {
         return new Task<>() {
             @Override
             protected List<BigtableTable> call() throws Exception {
-                var tables = new LinkedList<BigtableTable>();
-                var totalWork = instances.size();
-                var workDone = 0;
-                for (var instance : instances) {
-                    tables.addAll(getTables(instance));
-                    updateProgress(workDone, totalWork);
-                    workDone += 1;
-                    if (isCancelled()) {
-                        break;
-                    }
+                try (var client = createClient(instance)) {
+                    return client
+                            .listTables()
+                            .stream()
+                            .map(tableId -> toBigtableTable(instance, tableId))
+                            .collect(Collectors.toList());
                 }
-                return tables;
             }
         };
-    }
-
-    private List<BigtableTable> getTables(BigtableInstance instance) throws IOException {
-        var tables = cache.getOrDefault(instance, null);
-        if (tables != null) {
-            return tables;
-        }
-
-        try(var client = createClient(instance)) {
-            tables = client
-                    .listTables()
-                    .stream()
-                    .map(tableId -> toBigtableTable(instance, tableId))
-                    .collect(Collectors.toList());
-            cache.put(instance, tables);
-        }
-
-        return tables;
     }
 
     private BigtableTable toBigtableTable(BigtableInstance instance, String tableId) {

@@ -5,6 +5,7 @@ import com.erikmafo.btviewer.services.internal.BigtableInstanceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InMemoryInstanceManager implements BigtableInstanceManager {
 
@@ -12,9 +13,11 @@ public class InMemoryInstanceManager implements BigtableInstanceManager {
     private List<BigtableInstance> instances;
 
     @Override
-    public List<BigtableInstance> getInstances() {
+    public List<BigtableInstance> getInstances(String projectId) {
         synchronized (mutex) {
-            return new ArrayList<>(instances);
+            return instances.stream()
+                    .filter(i -> projectId.equals(i.getProjectId()))
+                    .collect(Collectors.toList());
         }
     }
 

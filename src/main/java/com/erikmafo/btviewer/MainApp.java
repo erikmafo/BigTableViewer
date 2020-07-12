@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer;
+import com.erikmafo.btviewer.projectexplorer.ProjectExplorerModule;
 import com.erikmafo.btviewer.services.*;
 import com.google.inject.Guice;
 import javafx.application.Application;
@@ -6,6 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import javax.inject.Provider;
 
 /**
  * Created by erikmafo on 12.12.17.
@@ -19,7 +22,8 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        loader.setControllerFactory(Guice.createInjector(new ServicesModule())::getInstance);
+        var injector = Guice.createInjector(new ServicesModule(), new ProjectExplorerModule());
+        loader.setControllerFactory(injector::getInstance);
         Parent root = loader.load();
         primaryStage.setTitle("Bigtable Viewer");
         primaryStage.setScene(new Scene(root, 800, 700));

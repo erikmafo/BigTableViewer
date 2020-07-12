@@ -5,10 +5,10 @@ import com.erikmafo.btviewer.events.ExecuteQueryAction;
 import com.erikmafo.btviewer.events.InstanceTreeItemExpanded;
 import com.erikmafo.btviewer.events.ProjectTreeItemExpanded;
 import com.erikmafo.btviewer.model.*;
+import com.erikmafo.btviewer.projectexplorer.ProjectExplorer;
 import com.erikmafo.btviewer.services.*;
 import com.erikmafo.btviewer.sql.QueryConverter;
 import com.erikmafo.btviewer.sql.SqlQuery;
-import com.google.cloud.bigtable.data.v2.models.Query;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -29,7 +29,7 @@ public class MainController {
     private QueryBox queryBox;
 
     @FXML
-    private InstanceExplorer tablesListView;
+    private ProjectExplorer projectExplorerController;
 
     @FXML
     private BigtableTableView bigtableTableView;
@@ -61,17 +61,17 @@ public class MainController {
         queryBox.setVisible(false);
         bigtableTableView.setVisible(false);
         bigtableTableView.setOnTableSettingsChanged(this::onTableSettingsChanged);
-        tablesListView.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
-        tablesListView.selectedTableProperty().addListener(this::onBigtableTableSelected);
-        tablesListView.setProjectItemExpandedHandler(this::onProjectItemExpanded);
-        tablesListView.setInstanceItemExpandedHandler(this::onInstanceItemExpanded);
+        projectExplorerController.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
+        projectExplorerController.selectedTableProperty().addListener(this::onBigtableTableSelected);
+        projectExplorerController.setProjectItemExpandedHandler(this::onProjectItemExpanded);
+        projectExplorerController.setInstanceItemExpandedHandler(this::onInstanceItemExpanded);
         queryBox.setOnExecuteQuery(this::onExecuteQuery);
         loadBigtableInstances();
     }
 
     private void loadBigtableInstances() {
         loadInstancesService.setOnSucceeded(stateEvent ->
-                tablesListView.addBigtableInstances(loadInstancesService.getValue()));
+                projectExplorerController.addBigtableInstances(loadInstancesService.getValue()));
         loadInstancesService.setOnFailed(stateEvent -> displayErrorInfo("Failed to load instances", stateEvent));
         loadInstancesService.restart();
     }
@@ -83,7 +83,7 @@ public class MainController {
                         return;
                     }
                     saveInstance(instance);
-                    tablesListView.addBigtableInstance(instance);
+                    projectExplorerController.addBigtableInstance(instance);
                     listBigtableTables(instance);
                 });
     }
@@ -112,14 +112,14 @@ public class MainController {
         }
         listTablesService.addInstances(instances);
         listTablesService.setOnSucceeded(workerStateEvent ->
-                tablesListView.addBigtableTables(listTablesService.getValue()));
+                projectExplorerController.addBigtableTables(listTablesService.getValue()));
         listTablesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to list tables", stateEvent));
         listTablesService.restart();
     }
 
     private void onExecuteQuery(ExecuteQueryAction queryAction) {
         bigtableTableView.clear();
-        var currentInstance = tablesListView.selectedInstanceProperty().get();
+        var currentInstance = projectExplorerController.selectedInstanceProperty().get();
         var sqlQuery = queryAction.getSqlQuery();
         var table = new BigtableTable(currentInstance, sqlQuery.getTableName());
         loadTableConfiguration(table, tableConfig -> {
@@ -153,7 +153,7 @@ public class MainController {
     }
 
     private void onTableSettingsChanged(ActionEvent event) {
-        var table = tablesListView.selectedTableProperty().get();
+        var table = projectExplorerController.selectedTableProperty().get();
         loadTableConfigurationService.setTable(table);
         loadTableConfigurationService.setOnSucceeded(e -> TableSettingsDialog
                 .displayAndAwaitResult(bigtableTableView.getColumns(), loadTableConfigurationService.getValue())

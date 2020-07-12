@@ -10,6 +10,11 @@ public class BigtableInstance {
 
     public BigtableInstance() {}
 
+    public BigtableInstance(BigtableInstance instance) {
+        this.projectId = instance.getProjectId();
+        this.instanceId = instance.getInstanceId();
+    }
+
     public BigtableInstance(String name)
     {
         String[] parts = name.split("/");
