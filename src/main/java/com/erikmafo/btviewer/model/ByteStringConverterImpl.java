@@ -12,7 +12,7 @@ import java.util.List;
 public class ByteStringConverterImpl implements ByteStringConverter {
     private final List<CellDefinition> cellDefinitions;
 
-    public ByteStringConverterImpl(BigtableTableConfiguration config) {
+    public ByteStringConverterImpl(BigtableTableSettings config) {
         this(config.getCellDefinitions() != null ? config.getCellDefinitions() : Collections.emptyList());
     }
 

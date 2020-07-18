@@ -1,6 +1,8 @@
 package com.erikmafo.btviewer.projectexplorer;
 
 import com.erikmafo.btviewer.services.LoadInstancesService;
+import com.erikmafo.btviewer.util.AlertUtil;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.TreeItem;
 
 import javax.inject.Inject;
@@ -19,7 +21,7 @@ public class ProjectTreeItem extends TreeItem<TreeItemData> {
                            Provider<InstanceTreeItem> instanceTreeItemProvider) {
         this.loadInstancesService = loadInstancesService;
         this.instanceTreeItemProvider = instanceTreeItemProvider;
-        this.expandedProperty().addListener((observable, prev, isExpanded) -> {
+        expandedProperty().addListener((observable, prev, isExpanded) -> {
             if (isExpanded && !loadedChildren && !loadInstancesService.isRunning()) {
                 loadChildren();
             }
@@ -31,26 +33,25 @@ public class ProjectTreeItem extends TreeItem<TreeItemData> {
         return false;
     }
 
-    private void loadChildren() {
+    public void loadChildren() {
         loadInstancesService.setProjectId(getValue().getProjectId());
-        loadInstancesService.setOnSucceeded(event -> {
-            var children = loadInstancesService
-                    .getValue()
-                    .stream()
-                    .map(TreeItemData::new)
-                    .map(this::createInstanceTreeItem)
-                    .collect(Collectors.toList());
-            getChildren().setAll(children);
-            loadedChildren = true;
-        });
-        loadInstancesService.setOnFailed(event -> {
-            loadInstancesService.getException().printStackTrace();
-            // TODO: show error
-        });
+        loadInstancesService.setOnSucceeded(this::onLoadInstancesSucceeded);
+        loadInstancesService.setOnFailed(event -> AlertUtil.displayError("Unable to load instances", event));
         loadInstancesService.restart();
     }
 
-    private InstanceTreeItem createInstanceTreeItem(TreeItemData treeItemData) {
+    private void onLoadInstancesSucceeded(WorkerStateEvent event) {
+        var children = loadInstancesService
+                .getValue()
+                .stream()
+                .map(TreeItemData::new)
+                .map(this::createChild)
+                .collect(Collectors.toList());
+        getChildren().setAll(children);
+        loadedChildren = true;
+    }
+
+    private InstanceTreeItem createChild(TreeItemData treeItemData) {
         var instanceItem = instanceTreeItemProvider.get();
         instanceItem.setValue(treeItemData);
         return instanceItem;

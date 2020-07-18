@@ -39,7 +39,7 @@ public class TreeItemData {
     public boolean isRoot() { return projectId == null; }
 
     public boolean isProject() {
-        return instanceId == null && tableId == null;
+        return !isRoot() && instanceId == null && tableId == null;
     }
 
     public boolean isInstance() {

@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class BigtableValueConverter {
 
-    public static BigtableValueConverter from(BigtableTableConfiguration config) {
+    public static BigtableValueConverter from(BigtableTableSettings config) {
         if (config == null) {
             return new BigtableValueConverter(new LinkedList<>());
         }

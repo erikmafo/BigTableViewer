@@ -1,18 +1,18 @@
 package com.erikmafo.btviewer.projectexplorer;
-import com.erikmafo.btviewer.events.InstanceTreeItemExpanded;
-import com.erikmafo.btviewer.events.ProjectTreeItemExpanded;
+import com.erikmafo.btviewer.components.AddInstanceDialog;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
+import com.erikmafo.btviewer.services.RemoveProjectService;
+import com.erikmafo.btviewer.services.SaveInstanceService;
+import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.inject.Provider;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import javax.inject.Inject;
-import java.util.List;
 
 public class ProjectExplorer {
 
@@ -26,19 +26,24 @@ public class ProjectExplorer {
 
     private final SimpleObjectProperty<BigtableTable> selectedTableProperty;
     private final SimpleObjectProperty<BigtableInstance> selectedInstanceProperty;
-    private EventHandler<ProjectTreeItemExpanded> projectItemExpandedHandler;
-    private EventHandler<InstanceTreeItemExpanded> instanceItemExpandedHandler;
+
+    private final SaveInstanceService saveInstanceService;
+    private final RemoveProjectService removeProjectService;
 
     @Inject
-    public ProjectExplorer(Provider<RootTreeItem> rootTreeItemProvider) {
+    public ProjectExplorer(
+            Provider<RootTreeItem> rootTreeItemProvider,
+            SaveInstanceService saveInstanceService,
+            RemoveProjectService removeProjectService) {
         this.rootTreeItemProvider = rootTreeItemProvider;
-        selectedTableProperty = new SimpleObjectProperty<>();
-        selectedInstanceProperty = new SimpleObjectProperty<>();
+        this.saveInstanceService = saveInstanceService;
+        this.removeProjectService = removeProjectService;
+        this.selectedTableProperty = new SimpleObjectProperty<>();
+        this.selectedInstanceProperty = new SimpleObjectProperty<>();
     }
 
     public void initialize() {
-        var root = rootTreeItemProvider.get();
-        treeView.setRoot(root);
+        treeView.setRoot(rootTreeItemProvider.get());
         treeView.setCellFactory(tableInfoTreeView -> new TreeCell<>() {
             @Override
             protected void updateItem(TreeItemData item, boolean empty) {
@@ -46,7 +51,9 @@ public class ProjectExplorer {
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
+                    setContextMenu(null);
                 } else {
+                    setContextMenu(createContextMenu(item));
                     setText(item.getDisplayName());
                 }
             }
@@ -63,15 +70,7 @@ public class ProjectExplorer {
                     }
         });
         treeView.setVisible(true);
-    }
-
-    public void setOnCreateNewBigtableInstance(EventHandler<ActionEvent> eventHandler) {
-    }
-
-    public void addBigtableInstances(List<BigtableInstance> bigtableInstances) {
-    }
-
-    public void addBigtableInstance(BigtableInstance instance) {
+        addInstanceButton.setOnAction(this::handleAddInstanceAction);
     }
 
     public ReadOnlyObjectProperty<BigtableInstance> selectedInstanceProperty() {
@@ -82,14 +81,43 @@ public class ProjectExplorer {
         return selectedTableProperty;
     }
 
-    public void setProjectItemExpandedHandler(EventHandler<ProjectTreeItemExpanded> projectItemExpandedHandler) {
-        this.projectItemExpandedHandler = projectItemExpandedHandler;
+    public ContextMenu createContextMenu(TreeItemData item){
+        ContextMenu menu = null;
+        if (item.isProject()) {
+            var addInstance = new MenuItem("Add instance");
+            addInstance.setOnAction(actionEvent ->
+                    AddInstanceDialog
+                            .displayAndAwaitResult(item.getProjectId())
+                            .whenComplete(this::handleAddInstanceResult));
+            var removeProject = new MenuItem("Remove");
+            removeProject.setOnAction(actionEvent -> {
+                removeProjectService.setProjectId(item.getProjectId());
+                removeProjectService.setOnSucceeded(event -> ((RootTreeItem)treeView.getRoot()).removeProject((item.getProjectId())));
+                removeProjectService.setOnFailed(event -> AlertUtil.displayError("Unable to remove project", event));
+                removeProjectService.restart();
+            });
+
+            menu = new ContextMenu(addInstance, removeProject);
+        }
+
+        return menu;
     }
 
-    public void setInstanceItemExpandedHandler(EventHandler<InstanceTreeItemExpanded> instanceItemExpandedHandler) {
-        this.instanceItemExpandedHandler = instanceItemExpandedHandler;
+    private void handleAddInstanceAction(ActionEvent ignore) {
+        AddInstanceDialog.displayAndAwaitResult().whenComplete(this::handleAddInstanceResult);
     }
 
-    public void addBigtableTables(List<BigtableTable> tables) {
+    private void handleAddInstanceResult(BigtableInstance instance, Throwable throwable) {
+        if (instance == null) {
+            return;
+        }
+        saveInstanceService.setInstance(instance);
+        saveInstanceService.setOnFailed(event -> AlertUtil.displayError("Unable to save instance", event));
+        saveInstanceService.setOnSucceeded(event -> reloadOrAddProject(instance.getProjectId()));
+        saveInstanceService.restart();
+    }
+
+    private void reloadOrAddProject(String projectId) {
+        ((RootTreeItem)treeView.getRoot()).reloadOrAddProject(projectId);
     }
 }

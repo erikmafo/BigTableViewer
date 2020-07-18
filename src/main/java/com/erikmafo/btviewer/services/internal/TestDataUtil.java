@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.services.internal.inmemory;
+package com.erikmafo.btviewer.services.internal;
 
 import com.erikmafo.btviewer.model.*;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
@@ -10,8 +10,8 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
+
+import static com.erikmafo.btviewer.util.ByteStringConverterUtil.toByteString;
 
 public class TestDataUtil {
 
@@ -55,19 +55,7 @@ public class TestDataUtil {
         }
     }
 
-    public static void injectWithTestData(InMemoryInstanceManager instanceManager) {
-        instanceManager.setInstances(Arrays.asList(
-                new BigtableInstance(PROJECT_0, INSTANCE_0),
-                new BigtableInstance(PROJECT_0, INSTANCE_1)));
-    }
-
-    public static void injectWithTestData(InMemoryTableConfigManager configManager) {
-        var table = new BigtableTable(PROJECT_0, INSTANCE_0, TABLE_0);
-        var config = new BigtableTableConfiguration();
-        configManager.saveTableConfiguration(table, config);
-    }
-
-    private static ByteString toByteString(String value) {
+    /*private static ByteString toByteString(String value) {
         return ByteString.copyFromUtf8(value);
     }
 
@@ -91,5 +79,5 @@ public class TestDataUtil {
         bb.order(ByteOrder.BIG_ENDIAN);
         bb.putDouble(i);
         return bb.array();
-    }
+    }*/
 }

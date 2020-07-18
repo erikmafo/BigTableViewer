@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.services.internal.inmemory;
+package com.erikmafo.btviewer.services.internal;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;

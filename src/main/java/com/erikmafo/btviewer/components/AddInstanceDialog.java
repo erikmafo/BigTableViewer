@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer.components;
+
 import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import javafx.fxml.FXML;
@@ -28,12 +29,27 @@ public class AddInstanceDialog extends DialogPane {
                 instanceIdTextField.getText());
     }
 
+    public void preFillProjectId(String projectId) {
+        projectIdTextField.setText(projectId);
+        projectIdTextField.setEditable(false);
+        instanceIdTextField.requestFocus();
+    }
+
     public static CompletableFuture<BigtableInstance> displayAndAwaitResult() {
+        return displayAndAwaitResult(null);
+    }
+
+    public static CompletableFuture<BigtableInstance> displayAndAwaitResult(String projectId) {
         CompletableFuture<BigtableInstance> future = new CompletableFuture<>();
 
         try {
             Dialog<BigtableInstance> dialog = new Dialog<>();
             AddInstanceDialog pane = new AddInstanceDialog();
+
+            if (projectId != null) {
+                pane.preFillProjectId(projectId);
+            }
+
             dialog.setDialogPane(pane);
             dialog.setResultConverter(buttonType -> {
 

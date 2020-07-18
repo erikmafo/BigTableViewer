@@ -2,18 +2,16 @@ package com.erikmafo.btviewer.components;
 import com.erikmafo.btviewer.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableTable;
-import com.erikmafo.btviewer.model.BigtableTableConfiguration;
+import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.model.CellDefinition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -23,15 +21,14 @@ import java.util.stream.Collectors;
  */
 public class TableSettingsDialog extends DialogPane {
 
-    public static CompletableFuture<BigtableTableConfiguration> displayAndAwaitResult(
+    public static CompletableFuture<BigtableTableSettings> displayAndAwaitResult(
             List<BigtableColumn> columns,
-            BigtableTableConfiguration current) {
+            BigtableTableSettings current) {
 
-        CompletableFuture<BigtableTableConfiguration> future = new CompletableFuture<>();
+        CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
         try {
-            Dialog<BigtableTableConfiguration> dialog = new Dialog<>();
+            Dialog<BigtableTableSettings> dialog = new Dialog<>();
             TableSettingsDialog settingsDialog = new TableSettingsDialog();
-            settingsDialog.setBigtableTable(current.getTable());
             current.getCellDefinitions().forEach(settingsDialog::addSchemaRow);
             columns.forEach(settingsDialog::addSchemaRow);
             if (settingsDialog.observableCells.isEmpty()) {
@@ -48,7 +45,7 @@ public class TableSettingsDialog extends DialogPane {
             });
 
             dialog.setOnHidden(event -> {
-                BigtableTableConfiguration configuration = dialog.getResult();
+                BigtableTableSettings configuration = dialog.getResult();
                 future.complete(configuration);
             });
 
@@ -103,12 +100,12 @@ public class TableSettingsDialog extends DialogPane {
         this.table = table;
     }
 
-    private BigtableTableConfiguration getBigtableTableConfiguration() {
+    private BigtableTableSettings getBigtableTableConfiguration() {
         var cellDefinitionList = observableCells
                 .stream()
                 .map(this::toCellDefinition)
                 .collect(Collectors.toList());
-        return new BigtableTableConfiguration(table, cellDefinitionList);
+        return new BigtableTableSettings(cellDefinitionList);
     }
 
     private CellDefinition toCellDefinition(ObservableCell cell) {

@@ -15,13 +15,6 @@ public class BigtableInstance {
         this.instanceId = instance.getInstanceId();
     }
 
-    public BigtableInstance(String name)
-    {
-        String[] parts = name.split("/");
-        this.projectId = parts[1];
-        this.instanceId = parts[3];
-    }
-
     public BigtableInstance(String projectId, String instanceId) {
         this.projectId = projectId;
         this.instanceId = instanceId;

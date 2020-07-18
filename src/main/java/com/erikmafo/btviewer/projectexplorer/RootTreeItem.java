@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.projectexplorer;
 
 import com.erikmafo.btviewer.services.LoadProjectsService;
+import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.inject.Provider;
 import javafx.scene.control.TreeItem;
 
@@ -18,6 +19,12 @@ public class RootTreeItem extends TreeItem<TreeItemData> {
             Provider<ProjectTreeItem> projectTreeItemProvider) {
         this.projectTreeItemProvider = projectTreeItemProvider;
         this.loadProjectsService = loadProjectsService;
+        loadChildren(loadProjectsService);
+        setExpanded(true);
+        setValue(new TreeItemData());
+    }
+
+    private void loadChildren(LoadProjectsService loadProjectsService) {
         this.loadProjectsService.setOnSucceeded(event -> {
             var children = loadProjectsService
                     .getValue()
@@ -27,12 +34,22 @@ public class RootTreeItem extends TreeItem<TreeItemData> {
                     .collect(Collectors.toList());
             getChildren().setAll(children);
         });
-        this.loadProjectsService.setOnFailed(event -> {
-            // TODO: show error
-        });
+        this.loadProjectsService.setOnFailed(event -> AlertUtil.displayError("Failed to load projects", event));
         this.loadProjectsService.restart();
-        this.setExpanded(true);
-        setValue(new TreeItemData());
+    }
+
+    public void reloadOrAddProject(String projectId) {
+        getChildren()
+                .stream()
+                .filter(item -> item.getValue().getProjectId().equals(projectId))
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> ((ProjectTreeItem)item).loadChildren(),
+                        () -> getChildren().add(createProjectTreeItem(new TreeItemData(projectId))));
+    }
+
+    public void removeProject(String projectId) {
+        getChildren().removeIf(item -> item.getValue().getProjectId().equals(projectId));
     }
 
     private ProjectTreeItem createProjectTreeItem(TreeItemData info) {

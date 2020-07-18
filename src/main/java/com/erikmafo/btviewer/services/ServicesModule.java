@@ -2,14 +2,11 @@ package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.config.AppConfig;
 import com.erikmafo.btviewer.config.ApplicationEnvironment;
-import com.erikmafo.btviewer.services.internal.inmemory.BigtableEmulatorSettingsProvider;
-import com.erikmafo.btviewer.services.internal.inmemory.InMemoryInstanceManager;
-import com.erikmafo.btviewer.services.internal.inmemory.InMemoryTableConfigManager;
-import com.erikmafo.btviewer.services.internal.inmemory.TestDataUtil;
+import com.erikmafo.btviewer.services.internal.BigtableEmulatorSettingsProvider;
+import com.erikmafo.btviewer.services.internal.TestDataUtil;
 import com.erikmafo.btviewer.services.internal.*;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.inject.*;
-import com.google.inject.Module;
 
 public class ServicesModule extends AbstractModule {
 
@@ -37,20 +34,11 @@ public class ServicesModule extends AbstractModule {
 
         bind(CredentialsProvider.class).to(DynamicCredentialsProvider.class);
 
-        if (config.useInMemoryTableConfigManager()) {
-            var inMemoryTableConfigManager = new InMemoryTableConfigManager();
-            bind(TableConfigManager.class).toInstance(inMemoryTableConfigManager);
+        if (config.useInMemoryDatabase()) {
+            bind(AppDataStorage.class).toInstance(AppDataStorageImpl.createInMemory());
         }
         else {
-            bind(TableConfigManager.class).toInstance(new TableConfigManagerImpl());
-        }
-
-        if (config.useInMemoryInstanceManager()) {
-            var inMemoryInstanceManager = new InMemoryInstanceManager();
-            TestDataUtil.injectWithTestData(inMemoryInstanceManager);
-            bind(BigtableInstanceManager.class).toInstance(inMemoryInstanceManager);
-        } else {
-            bind(BigtableInstanceManager.class).toInstance(new BigtableInstanceManagerImpl());
+            bind(AppDataStorage.class).toInstance(AppDataStorageImpl.createInstance());
         }
     }
 }

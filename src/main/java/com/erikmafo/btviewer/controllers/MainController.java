@@ -9,6 +9,7 @@ import com.erikmafo.btviewer.projectexplorer.ProjectExplorer;
 import com.erikmafo.btviewer.services.*;
 import com.erikmafo.btviewer.sql.QueryConverter;
 import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.util.AlertUtil;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -34,87 +35,26 @@ public class MainController {
     @FXML
     private BigtableTableView bigtableTableView;
 
-    private final SaveInstancesService saveInstancesService;
-    private final LoadInstancesService loadInstancesService;
-    private final SaveTableConfigurationService saveTableConfigurationService;
-    private final LoadTableConfigurationService loadTableConfigurationService;
+    private final SaveTableSettingsService saveTableSettingsService;
+    private final LoadTableSettingsService loadTableSettingsService;
     private final ReadRowsService readRowsService;
-    private final ListTablesService listTablesService;
 
     @Inject
     public MainController(
-            SaveInstancesService saveInstancesService,
-            LoadInstancesService loadInstancesService,
-            SaveTableConfigurationService saveTableConfigurationService,
-            LoadTableConfigurationService loadTableConfigurationService,
-            ReadRowsService readRowsService,
-            ListTablesService listTablesService) {
-        this.saveInstancesService = saveInstancesService;
-        this.loadInstancesService = loadInstancesService;
-        this.saveTableConfigurationService = saveTableConfigurationService;
-        this.loadTableConfigurationService = loadTableConfigurationService;
+            SaveTableSettingsService saveTableSettingsService,
+            LoadTableSettingsService loadTableSettingsService,
+            ReadRowsService readRowsService) {
+        this.saveTableSettingsService = saveTableSettingsService;
+        this.loadTableSettingsService = loadTableSettingsService;
         this.readRowsService = readRowsService;
-        this.listTablesService = listTablesService;
     }
 
     public void initialize() {
         queryBox.setVisible(false);
         bigtableTableView.setVisible(false);
         bigtableTableView.setOnTableSettingsChanged(this::onTableSettingsChanged);
-        projectExplorerController.setOnCreateNewBigtableInstance(this::onAddNewBigtableInstance);
         projectExplorerController.selectedTableProperty().addListener(this::onBigtableTableSelected);
-        projectExplorerController.setProjectItemExpandedHandler(this::onProjectItemExpanded);
-        projectExplorerController.setInstanceItemExpandedHandler(this::onInstanceItemExpanded);
         queryBox.setOnExecuteQuery(this::onExecuteQuery);
-        loadBigtableInstances();
-    }
-
-    private void loadBigtableInstances() {
-        loadInstancesService.setOnSucceeded(stateEvent ->
-                projectExplorerController.addBigtableInstances(loadInstancesService.getValue()));
-        loadInstancesService.setOnFailed(stateEvent -> displayErrorInfo("Failed to load instances", stateEvent));
-        loadInstancesService.restart();
-    }
-
-    private void onAddNewBigtableInstance(ActionEvent event) {
-        AddInstanceDialog.displayAndAwaitResult()
-                .whenComplete((instance, throwable) -> {
-                    if (instance == null) {
-                        return;
-                    }
-                    saveInstance(instance);
-                    projectExplorerController.addBigtableInstance(instance);
-                    listBigtableTables(instance);
-                });
-    }
-
-    private void saveInstance(BigtableInstance instance) {
-        saveInstancesService.addInstance(instance);
-        saveInstancesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to save instance", stateEvent));
-        saveInstancesService.restart();
-    }
-
-    private void onInstanceItemExpanded(InstanceTreeItemExpanded event) {
-        listBigtableTables(event.getInstance());
-    }
-
-    private void onProjectItemExpanded(ProjectTreeItemExpanded event) {
-        listBigtableTables(event.getInstances());
-    }
-
-    private void listBigtableTables(BigtableInstance instance) {
-        listBigtableTables(List.of(instance));
-    }
-
-    private void listBigtableTables(List<BigtableInstance> instances) {
-        if (listTablesService.isRunning()) {
-            listTablesService.cancel();
-        }
-        listTablesService.addInstances(instances);
-        listTablesService.setOnSucceeded(workerStateEvent ->
-                projectExplorerController.addBigtableTables(listTablesService.getValue()));
-        listTablesService.setOnFailed(stateEvent -> displayErrorInfo("Unable to list tables", stateEvent));
-        listTablesService.restart();
     }
 
     private void onExecuteQuery(ExecuteQueryAction queryAction) {
@@ -141,46 +81,40 @@ public class MainController {
         });
     }
 
-    private void loadTableConfiguration(BigtableTable currentTable, Consumer<BigtableTableConfiguration> configurationConsumer) {
-        loadTableConfigurationService.setTable(currentTable);
-        loadTableConfigurationService.setOnSucceeded(event -> {
-            var tableConfig = loadTableConfigurationService.getValue();
+    private void loadTableConfiguration(BigtableTable currentTable, Consumer<BigtableTableSettings> configurationConsumer) {
+        loadTableSettingsService.setTable(currentTable);
+        loadTableSettingsService.setOnSucceeded(event -> {
+            var tableConfig = loadTableSettingsService.getValue();
             bigtableTableView.setValueConverter(BigtableValueConverter.from(tableConfig));
             configurationConsumer.accept(tableConfig);
         });
-        loadTableConfigurationService.setOnFailed(event -> displayErrorInfo("Unable to load table configuration", event));
-        loadTableConfigurationService.restart();
+        loadTableSettingsService.setOnFailed(event -> AlertUtil.displayError("Unable to load table configuration", event));
+        loadTableSettingsService.restart();
     }
 
     private void onTableSettingsChanged(ActionEvent event) {
         var table = projectExplorerController.selectedTableProperty().get();
-        loadTableConfigurationService.setTable(table);
-        loadTableConfigurationService.setOnSucceeded(e -> TableSettingsDialog
-                .displayAndAwaitResult(bigtableTableView.getColumns(), loadTableConfigurationService.getValue())
+        loadTableSettingsService.setTable(table);
+        loadTableSettingsService.setOnSucceeded(e -> TableSettingsDialog
+                .displayAndAwaitResult(bigtableTableView.getColumns(), loadTableSettingsService.getValue())
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
-        loadTableConfigurationService.setOnFailed(e -> TableSettingsDialog
-                .displayAndAwaitResult(bigtableTableView.getColumns(), new BigtableTableConfiguration(table))
+        loadTableSettingsService.setOnFailed(e -> TableSettingsDialog
+                .displayAndAwaitResult(bigtableTableView.getColumns(), new BigtableTableSettings())
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table, configuration))
         );
-        loadTableConfigurationService.restart();
+        loadTableSettingsService.restart();
     }
 
-    private void updateTableConfiguration(BigtableTable table, BigtableTableConfiguration configuration) {
+    private void updateTableConfiguration(BigtableTable table, BigtableTableSettings configuration) {
         bigtableTableView.setValueConverter(new BigtableValueConverter(configuration.getCellDefinitions()));
         saveTableConfiguration(table, configuration);
     }
 
-    private void saveTableConfiguration(BigtableTable table, BigtableTableConfiguration configuration) {
-        saveTableConfigurationService.setTableConfiguration(table, configuration);
-        saveTableConfigurationService.setOnFailed(event -> displayErrorInfo("Failed to save table configuration", event));
-        saveTableConfigurationService.restart();
-    }
-
-    private void displayErrorInfo(String errorText, WorkerStateEvent event) {
-        var exception = event.getSource().getException();
-        var alert = new Alert(Alert.AlertType.ERROR, errorText + " " + exception.getLocalizedMessage(), ButtonType.CLOSE);
-        alert.showAndWait();
+    private void saveTableConfiguration(BigtableTable table, BigtableTableSettings configuration) {
+        saveTableSettingsService.setTableConfiguration(table, configuration);
+        saveTableSettingsService.setOnFailed(event -> AlertUtil.displayError("Failed to save table configuration", event));
+        saveTableSettingsService.restart();
     }
 
     private void onBigtableTableSelected(ObservableValue<? extends BigtableTable> observable, BigtableTable oldValue, BigtableTable newValue) {
@@ -198,7 +132,7 @@ public class MainController {
         });
         readRowsService.setOnFailed(stateEvent -> {
             queryBox.getProgressBar().setVisible(false);
-            displayErrorInfo("Failed to execute query: ", stateEvent);
+            AlertUtil.displayError("Failed to execute query: ", stateEvent);
         });
         queryBox.getProgressBar().setVisible(true);
         queryBox.getProgressBar().progressProperty().bind(readRowsService.progressProperty());

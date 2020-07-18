@@ -16,27 +16,20 @@ public class AppConfig {
     }
 
     private final boolean useBigtableEmulator;
-    private final boolean useInMemoryTableConfigManager;
-    private final boolean useInMemoryInstanceManager;
+    private final boolean useInMemoryDatabase;
 
     @Inject
     public AppConfig(@Named("USE_BIGTABLE_EMULATOR") boolean useBigtableEmulator,
-                     @Named("USE_IN_MEMORY_TABLE_CONFIG_MANAGER") boolean useInMemoryTableConfigManager,
-                     @Named("USE_IN_MEMORY_INSTANCE_MANAGER") boolean useInMemoryInstanceManager) {
+                     @Named("USE_IN_MEMORY_DATABASE") boolean useInMemoryDatabase) {
         this.useBigtableEmulator = useBigtableEmulator;
-        this.useInMemoryTableConfigManager = useInMemoryTableConfigManager;
-        this.useInMemoryInstanceManager = useInMemoryInstanceManager;
+        this.useInMemoryDatabase = useInMemoryDatabase;
     }
 
     public boolean useBigtableEmulator() {
         return useBigtableEmulator;
     }
 
-    public boolean useInMemoryTableConfigManager() {
-        return useInMemoryTableConfigManager;
-    }
-
-    public boolean useInMemoryInstanceManager() {
-        return useInMemoryInstanceManager;
+    public boolean useInMemoryDatabase() {
+        return useInMemoryDatabase;
     }
 }
