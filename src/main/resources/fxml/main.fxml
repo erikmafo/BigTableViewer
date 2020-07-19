@@ -2,8 +2,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import com.erikmafo.btviewer.components.BigtableTableView?>
-<?import com.erikmafo.btviewer.components.QueryBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.controllers.MainController"
             stylesheets="/css/main.css"
@@ -17,9 +15,9 @@
         <fx:include fx:id="projectExplorer" source="project_explorer.fxml"/>
     </left>
     <center>
-        <BigtableTableView fx:id="bigtableTableView" styleClass="has-spacing"/>
+        <fx:include fx:id="bigtableView" source="bigtable_view.fxml"/>
     </center>
     <bottom>
-        <QueryBox fx:id="queryBox"/>
+        <fx:include fx:id="queryBox" source="query_box.fxml"/>
     </bottom>
 </BorderPane>

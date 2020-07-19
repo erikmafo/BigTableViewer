@@ -25,6 +25,10 @@ public class TableSettingsDialog extends DialogPane {
             List<BigtableColumn> columns,
             BigtableTableSettings current) {
 
+        if (current == null) {
+            current = new BigtableTableSettings();
+        }
+
         CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
         try {
             Dialog<BigtableTableSettings> dialog = new Dialog<>();

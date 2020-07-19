@@ -14,7 +14,7 @@ import javafx.scene.control.*;
 
 import javax.inject.Inject;
 
-public class ProjectExplorer {
+public class ProjectExplorerController {
 
     @FXML
     private Button addInstanceButton;
@@ -31,7 +31,7 @@ public class ProjectExplorer {
     private final RemoveProjectService removeProjectService;
 
     @Inject
-    public ProjectExplorer(
+    public ProjectExplorerController(
             Provider<RootTreeItem> rootTreeItemProvider,
             SaveInstanceService saveInstanceService,
             RemoveProjectService removeProjectService) {

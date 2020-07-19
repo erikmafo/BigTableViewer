@@ -12,7 +12,7 @@ public class AlertUtil {
 
     public static void displayError(String errorText, Throwable cause) {
         var alert = new Alert(Alert.AlertType.ERROR, errorText + ": " + cause.getLocalizedMessage(), ButtonType.CLOSE);
-        alert.setTitle("Computer says no..");
+        alert.setTitle("Computer says no!");
         alert.showAndWait();
     }
 }

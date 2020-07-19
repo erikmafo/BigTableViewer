@@ -3,6 +3,9 @@ package com.erikmafo.btviewer.services;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
+import com.erikmafo.btviewer.util.AlertUtil;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
@@ -16,6 +19,7 @@ public class LoadTableSettingsService extends Service<BigtableTableSettings> {
     @Inject
     public LoadTableSettingsService(AppDataStorage appDataStorage) {
         this.appDataStorage = appDataStorage;
+        setOnFailed(event -> AlertUtil.displayError("Unable to load table setting", getException()));
     }
 
     public void setTable(BigtableTable table) {
@@ -24,6 +28,7 @@ public class LoadTableSettingsService extends Service<BigtableTableSettings> {
 
     @Override
     protected Task<BigtableTableSettings> createTask() {
+        var table = this.table;
         return new Task<>() {
             @Override
             protected BigtableTableSettings call() throws Exception {

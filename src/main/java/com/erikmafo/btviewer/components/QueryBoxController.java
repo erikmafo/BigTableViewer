@@ -15,18 +15,25 @@
  */
 package com.erikmafo.btviewer.components;
 
-import com.erikmafo.btviewer.FXMLLoaderUtil;
-import com.erikmafo.btviewer.events.ExecuteQueryAction;
+import com.erikmafo.btviewer.model.BigtableInstance;
+import com.erikmafo.btviewer.model.BigtableRow;
+import com.erikmafo.btviewer.model.BigtableTable;
+import com.erikmafo.btviewer.services.ReadRowsService;
 import com.erikmafo.btviewer.sql.SqlParser;
+import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.util.AlertUtil;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -34,12 +41,14 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
 
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class QueryBox extends VBox {
+public class QueryBoxController {
 
     private static final String[] KEYWORDS = new String[] {
             "SELECT", "FROM", "WHERE", "LIKE", "AND", "LIMIT", "KEY", "TIMESTAMP"
@@ -67,19 +76,67 @@ public class QueryBox extends VBox {
     @FXML
     private CodeArea codeArea;
 
-    private final Subscription codeAreaSubscription;
+    private Subscription codeAreaSubscription;
 
-    public QueryBox() {
+    private final ReadRowsService readRowsService;
 
-        FXMLLoaderUtil.loadFxml("/fxml/query_box.fxml", this);
+    private final ObjectProperty<BigtableInstance> instance = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
+    private final ObjectProperty<SqlQuery> query = new SimpleObjectProperty<>();
 
-        progressBar.setVisible(false);
+    @Inject
+    public QueryBoxController(ReadRowsService readRowsService) {
+        this.readRowsService = readRowsService;
+        tableProperty().bind(Bindings.createObjectBinding(() -> {
+            var instance = this.instance.get();
+            var query = this.query.get();
+            if (instance != null && query != null && query.getTableName() != null) {
+                return new BigtableTable(instance, query.getTableName());
+            }
+            return null;
+        }, instance, query));
+    }
+
+    @FXML
+    public void initialize() {
+        progressBar.visibleProperty().bind(readRowsService.runningProperty());
+        progressBar.progressProperty().bind(readRowsService.progressProperty());
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, this::moveCaretToCorrectPosition);
         codeAreaSubscription = codeArea
                 .multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
+
+    }
+
+    public ObjectProperty<BigtableTable> tableProperty() { return table; }
+
+    public ReadOnlyObjectProperty<List<BigtableRow>> queryResultProperty() { return readRowsService.valueProperty(); }
+
+    public void onExecuteQuery(ActionEvent actionEvent) {
+        try {
+            query.set(new SqlParser().parse(codeArea.getText()));
+            readRowsService.setInstance(instance.get());
+            readRowsService.setQuery(query.get());
+            readRowsService.restart();
+        } catch (Exception ex) {
+            AlertUtil.displayError("Invalid query", ex);
+        }
+    }
+
+    public void setQuery(String sql) {
+        codeArea.clear();
+        codeArea.replaceText(0, 0, sql);
+    }
+
+    public ObjectProperty<BigtableInstance> instanceProperty() {
+        return instance;
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        codeAreaSubscription.unsubscribe();
     }
 
     private void moveCaretToCorrectPosition(KeyEvent keyEvent) {
@@ -91,34 +148,6 @@ public class QueryBox extends VBox {
                 Platform.runLater(() -> codeArea.insertText(caretPosition, matcher.group()));
             }
         }
-    }
-
-    public void setQuery(String sql) {
-        codeArea.clear();
-        codeArea.replaceText(0, 0, sql);
-    }
-
-    public void setOnExecuteQuery(EventHandler<ExecuteQueryAction> eventHandler) {
-        executeQueryButton.setOnAction(actionEvent -> {
-            try {
-                var sqlQuery = new SqlParser().parse(codeArea.getText());
-                eventHandler.handle(new ExecuteQueryAction(sqlQuery));
-            } catch (Exception ex) {
-                var alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid query");
-                alert.setContentText(ex.getLocalizedMessage());
-                alert.showAndWait();
-            }
-        });
-    }
-
-    public ProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    @PreDestroy
-    public void preDestroy() {
-        codeAreaSubscription.unsubscribe();
     }
 
     private static StyleSpans<Collection<String>> computeSyntaxHighlighting(String text) {

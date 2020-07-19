@@ -3,21 +3,21 @@
 <?import javafx.scene.layout.*?>
 <?import org.fxmisc.richtext.CodeArea?>
 
-<fx:root type="VBox"
-         styleClass="queryBox, has-spacing"
-         stylesheets="/css/query_box.css"
-         xmlns:fx="http://javafx.com/fxml">
+<VBox styleClass="queryBox, has-spacing"
+      stylesheets="/css/query_box.css"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.erikmafo.btviewer.components.QueryBoxController">
 
     <CodeArea fx:id="codeArea"/>
     <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
         <Button
                 fx:id="executeQueryButton"
                 text="Execute"
-                styleClass="btn-success"/>
-
+                styleClass="btn-success"
+                onAction="#onExecuteQuery"/>
         <ProgressBar
                 fx:id="progressBar"
                 styleClass="progress-bar-success"/>
     </HBox>
 
-</fx:root>
+</VBox>
