@@ -1,27 +1,28 @@
 package com.erikmafo.btviewer.model;
 
-
-import java.nio.file.Path;
+import com.google.cloud.bigtable.data.v2.models.Query;
 
 public class BigtableReadRequest {
 
-    private final BigtableTable bigtableTable;
-    private final Path credentialsPath;
-    private final BigtableRowRange scan;
+    private final BigtableInstance instance;
+    private final Query query;
+    private final long limit;
 
-    BigtableReadRequest(BigtableTable bigtableTable, Path credentialsPath, BigtableRowRange scan) {
-        this.bigtableTable = bigtableTable;
-        this.credentialsPath = credentialsPath;
-        this.scan = scan;
+    BigtableReadRequest(BigtableInstance instance, Query query, long limit) {
+        this.instance = instance;
+        this.query = query;
+        this.limit = limit;
     }
 
-    public Path getCredentialsPath() {
-        return credentialsPath;
+    public BigtableInstance getInstance() {
+        return instance;
     }
 
-    public BigtableRowRange getScan() {
-        return scan;
+    public Query getQuery() {
+        return query;
     }
 
-    public BigtableTable getBigtableTable() { return bigtableTable; }
+    public long getLimit() {
+        return limit;
+    }
 }

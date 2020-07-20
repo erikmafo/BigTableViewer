@@ -1,10 +1,13 @@
 package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.model.*;
+import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
+import com.erikmafo.btviewer.sql.QueryConverter;
+import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
-import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import javafx.concurrent.Service;
@@ -12,51 +15,55 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReadRowsService extends Service<List<BigtableRow>> {
 
     private final BigtableSettingsProvider settingsProvider;
+    private final AppDataStorage storage;
 
     private BigtableDataClient client;
     private BigtableDataSettings settings;
-    private BigtableReadRequest readRequest;
+
+    private BigtableInstance instance;
+    private SqlQuery query;
 
     @Inject
-    public ReadRowsService(BigtableSettingsProvider settingsProvider) {
+    public ReadRowsService(BigtableSettingsProvider settingsProvider, AppDataStorage storage) {
         this.settingsProvider = settingsProvider;
+        this.storage = storage;
     }
+
+    public void setInstance(BigtableInstance instance) { this.instance = instance; }
+
+    public void setQuery(SqlQuery query) { this.query = query; }
 
     @Override
     protected Task<List<BigtableRow>> createTask() {
+        var instance = this.instance;
+        var sqlQuery = this.query;
+        var tableId = sqlQuery.getTableName();
+
         return new Task<>() {
             @Override
             protected List<BigtableRow> call() throws Exception {
-                var rowIterator = getOrCreateNewClient()
-                        .readRows(createQuery(readRequest))
-                        .iterator();
-
-                var bigtableRows = new ArrayList<BigtableRow>();
+                var tableSettings = storage.getTableSettings(new BigtableTable(instance, tableId));
+                var queryConverter = new QueryConverter(new ByteStringConverterImpl(tableSettings));
+                var btQuery = queryConverter.toBigtableQuery(sqlQuery);
+                var rowIterator = getOrCreateNewClient(instance).readRows(btQuery).iterator();
+                var bigtableRows = new LinkedList<BigtableRow>();
                 while (rowIterator.hasNext()) {
                     bigtableRows.add(toBigtableRow(rowIterator.next()));
-                    updateProgress(bigtableRows.size(), readRequest.getScan().getMaxRows());
+                    updateProgress(bigtableRows.size(), sqlQuery.getLimit());
+                    if (isCancelled()) {
+                        break;
+                    }
                 }
                 return bigtableRows;
             }
         };
-    }
-
-    public void setReadRequest(BigtableReadRequest readRequest) {
-        this.readRequest = readRequest;
-    }
-
-    private static Query createQuery(BigtableReadRequest request) {
-        return Query
-                .create(request.getBigtableTable().getTableId())
-                .range(request.getScan().getFrom(), request.getScan().getTo())
-                .limit(request.getScan().getMaxRows());
     }
 
     private static BigtableRow toBigtableRow(Row row) {
@@ -75,17 +82,14 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
         return new BigtableCell(
                 cell.getFamily(),
                 cell.getQualifier().toStringUtf8(),
-                cell.getValue());
+                cell.getValue(),
+                cell.getTimestamp());
     }
 
-    private BigtableDataClient getOrCreateNewClient() throws IOException {
-        if (readRequest == null) {
+    private BigtableDataClient getOrCreateNewClient(BigtableInstance instance) throws IOException {
+        if (instance == null) {
             throw new IllegalStateException("Cannot list tables when read request is not specified");
         }
-
-        var instance = new BigtableInstance(
-                readRequest.getBigtableTable().getProjectId(),
-                readRequest.getBigtableTable().getInstanceId());
 
         if (instance.equals(getClientInstance())) {
             return client;

@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
 
-<?import com.erikmafo.btviewer.components.RowSelectionView?>
-<?import com.erikmafo.btviewer.components.BigtableTableView?>
-<?import com.erikmafo.btviewer.components.BigtableTablesListView?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.controllers.MainController"
-            stylesheets="/css/main.css">
+            stylesheets="/css/main.css"
+            styleClass="pane-view">
     <top>
         <VBox>
             <fx:include source="bigtable_menu_bar.fxml" fx:id="menuBar"/>
-            <Label fx:id="tableNameLabel" styleClass="title" text="test" alignment="CENTER"/>
         </VBox>
     </top>
     <left>
-        <BigtableTablesListView fx:id="tablesListView"/>
+        <fx:include fx:id="projectExplorer" source="project_explorer.fxml"/>
     </left>
     <center>
-        <BigtableTableView fx:id="bigtableTableView"/>
+        <fx:include fx:id="bigtableView" source="bigtable_view.fxml"/>
     </center>
     <bottom>
-        <RowSelectionView fx:id="rowSelectionView"
-                          BorderPane.alignment="BOTTOM_CENTER" alignment="CENTER"/>
+        <fx:include fx:id="queryBox" source="query_box.fxml"/>
     </bottom>
 </BorderPane>

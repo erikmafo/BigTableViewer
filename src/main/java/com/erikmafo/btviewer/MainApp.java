@@ -19,10 +19,12 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        loader.setControllerFactory(Guice.createInjector(new ServicesModule())::getInstance);
+        var injector = Guice.createInjector(new ServicesModule());
+        loader.setControllerFactory(injector::getInstance);
         Parent root = loader.load();
-        primaryStage.setTitle("Bigtable viewer");
+        primaryStage.setTitle("Bigtable Viewer");
         primaryStage.setScene(new Scene(root, 800, 700));
+        primaryStage.getScene().getStylesheets().add("org/kordamp/bootstrapfx/bootstrapfx.css");
         primaryStage.show();
     }
 

@@ -1,0 +1,17 @@
+@import "main.css"
+
+.keyword {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: purple;
+}
+
+.comment {
+	-fx-fill: green;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}

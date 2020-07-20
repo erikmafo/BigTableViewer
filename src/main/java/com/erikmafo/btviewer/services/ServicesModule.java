@@ -2,47 +2,43 @@ package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.config.AppConfig;
 import com.erikmafo.btviewer.config.ApplicationEnvironment;
-import com.erikmafo.btviewer.services.internal.inmemory.BigtableEmulatorSettingsProvider;
-import com.erikmafo.btviewer.services.internal.inmemory.InMemoryInstanceManager;
-import com.erikmafo.btviewer.services.internal.inmemory.InMemoryTableConfigManager;
-import com.erikmafo.btviewer.services.internal.inmemory.TestDataUtil;
+import com.erikmafo.btviewer.services.internal.BigtableEmulatorSettingsProvider;
+import com.erikmafo.btviewer.services.internal.TestDataUtil;
 import com.erikmafo.btviewer.services.internal.*;
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import com.google.inject.*;
 
-public class ServicesModule implements Module {
+public class ServicesModule extends AbstractModule {
+
+    private final AppConfig config;
+
+    public ServicesModule() {
+        this(AppConfig.load(ApplicationEnvironment.get()));
+    }
+
+    public ServicesModule(AppConfig config) {
+        this.config = config;
+    }
 
     @Override
-    public void configure(Binder binder) {
-        var config = AppConfig.load(ApplicationEnvironment.get());
-
+    protected void configure() {
         if (config.useBigtableEmulator()) {
             var emulatorSettingsProvider = new BigtableEmulatorSettingsProvider();
             emulatorSettingsProvider.startEmulator();
             TestDataUtil.injectWithTestData(emulatorSettingsProvider);
-            binder.bind(BigtableSettingsProvider.class).toInstance(emulatorSettingsProvider);
+            bind(BigtableSettingsProvider.class).toInstance(emulatorSettingsProvider);
         }
         else {
-            binder.bind(BigtableSettingsProvider.class).to(BigtableSettingsProviderImpl.class);
+            bind(BigtableSettingsProvider.class).to(BigtableSettingsProviderImpl.class);
         }
 
-        binder.bind(CredentialsProvider.class).to(DynamicCredentialsProvider.class);
+        bind(CredentialsProvider.class).to(DynamicCredentialsProvider.class);
 
-        if (config.useInMemoryTableConfigManager()) {
-            var inMemoryTableConfigManager = new InMemoryTableConfigManager();
-            binder.bind(TableConfigManager.class).toInstance(inMemoryTableConfigManager);
+        if (config.useInMemoryDatabase()) {
+            bind(AppDataStorage.class).toInstance(AppDataStorageImpl.createInMemory());
         }
         else {
-            binder.bind(TableConfigManager.class).toInstance(new TableConfigManagerImpl());
-        }
-
-        if (config.useInMemoryInstanceManager()) {
-            var inMemoryInstanceManager = new InMemoryInstanceManager();
-            TestDataUtil.injectWithTestData(inMemoryInstanceManager);
-            binder.bind(BigtableInstanceManager.class).toInstance(inMemoryInstanceManager);
-        } else {
-            binder.bind(BigtableInstanceManager.class).toInstance(new BigtableInstanceManagerImpl());
+            bind(AppDataStorage.class).toInstance(AppDataStorageImpl.createInstance());
         }
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.fxmisc.richtext.CodeArea?>
+
+<VBox styleClass="queryBox, has-spacing"
+      stylesheets="/css/query_box.css"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.erikmafo.btviewer.components.QueryBoxController">
+
+    <CodeArea fx:id="codeArea" onKeyPressed="#onKeyPressedInCodeArea"/>
+    <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
+        <Button
+                fx:id="executeQueryButton"
+                text="Execute"
+                styleClass="btn-success"
+                onAction="#onExecuteQueryButtonPressed"/>
+        <ProgressBar
+                fx:id="progressBar"
+                styleClass="progress-bar-success"/>
+    </HBox>
+
+</VBox>

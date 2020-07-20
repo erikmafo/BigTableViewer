@@ -23,6 +23,12 @@ public class BigtableTable {
         this.tableId = tableId;
     }
 
+    public BigtableTable(BigtableInstance instance, String tableId) {
+        this.projectId = instance.getProjectId();
+        this.instanceId = instance.getInstanceId();
+        this.tableId = tableId;
+    }
+
     public String getName() {
         return String.format("projects/%s/instances/%s/tables/%s", projectId, instanceId, tableId);
     }
