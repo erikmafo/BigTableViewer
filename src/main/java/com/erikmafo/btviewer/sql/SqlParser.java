@@ -26,6 +26,9 @@ public class SqlParser {
         private Value whereValue;
 
         void handleNextToken(SqlToken token) {
+            if (token.getTokenType().equals(SqlTokenType.INVALID)) {
+                throw new IllegalArgumentException(token.getError());
+            }
 
             switch (step) {
 

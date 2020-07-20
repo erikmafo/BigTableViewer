@@ -53,11 +53,18 @@ public class SqlTokenizerTest {
         assertEquals("family", token.getValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldFailIfInvalidIdentifier() {
-
+    @Test
+    public void shouldProduceInvalidTokenIfInvalidIdentifier() {
         var reader = new SqlTokenizer("family.");
         reader.next();
-        reader.next();
+        var token = reader.next();
+        assertEquals(SqlTokenType.INVALID, token.getTokenType());
+    }
+
+    @Test
+    public void shouldReturnInvalidTokenGivenInvalidCharacter() {
+        var reader = new SqlTokenizer("§");
+        var token = reader.next();
+        assertEquals(SqlTokenType.INVALID, token.getTokenType());
     }
 }

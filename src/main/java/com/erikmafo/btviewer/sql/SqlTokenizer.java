@@ -14,7 +14,7 @@ public class SqlTokenizer {
     private int position;
 
     public SqlTokenizer(String sql) {
-        this.sql = sql.trim();
+        this.sql = sql;
     }
 
     public SqlToken next() {
@@ -23,29 +23,31 @@ public class SqlTokenizer {
             return null;
         }
 
-        while (Character.isWhitespace(sql.charAt(position))) {
+        if (Character.isWhitespace(sql.charAt(position))) {
             position += 1;
-        }
-
-        if (sql.charAt(position) == QUOTE) {
-            var indexOfNextQuote = sql.indexOf(QUOTE, position + 1);
-            if (indexOfNextQuote < 0) {
-                throw new IllegalArgumentException(String.format("Expected a matching '%s'", QUOTE));
-            }
-            var quotedString = sql.substring(position, indexOfNextQuote + 1);
-            position += quotedString.length();
-            return new SqlToken(quotedString, SqlTokenType.QUOTED_STRING);
+            return next();
         }
 
         var remainingSql = sql.substring(position);
 
+        if (sql.charAt(position) == QUOTE) {
+            var indexOfNextQuote = sql.indexOf(QUOTE, position + 1);
+            if (indexOfNextQuote < 0) {
+                position = sql.length();
+                return new SqlToken(remainingSql, SqlTokenType.INVALID, position, String.format("Expected a matching '%s'", QUOTE));
+            }
+            var quotedString = sql.substring(position, indexOfNextQuote + 1);
+            position += quotedString.length();
+            return new SqlToken(quotedString, SqlTokenType.QUOTED_STRING, position);
+        }
+
         for (var word : ReservedWord.values()) {
             if (word.matchesStartOf(remainingSql)) {
-                if (!word.isSupported()) {
-                    throw new IllegalArgumentException(String.format("'%s' is not supported", word.value()));
-                }
                 position += word.length();
-                return new SqlToken(word.value(), word.tokenType());
+                if (!word.isSupported()) {
+                    return new SqlToken(word.value(), SqlTokenType.INVALID, position, String.format("'%s' is not supported", word.value()));
+                }
+                return new SqlToken(word.value(), word.tokenType(), position);
             }
         }
 
@@ -53,23 +55,24 @@ public class SqlTokenizer {
         if (matcher.find()) {
             var token = remainingSql.substring(matcher.start(), matcher.end());
             position += token.length();
-            return new SqlToken(token, SqlTokenType.IDENTIFIER);
+            return new SqlToken(token, SqlTokenType.IDENTIFIER, position);
         }
 
         matcher = BOOL_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
             var token = remainingSql.substring(matcher.start(), matcher.end());
             position += token.length();
-            return new SqlToken(token, SqlTokenType.BOOL);
+            return new SqlToken(token, SqlTokenType.BOOL, position);
         }
 
         matcher = INTEGER_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
             var token = remainingSql.substring(matcher.start(), matcher.end());
             position += token.length();
-            return new SqlToken(token, SqlTokenType.INTEGER);
+            return new SqlToken(token, SqlTokenType.INTEGER, position);
         }
 
-        throw new IllegalArgumentException(String.format("Unable to parse: '%s'", remainingSql));
+        position = sql.length();
+        return new SqlToken(remainingSql, SqlTokenType.INVALID, position, String.format("Unable to parse: '%s'", remainingSql));
     }
 }

@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.sql;
 
 public enum SqlTokenType {
+    INVALID,
     SELECT,
     IDENTIFIER,
     ASTERISK,

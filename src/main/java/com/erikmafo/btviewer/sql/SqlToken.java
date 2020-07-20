@@ -4,8 +4,14 @@ public class SqlToken {
 
     private final String value;
     private final SqlTokenType tokenType;
+    private final int end;
+    private final String error;
 
-    public SqlToken(String value, SqlTokenType tokenType) {
+    public SqlToken(String value, SqlTokenType tokenType, int end) {
+        this(value, tokenType, end, null);
+    }
+
+    public SqlToken(String value, SqlTokenType tokenType, int end, String error) {
 
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("'value' cannot be null or empty");
@@ -17,6 +23,8 @@ public class SqlToken {
 
         this.value = value;
         this.tokenType = tokenType;
+        this.end = end;
+        this.error = error;
     }
 
     public String getValue() {
@@ -38,4 +46,12 @@ public class SqlToken {
         return tokenType;
     }
 
+    public int getStart() { return end - value.length(); }
+
+    public int getEnd() { return end; }
+
+
+    public String getError() {
+        return error;
+    }
 }

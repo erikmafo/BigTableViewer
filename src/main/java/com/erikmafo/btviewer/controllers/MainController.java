@@ -19,12 +19,14 @@ public class MainController {
     @FXML
     private BigtableViewController bigtableViewController;
 
-    public void initialize() {
-        queryBoxController.instanceProperty().bind(projectExplorerController.selectedInstanceProperty());
+    @FXML
+    private void initialize() {
         bigtableViewController.tableProperty().bind(queryBoxController.tableProperty());
-        queryBoxController.queryResultProperty().addListener((obs, prev, current) ->
-                bigtableViewController.getRows().setAll(current));
-        projectExplorerController.selectedTableProperty().addListener((obs, prev, current) ->
-                queryBoxController.setQuery(SqlQuery.getDefaultSql(current.getTableId())));
+        bigtableViewController.setRows(queryBoxController.getQueryResult());
+        queryBoxController.instanceProperty().bind(projectExplorerController.selectedInstanceProperty());
+        projectExplorerController
+                .selectedTableProperty()
+                .addListener((obs, prev, current) ->
+                        queryBoxController.setQuery(SqlQuery.getDefaultSql(current.getTableId())));
     }
 }

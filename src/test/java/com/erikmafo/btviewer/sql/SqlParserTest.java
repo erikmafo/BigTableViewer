@@ -23,4 +23,9 @@ public class SqlParserTest {
 
         assertEquals(QueryType.SELECT, query.getQueryType());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailGivenInvalidCharacters() {
+        parser.parse("SELECT * FROM 'table-0' LIMIT 100§");
+    }
 }
