@@ -10,8 +10,6 @@ import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
@@ -36,7 +34,6 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
     public ReadRowsService(BigtableSettingsProvider settingsProvider, AppDataStorage storage) {
         this.settingsProvider = settingsProvider;
         this.storage = storage;
-        setOnFailed(stateEvent -> AlertUtil.displayError("Failed to execute query: ", stateEvent));
     }
 
     public void setInstance(BigtableInstance instance) { this.instance = instance; }

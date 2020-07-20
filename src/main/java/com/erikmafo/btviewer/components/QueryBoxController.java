@@ -88,10 +88,12 @@ public class QueryBoxController {
     @FXML
     private void onExecuteQueryButtonPressed(ActionEvent actionEvent) {
         try {
+            queryResult.clear();
             query.set(new SqlParser().parse(codeArea.getText()));
             readRowsService.setInstance(instance.get());
             readRowsService.setQuery(query.get());
             readRowsService.setOnSucceeded(event -> queryResult.setAll(readRowsService.getValue()));
+            readRowsService.setOnFailed(stateEvent -> Platform.runLater(() -> AlertUtil.displayError("Failed to execute query: ", stateEvent)));
             readRowsService.restart();
         } catch (Exception ex) {
             AlertUtil.displayError("Invalid query", ex);
