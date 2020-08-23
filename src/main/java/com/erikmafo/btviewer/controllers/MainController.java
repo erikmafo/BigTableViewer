@@ -11,6 +11,9 @@ import javafx.fxml.FXML;
 public class MainController {
 
     @FXML
+    private MenuBarController menuBarController;
+
+    @FXML
     private QueryBoxController queryBoxController;
 
     @FXML

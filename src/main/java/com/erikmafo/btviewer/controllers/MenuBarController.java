@@ -27,7 +27,9 @@ public class MenuBarController {
     private MenuBar menuBar;
 
     @Inject
-    public MenuBarController(LoadCredentialsPathService loadCredentialsPathService, SaveCredentialsPathService saveCredentialsPathService) {
+    public MenuBarController(
+            LoadCredentialsPathService loadCredentialsPathService,
+            SaveCredentialsPathService saveCredentialsPathService) {
         this.loadCredentialsPathService = loadCredentialsPathService;
         this.saveCredentialsPathService = saveCredentialsPathService;
     }
