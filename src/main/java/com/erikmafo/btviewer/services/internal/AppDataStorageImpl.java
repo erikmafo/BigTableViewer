@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.mapdb.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -29,11 +31,18 @@ public class AppDataStorageImpl implements AppDataStorage {
     }
 
     public static AppDataStorage createInstance() {
-        var path = AppDataUtil
-                .getStorageFolder()
-                .resolve("database");
+        var storageDir = AppDataUtil.getStorageFolder();
+        if (!Files.exists(storageDir)) {
+            try {
+                Files.createDirectories(storageDir);
+            } catch (IOException e) {
+                return createInMemory();
+            }
+        }
+
+        var dbFile = storageDir.resolve("database").toFile();
         var database = DBMaker
-                .fileDB(path.toFile())
+                .fileDB(dbFile)
                 .transactionEnable()
                 .closeOnJvmShutdown()
                 .make();

@@ -8,7 +8,7 @@
             styleClass="pane-view">
     <top>
         <VBox>
-            <fx:include source="bigtable_menu_bar.fxml" fx:id="menuBar"/>
+            <fx:include fx:id="menuBar" source="bigtable_menu_bar.fxml"/>
         </VBox>
     </top>
     <left>
