@@ -10,7 +10,6 @@ import java.io.IOException;
 
 public class BigtableSettingsProviderImpl implements BigtableSettingsProvider {
 
-    private static final String BIGTABLE_VIEWER = "bigtable-viewer";
     private final CredentialsProvider credentialsProvider;
 
     @Inject
@@ -30,7 +29,6 @@ public class BigtableSettingsProviderImpl implements BigtableSettingsProvider {
     @Override
     public BigtableDataSettings getDataSettings(BigtableInstance instance) {
         return BigtableDataSettings.newBuilder()
-                .setAppProfileId(BIGTABLE_VIEWER)
                 .setCredentialsProvider(credentialsProvider)
                 .setProjectId(instance.getProjectId())
                 .setInstanceId(instance.getInstanceId())
