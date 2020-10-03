@@ -13,5 +13,7 @@
             mnemonicParsing="false"
             text="Table Settings"
             styleClass="btn"/>
-    <TableView fx:id="tableView" VBox.vgrow="ALWAYS"/>
+    <TableView fx:id="tableView"
+               onKeyPressed="#onTableViewKeyPressed"
+               VBox.vgrow="ALWAYS"/>
 </VBox>

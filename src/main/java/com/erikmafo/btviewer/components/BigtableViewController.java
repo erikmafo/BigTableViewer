@@ -4,16 +4,17 @@ import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.services.LoadTableSettingsService;
 import com.erikmafo.btviewer.services.SaveTableSettingsService;
 import com.erikmafo.btviewer.util.AlertUtil;
+import com.sun.javafx.PlatformUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,14 @@ public class BigtableViewController {
     public void initialize() {
         vBox.visibleProperty().bind(tableProperty().isNotNull());
         tableView.getColumns().add(createRowKeyColumn());
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setAutoHide(true);
+        MenuItem copy = new MenuItem("Copy");
+        copy.setOnAction(actionEvent -> copySelectedCellsToClipboard());
+        contextMenu.getItems().add(copy);
+        tableView.setContextMenu(contextMenu);
         tableSettings.bind(loadTableSettingsService.valueProperty());
         tableProperty().addListener((obs, prev, current) -> {
             loadTableSettingsService.setTable(current);
@@ -86,6 +95,49 @@ public class BigtableViewController {
         TableSettingsDialog
                 .displayAndAwaitResult(getColumns(), tableSettings.getValue())
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table.get(), configuration));
+    }
+
+    @FXML
+    private void onTableViewKeyPressed(KeyEvent keyEvent) {
+        if (isCopyOperation(keyEvent)) {
+            copySelectedCellsToClipboard();
+        }
+    }
+
+    private boolean isCopyOperation(KeyEvent keyEvent) {
+        return PlatformUtil.isMac() ?
+                keyEvent.getCode() == KeyCode.C && keyEvent.isMetaDown() :
+                keyEvent.getCode() == KeyCode.C && keyEvent.isControlDown();
+    }
+
+    private void copySelectedCellsToClipboard() {
+        var selectedCells = tableView.getSelectionModel().getSelectedCells();
+        var content = selectedCells
+                .stream()
+                .collect(Collectors.groupingBy(TablePositionBase::getRow))
+                .values()
+                .stream()
+                .map(cells -> cells
+                        .stream()
+                        .map(this::getCellValue)
+                        .collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
+
+        var clipboardContent = new ClipboardContent();
+        clipboardContent.putString(content);
+        Clipboard.getSystemClipboard().setContent(clipboardContent);
+    }
+
+    private String getCellValue(TablePosition position) {
+        var row = tableView.getItems().get(position.getRow());
+        if (position.getColumn() == 0) {
+            return row.getRowKey();
+        }
+
+        var family = position.getTableColumn().getParentColumn().getText();
+        var qualifier = position.getTableColumn().getText();
+
+        return row.getCellValue(family, qualifier, valueConverter.get()).toString();
     }
 
     private TableColumn<BigtableRow, ?> createRowKeyColumn() {
