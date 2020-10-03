@@ -4,7 +4,7 @@ matrix:
       language: shell
       before_install:
         - choco install wixtoolset --version 3.10.3.300701
-        - choco install -y openjdk --version 11.0.2
+        - choco install -y openjdk11
         - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11.0.2"
         - export PATH="$JAVA_HOME/bin:$PATH"
         - choco install maven --version 3.5.0
