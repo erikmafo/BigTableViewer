@@ -55,4 +55,12 @@ public class SqlQuery {
     public int getLimit() {
         return limit;
     }
+
+    public SqlQuery ensureValid() {
+        if (tableName == null) {
+            throw new IllegalArgumentException("Missing table name");
+        }
+
+        return this;
+    }
 }

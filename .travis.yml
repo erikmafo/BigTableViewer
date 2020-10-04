@@ -4,12 +4,12 @@ matrix:
       language: shell
       before_install:
         - choco install wixtoolset --version 3.10.3.300701
-        - choco install -y openjdk --version 11.0.1
-        - export JAVA_HOME="/c/Program Files/OpenJDK/jdk-11.0.1"
+        - choco install openjdk11 --version 11.0.8.10
+        - export JAVA_HOME="/c/Program Files/OpenJDK/openjdk-11.0.8_10"
         - export PATH="$JAVA_HOME/bin:$PATH"
         - choco install maven --version 3.5.0
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip
-        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_windows-x64_bin-jmods.zip
+        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_windows-x64_bin-jmods.zip
         - unzip jpackager.zip
         - unzip javafxmods.zip
         - mv jpackager.exe "${JAVA_HOME}/bin"
@@ -21,7 +21,7 @@ matrix:
       jdk: openjdk11
       before_install:
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip
-        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_osx-x64_bin-jmods.zip
+        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_osx-x64_bin-jmods.zip
         - unzip jpackager.zip
         - unzip javafxmods.zip
     - os: linux
@@ -30,7 +30,7 @@ matrix:
       before_install:
         - sudo apt-get install fakeroot
         - curl -o jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip
-        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.1/openjfx-11.0.1_linux-x64_bin-jmods.zip
+        - curl -o javafxmods.zip http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-jmods.zip
         - unzip jpackager.zip
         - unzip javafxmods.zip
 deploy:

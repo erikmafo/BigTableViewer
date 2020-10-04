@@ -43,7 +43,7 @@ public class ByteStringConverterImpl implements ByteStringConverter {
             case "INTEGER":
                 byteString = ByteStringConverterUtil.toByteString(value.asInt());
                 break;
-            default: throw new AssertionError();
+            default: throw new AssertionError("Value type " + valueType.toUpperCase() + " is not supported");
         }
 
         return byteString;

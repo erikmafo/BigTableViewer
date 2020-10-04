@@ -89,7 +89,7 @@ public class QueryBoxController {
     private void onExecuteQueryButtonPressed(ActionEvent actionEvent) {
         try {
             queryResult.clear();
-            query.set(new SqlParser().parse(codeArea.getText()));
+            query.set(new SqlParser().parse(codeArea.getText()).ensureValid());
             readRowsService.setInstance(instance.get());
             readRowsService.setQuery(query.get());
             readRowsService.setOnSucceeded(event -> queryResult.setAll(readRowsService.getValue()));

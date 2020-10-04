@@ -8,7 +8,7 @@ public class Field {
     public Field(String name) {
 
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("'name' cannot be null or empty");
+            throw new IllegalArgumentException("Field name cannot be null or empty");
         }
 
         this.name = name;
@@ -29,22 +29,28 @@ public class Field {
     }
 
     public String getFamily() {
-        return getParts()[0];
+        return getFamilyAndQualifier()[0];
+    }
+
+    public void ensureHasFamilyAndQualifier() {
+        if (getFamilyAndQualifier().length != 2) {
+            throw new IllegalArgumentException("Field name was not on the format {family}.{qualifier}");
+        }
     }
 
     public boolean hasQualifier() {
-        return getParts().length > 1;
+        return getFamilyAndQualifier().length > 1;
     }
 
     public String getQualifier() {
-        var parts = getParts();
-        if (parts.length > 1) {
-            return parts[1];
+        var parts = getFamilyAndQualifier();
+        if (parts.length != 2) {
+            return null;
         }
-        return null;
+        return parts[1];
     }
 
-    private String[] getParts() {
+    private String[] getFamilyAndQualifier() {
         return name.split("\\.");
     }
 }

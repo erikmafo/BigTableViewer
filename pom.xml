@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>bigtableviewer</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11</version>
     <packaging>jar</packaging>
     <name>bigtableviewer</name>
 
@@ -99,7 +99,7 @@
                         <configuration>
                             <executable>${java.home}/bin/jlink</executable>
                             <arguments>
-                                <argument>--module-path=javafx-jmods-11.0.1/</argument>
+                                <argument>--module-path=javafx-jmods-11.0.2/</argument>
                                 <argument>--add-modules=java.base</argument>
                                 <argument>--add-modules=java.prefs</argument>
                                 <argument>--add-modules=java.desktop</argument>
@@ -191,23 +191,23 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-bigtable</artifactId>
-            <version>1.13.0</version>
+            <version>1.15.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-bigtable-emulator</artifactId>
-            <version>0.122.0</version>
+            <version>0.124.0</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>11.0.1</version>
+            <version>11.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11.0.1</version>
+            <version>11.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
