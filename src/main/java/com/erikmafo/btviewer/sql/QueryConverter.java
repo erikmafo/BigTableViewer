@@ -101,10 +101,10 @@ public class QueryConverter {
     private Filters.Filter getValueFilter(WhereClause where) {
         var condition = FILTERS.chain()
                 .filter(FILTERS.chain()
-                        .filter(getFamilyQualifierFilter(where.getField()))
+                        .filter(FILTERS.family().exactMatch(where.getField().getFamily()))
+                        .filter(FILTERS.qualifier().exactMatch(where.getField().getQualifier()))
                         .filter(getValueFilterCore(where))
-                        .filter(FILTERS.limit().cellsPerColumn(1)))
-                .filter(FILTERS.offset().cellsPerRow(1));
+                        .filter(FILTERS.limit().cellsPerColumn(1)));
         return FILTERS
                 .condition(condition)
                 .then(FILTERS.pass())
