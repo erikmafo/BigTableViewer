@@ -24,8 +24,8 @@ jobs:
         run: |
           curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
           curl -o javafxmods.zip ${{ matrix.jfxmodsDownloadUrl }}
-          unzip jpackager.zip -d ${{ JAVA_HOME/bin }}
-          unzip javafxmods.zip -d ${{ JAVA_HOME/bin }}
+          unzip jpackager.zip -d "${JAVA_HOME}/bin"
+          unzip javafxmods.zip -d "${JAVA_HOME}/bin"
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Java JDK
