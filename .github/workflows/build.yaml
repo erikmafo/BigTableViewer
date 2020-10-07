@@ -33,4 +33,4 @@ jobs:
         with:
           java-version: 11
       - name: Install with maven
-        run: mvn -B install
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
