@@ -2,6 +2,7 @@ on: [push]
 
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
@@ -18,10 +19,6 @@ jobs:
           display-name: 'osx'
           jpackagerDownloadUrl: 'jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
           jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_osx-x64_bin-jmods.zip'
-
-    runs-on: $ {{ matrix.os }}
-    name: Install on ${{ matrix.os }}
-
     steps:
       - name: Download javafx tools
         run: |
@@ -37,4 +34,3 @@ jobs:
           java-version: 11
       - name: Install with maven
         run: mvn -B install
-
