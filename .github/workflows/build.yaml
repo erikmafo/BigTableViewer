@@ -17,7 +17,7 @@ jobs:
           jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-jmods.zip'
         - os: macos-latest
           display-name: 'osx'
-          jpackagerDownloadUrl: 'jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
+          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
           jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_osx-x64_bin-jmods.zip'
     steps:
       - name: Download javafx tools
