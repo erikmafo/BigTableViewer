@@ -1,38 +1,40 @@
 on: [push]
 
-strategy:
-  matrix:
-    os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
-    include:
-    - os: windows-latest
-      display-name: 'windows'
-      jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
-      jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_windows-x64_bin-jmods.zip'
-    - os: ubuntu-latest
-      display-name: 'linux'
-      jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
-      jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-jmods.zip'
-    - os: macos-latest
-      display-name: 'osx'
-      jpackagerDownloadUrl: 'jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
-      jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_osx-x64_bin-jmods.zip'
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
+        include:
+        - os: windows-latest
+          display-name: 'windows'
+          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
+          jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_windows-x64_bin-jmods.zip'
+        - os: ubuntu-latest
+          display-name: 'linux'
+          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
+          jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-jmods.zip'
+        - os: macos-latest
+          display-name: 'osx'
+          jpackagerDownloadUrl: 'jpackager.zip http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
+          jfxmodsDownloadUrl: 'http://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_osx-x64_bin-jmods.zip'
 
-runs-on: $ {{ matrix.os }}
-name: Install on ${{ matrix.os }}
+    runs-on: $ {{ matrix.os }}
+    name: Install on ${{ matrix.os }}
 
-steps:
-  - name: Download javafx tools
-    run: |
-      curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-      curl -o javafxmods.zip ${{ matrix.jfxmodsDownloadUrl }}
-      unzip jpackager.zip
-      unzip javafxmods.zip
-  - name: Checkout repository
-    uses: actions/checkout@v2
-  - name: Setup Java JDK
-    uses: actions/setup-java@v1.3.0
-    with:
-      java-version: 11
-  - name: Install with maven
-    run: mvn -B install
+    steps:
+      - name: Download javafx tools
+        run: |
+          curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
+          curl -o javafxmods.zip ${{ matrix.jfxmodsDownloadUrl }}
+          unzip jpackager.zip
+          unzip javafxmods.zip
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: 11
+      - name: Install with maven
+        run: mvn -B install
 
