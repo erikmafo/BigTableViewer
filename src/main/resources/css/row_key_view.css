@@ -1,0 +1,5 @@
+.bigtable-row-key {
+    -fx-padding: 5px 0 0 20px;
+    -fx-border-insets: 5px;
+    -fx-background-insets: 5px;
+}

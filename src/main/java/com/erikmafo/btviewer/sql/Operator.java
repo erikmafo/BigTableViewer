@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public enum Operator {
     EQUAL("="),
+    NOT_EQUAL("!="),
     LESS_THAN("<"),
     LESS_THAN_OR_EQUAL("<="),
     GREATER_THAN(">"),
