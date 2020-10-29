@@ -10,7 +10,7 @@ jobs:
         include:
         - os: windows-latest
           display-name: 'windows'
-         - os: ubuntu-latest
+        - os: ubuntu-latest
           display-name: 'linux'
         - os: macos-latest
           display-name: 'osx'
