@@ -9,6 +9,7 @@ public enum ReservedWord {
     WHERE("WHERE", SqlTokenType.WHERE, true),
     AND("AND", SqlTokenType.AND, true),
     EQ("=", SqlTokenType.OPERATOR, false),
+    NEQ("!=", SqlTokenType.OPERATOR, false),
     GEQ(">=", SqlTokenType.OPERATOR, false),
     GT(">", SqlTokenType.OPERATOR, false),
     LEQ("<=", SqlTokenType.OPERATOR, false),

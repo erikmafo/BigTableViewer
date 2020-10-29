@@ -6,14 +6,23 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.erikmafo.btviewer.components.BigtableViewController"
       fx:id="vBox"
-      stylesheets="/css/main.css"
+      stylesheets="/css/bigtable_view.css"
       styleClass="has-spacing">
-    <Button fx:id="tableSettingsButton"
-            onAction="#handleTableSettingsButtonPressed"
-            mnemonicParsing="false"
-            text="Table Settings"
-            styleClass="btn"/>
-    <TableView fx:id="tableView"
-               onKeyPressed="#onTableViewKeyPressed"
-               VBox.vgrow="ALWAYS"/>
+    <HBox maxWidth="Infinity">
+        <Button fx:id="tableSettingsButton"
+                onAction="#handleTableSettingsButtonPressed"
+                mnemonicParsing="false"
+                text="Table Settings"
+                styleClass="btn"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <CheckBox fx:id="timestampsCheckBox"
+                  text="Display timestamps"/>
+    </HBox>
+    <TreeTableView fx:id="tableView"
+                   onKeyPressed="#onTableViewKeyPressed"
+                   VBox.vgrow="ALWAYS">
+        <columnResizePolicy>
+            <TreeTableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TreeTableView>
 </VBox>
