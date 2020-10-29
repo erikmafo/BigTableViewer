@@ -18,6 +18,31 @@
         <name>com.erikmafo</name>
     </organization>
 
+    <profiles>
+        <profile>
+            <id>Windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <script.extension>exe</script.extension>
+            </properties>
+        </profile>
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <script.extension>sh</script.extension>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -125,7 +150,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>jpackager</executable>
+                            <executable>./jpackager.${script.extension}</executable>
                             <arguments>
                                 <argument>create-installer</argument>
                                 <argument>--runtime-image</argument>
