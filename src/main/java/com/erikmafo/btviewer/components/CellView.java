@@ -59,7 +59,7 @@ public class CellView extends BorderPane {
     private String getDisplayValue() {
 
         if (cell.getValue() == null) {
-            return "N/A";
+            return "null";
         }
 
         if (valueConverter.getValue() == null) {

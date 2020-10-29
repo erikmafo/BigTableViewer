@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Label?>
+<fx:root type="Pane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         styleClass="container"
+         stylesheets="/css/row_key_view.css">
+
+    <Label fx:id="rowKeyLabel"
+           styleClass="bigtable-row-key"/>
+
+</fx:root>

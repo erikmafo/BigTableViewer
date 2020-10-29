@@ -12,6 +12,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
@@ -106,8 +107,6 @@ public class BigtableViewController {
                 .map(BigtableRowTreeItem::new)
                 .collect(Collectors.toList());
         root.getChildren().setAll(treeItems);
-
-        tableView.resizeColumn(rowKeyColumn, 20);
     }
 
     public SimpleObjectProperty<BigtableTable> tableProperty() {
@@ -167,6 +166,7 @@ public class BigtableViewController {
     private TreeTableColumn<BigtableRow, String> createRowKeyColumn() {
         TreeTableColumn<BigtableRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
+        tableColumn.setCellFactory(new RowCellFactory());
         return tableColumn;
     }
 
@@ -248,6 +248,26 @@ public class BigtableViewController {
         @Override
         public ObservableValue<BigtableCell> call(TreeTableColumn.CellDataFeatures<BigtableRow, BigtableCell> param) {
             return new ReadOnlyObjectWrapper<>(param.getValue().getValue().getLatestCell(family, qualifier));
+        }
+    }
+
+    static class RowCellFactory implements Callback<TreeTableColumn<BigtableRow, String>, TreeTableCell<BigtableRow, String>> {
+
+        @Override
+        public TreeTableCell<BigtableRow, String> call(TreeTableColumn<BigtableRow, String> column) {
+            return new TreeTableCell<>() {
+                @Override
+                protected void updateItem(String rowKey, boolean empty) {
+                    super.updateItem(rowKey, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        var rowKeyView = getGraphic() != null ? (RowKeyView) getGraphic() : new RowKeyView();
+                        rowKeyView.setRowKey(rowKey);
+                        setGraphic(rowKeyView);
+                    }
+                }
+            };
         }
     }
 
