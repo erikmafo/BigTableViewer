@@ -27,7 +27,7 @@
                 </os>
             </activation>
             <properties>
-                <jpackager.executable>./jpackager.exe</jpackager.executable>
+                <jpackager.executable>jpackager.exe</jpackager.executable>
             </properties>
         </profile>
         <profile>
