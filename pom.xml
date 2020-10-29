@@ -150,7 +150,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${jpackager.executable}</executable>
+                            <executable>jpackage</executable>
                             <arguments>
                                 <argument>create-installer</argument>
                                 <argument>--runtime-image</argument>
