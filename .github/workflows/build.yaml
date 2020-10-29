@@ -19,9 +19,9 @@ jobs:
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
     steps:
       - name: Download jpackager
-          run: |
-            curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-            unzip jpackager.zip
+        run: |
+          curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
+          unzip jpackager.zip
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Java JDK
