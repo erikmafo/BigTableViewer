@@ -39,18 +39,28 @@ public class TestDataUtil {
                     .addFamily("f2")
                     .addFamily("f3"));
             var dataSettings = settingsProvider.getDataSettings(instance);
-            try(var dataClient = BigtableDataClient.create(dataSettings)) {
-                for (int i = 0; i < 1000; i++) {
-                    var rowKey = "row-" + String.format("%04d", i);
-                    var mutation = RowMutation
-                            .create(tableName, rowKey)
-                            .setCell("f1", "q1", "string-" + i)
-                            .setCell("f1", toByteString("q2"), toByteString(i))
-                            .setCell("f1", toByteString("q3"), toByteString(i + 0.5))
-                            .setCell("f2", toByteString("q4"), toByteString("string-" + i))
-                            .setCell("f3", toByteString("q5"), toByteString("string-" + i));
-                    dataClient.mutateRow(mutation);
-                }
+            addData(tableName, dataSettings);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            addData(tableName, dataSettings);
+        }
+    }
+
+    private static void addData(String tableName, com.google.cloud.bigtable.data.v2.BigtableDataSettings dataSettings) throws IOException {
+        try(var dataClient = BigtableDataClient.create(dataSettings)) {
+            for (int i = 0; i < 1000; i++) {
+                var rowKey = "row-" + String.format("%04d", i);
+                var mutation = RowMutation
+                        .create(tableName, rowKey)
+                        .setCell("f1", "q1", "string-" + i)
+                        .setCell("f1", toByteString("q2"), toByteString(i))
+                        .setCell("f1", toByteString("q3"), toByteString(i + 0.5))
+                        .setCell("f2", toByteString("q4"), toByteString("string-" + i))
+                        .setCell("f3", toByteString("q5"), toByteString("string-" + i));
+                dataClient.mutateRow(mutation);
             }
         }
     }

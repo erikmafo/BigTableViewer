@@ -11,11 +11,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -28,17 +28,23 @@ public class BigtableViewController {
     private static final String ROW_KEY = "key";
 
     @FXML
+    private CheckBox timestampsCheckBox;
+
+    @FXML
     private VBox vBox;
 
     @FXML
     private Button tableSettingsButton;
 
     @FXML
-    private TableView<BigtableRow> tableView;
+    private TreeTableView<BigtableRow> tableView;
+
+    private final BigtableRowTreeItem root;
 
     private final SimpleObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<BigtableTableSettings> tableSettings = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<BigtableValueConverter> valueConverter = new SimpleObjectProperty<>();
+    private final BooleanProperty displayTimestamps = new SimpleBooleanProperty(false);
 
     private final SaveTableSettingsService saveTableSettingsService;
     private final LoadTableSettingsService loadTableSettingsService;
@@ -47,6 +53,7 @@ public class BigtableViewController {
     public BigtableViewController(
             SaveTableSettingsService saveTableSettingsService,
             LoadTableSettingsService loadTableSettingsService) {
+        this.root = new BigtableRowTreeItem(null);
         this.saveTableSettingsService = saveTableSettingsService;
         this.loadTableSettingsService = loadTableSettingsService;
         valueConverter.bind(Bindings.createObjectBinding(this::createValueConverter, tableSettings));
@@ -56,34 +63,51 @@ public class BigtableViewController {
     @FXML
     public void initialize() {
         vBox.visibleProperty().bind(tableProperty().isNotNull());
+        tableView.setRoot(root);
+        tableView.setShowRoot(false);
         tableView.getColumns().add(createRowKeyColumn());
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.setAutoHide(true);
-        MenuItem copy = new MenuItem("Copy");
-        copy.setOnAction(actionEvent -> copySelectedCellsToClipboard());
-        contextMenu.getItems().add(copy);
-        tableView.setContextMenu(contextMenu);
+        tableView.setContextMenu(createTableViewContextMenu());
         tableSettings.bind(loadTableSettingsService.valueProperty());
         tableProperty().addListener((obs, prev, current) -> {
             loadTableSettingsService.setTable(current);
             loadTableSettingsService.restart();
         });
+        displayTimestamps.bind(timestampsCheckBox.selectedProperty());
+    }
+
+    @NotNull
+    private ContextMenu createTableViewContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setAutoHide(true);
+        MenuItem copy = new MenuItem("Copy");
+        copy.setOnAction(actionEvent -> copySelectedCellsToClipboard());
+        contextMenu.getItems().add(copy);
+        return contextMenu;
     }
 
     public void setRows(ObservableList<BigtableRow> rows) {
-        rows.addListener((ListChangeListener<BigtableRow>) change -> {
-            tableView.getColumns().clear();
-            tableView.getColumns().add(createRowKeyColumn());
-            while (change.next()) {
-                change.getAddedSubList()
-                        .stream()
-                        .flatMap(r -> r.getCells().stream())
-                        .forEach(cell -> addColumn(cell.getFamily(), cell.getQualifier()));
-            }
-        });
-        tableView.setItems(rows);
+        rows.addListener(this::onBigtableRowsChange);
+    }
+
+    private void onBigtableRowsChange(ListChangeListener.Change<? extends BigtableRow> change) {
+        tableView.getColumns().clear();
+        var rowKeyColumn = createRowKeyColumn();
+        tableView.getColumns().add(rowKeyColumn);
+        while (change.next()) {
+            change.getAddedSubList()
+                    .stream()
+                    .flatMap(r -> r.getCells().stream())
+                    .forEach(cell -> addColumn(cell.getFamily(), cell.getQualifier()));
+        }
+        var treeItems = change.getList()
+                .stream()
+                .map(BigtableRowTreeItem::new)
+                .collect(Collectors.toList());
+        root.getChildren().setAll(treeItems);
+
+        tableView.resizeColumn(rowKeyColumn, 20);
     }
 
     public SimpleObjectProperty<BigtableTable> tableProperty() {
@@ -128,8 +152,8 @@ public class BigtableViewController {
         Clipboard.getSystemClipboard().setContent(clipboardContent);
     }
 
-    private String getCellValue(TablePosition position) {
-        var row = tableView.getItems().get(position.getRow());
+    private String getCellValue(TreeTablePosition<BigtableRow, ?> position) {
+        var row = (BigtableRow)position.getTreeItem().getValue();
         if (position.getColumn() == 0) {
             return row.getRowKey();
         }
@@ -140,12 +164,9 @@ public class BigtableViewController {
         return row.getCellValue(family, qualifier, valueConverter.get()).toString();
     }
 
-    private TableColumn<BigtableRow, ?> createRowKeyColumn() {
-        TableColumn<BigtableRow, Object> tableColumn = new TableColumn<>(ROW_KEY);
-        tableColumn.setCellValueFactory(param -> {
-            var bigtableRow = param.getValue();
-            return new ReadOnlyObjectWrapper<>(bigtableRow.getRowKey());
-        });
+    private TreeTableColumn<BigtableRow, String> createRowKeyColumn() {
+        TreeTableColumn<BigtableRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
+        tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
         return tableColumn;
     }
 
@@ -154,7 +175,7 @@ public class BigtableViewController {
         var qualifierColumn = getQualifierTableColumn(family, qualifier);
 
         if (familyColumn == null) {
-            familyColumn = new TableColumn<>(family);
+            familyColumn = new TreeTableColumn<BigtableRow, String>(family);
             familyColumn.getColumns().add(qualifierColumn);
             tableView.getColumns().add(familyColumn);
         } else if (familyColumn.getColumns().stream().noneMatch(c -> c.getText().equals(qualifier))) {
@@ -162,16 +183,14 @@ public class BigtableViewController {
         }
     }
 
-    private TableColumn<BigtableRow, Object> getQualifierTableColumn(String family, String qualifier) {
-        TableColumn<BigtableRow, Object> qualifierColumn = new TableColumn<>(qualifier);
-        qualifierColumn.setCellValueFactory(param -> {
-            var cell = param.getValue().getLatestCell(family, qualifier);
-            return new ReadOnlyObjectWrapper<>(valueConverter.get().convert(cell));
-        });
+    private TreeTableColumn<BigtableRow, BigtableCell> getQualifierTableColumn(String family, String qualifier) {
+        TreeTableColumn<BigtableRow, BigtableCell> qualifierColumn = new TreeTableColumn<>(qualifier);
+        qualifierColumn.setCellValueFactory(new CellValueFactory(family, qualifier));
+        qualifierColumn.setCellFactory(new CellFactory());
         return qualifierColumn;
     }
 
-    private TableColumn<BigtableRow, ?> getFamilyTableColumn(String family) {
+    private TreeTableColumn<BigtableRow, ?> getFamilyTableColumn(String family) {
         return tableView.getColumns()
                 .stream()
                 .filter(c -> c.getText().equals(family))
@@ -215,4 +234,43 @@ public class BigtableViewController {
                 new BigtableValueConverter(settings.getCellDefinitions()) :
                 new BigtableValueConverter(Collections.emptyList());
     }
+
+    static class CellValueFactory implements Callback<TreeTableColumn.CellDataFeatures<BigtableRow, BigtableCell>, ObservableValue<BigtableCell>>
+    {
+        private final String family;
+        private final String qualifier;
+
+        CellValueFactory(String family, String qualifier) {
+            this.family = family;
+            this.qualifier = qualifier;
+        }
+
+        @Override
+        public ObservableValue<BigtableCell> call(TreeTableColumn.CellDataFeatures<BigtableRow, BigtableCell> param) {
+            return new ReadOnlyObjectWrapper<>(param.getValue().getValue().getLatestCell(family, qualifier));
+        }
+    }
+
+    class CellFactory implements Callback<TreeTableColumn<BigtableRow, BigtableCell>, TreeTableCell<BigtableRow, BigtableCell>>
+    {
+        @Override
+        public TreeTableCell<BigtableRow, BigtableCell> call(TreeTableColumn<BigtableRow, BigtableCell> column) {
+            return new TreeTableCell<>() {
+                @Override
+                protected void updateItem(BigtableCell item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        CellView cellView = getGraphic() != null ? (CellView) getGraphic() : new CellView();
+                        cellView.setBigtableCell(item);
+                        cellView.valueConverterProperty().bind(valueConverter);
+                        cellView.displayTimestampProperty().bind(displayTimestamps);
+                        setGraphic(cellView);
+                    }
+                }
+            };
+        }
+    }
+
 }

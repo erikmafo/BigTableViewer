@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.sql;
 import com.google.cloud.bigtable.data.v2.models.Filters;
 import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Range;
+import com.google.protobuf.ByteString;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -99,37 +100,53 @@ public class QueryConverter {
     }
 
     private Filters.Filter getValueFilter(WhereClause where) {
-        var condition = FILTERS.chain()
-                .filter(FILTERS.chain()
-                        .filter(FILTERS.family().exactMatch(where.getField().getFamily()))
-                        .filter(FILTERS.qualifier().exactMatch(where.getField().getQualifier()))
-                        .filter(getValueFilterCore(where))
-                        .filter(FILTERS.limit().cellsPerColumn(1)));
-        return FILTERS
-                .condition(condition)
-                .then(FILTERS.pass())
-                .otherwise(FILTERS.block());
-    }
+        var byteString = getValueByteString(where);
+        var trueFilter = FILTERS.pass();
+        var falseFilter = FILTERS.block();
+        Filters.Filter valueFilter;
 
-    private Filters.Filter getValueFilterCore(WhereClause where) {
-        var valueAsByteString = byteStringConverter.toByteString(where.getField(), where.getValue());
         switch (where.getOperator()) {
+            case NOT_EQUAL:
+                trueFilter = FILTERS.block();
+                falseFilter = FILTERS.pass();
             case EQUAL:
-                return FILTERS.value().exactMatch(valueAsByteString);
+                valueFilter = FILTERS.value().exactMatch(byteString);
+                break;
             case LESS_THAN:
-                return FILTERS.value().range().endOpen(valueAsByteString);
+                valueFilter = FILTERS.value().range().endOpen(byteString);
+                break;
             case LESS_THAN_OR_EQUAL:
-                return FILTERS.value().range().endClosed(valueAsByteString);
+                valueFilter = FILTERS.value().range().endClosed(byteString);
+                break;
             case GREATER_THAN:
-                return FILTERS.value().range().startOpen(valueAsByteString);
+                valueFilter = FILTERS.value().range().startOpen(byteString);
+                break;
             case GREATER_THAN_OR_EQUAL:
-                return FILTERS.value().range().startClosed(valueAsByteString);
+                valueFilter = FILTERS.value().range().startClosed(byteString);
+                break;
             case LIKE:
-                return FILTERS.value().regex(where.getValue().asString());
+                valueFilter = FILTERS.value().regex(where.getValue().asString());
+                break;
             default:
                 throw new IllegalArgumentException(
                         String.format("operator %s is not supported for filtering values", where.getOperator()));
         }
+
+        var condition = FILTERS.chain()
+                .filter(FILTERS.chain()
+                        .filter(FILTERS.limit().cellsPerColumn(1))
+                        .filter(FILTERS.family().exactMatch(where.getField().getFamily()))
+                        .filter(FILTERS.qualifier().exactMatch(where.getField().getQualifier()))
+                        .filter(valueFilter)
+                        .filter(FILTERS.limit().cellsPerRow(1)));
+        return FILTERS
+                .condition(condition)
+                .then(trueFilter)
+                .otherwise(falseFilter);
+    }
+
+    private ByteString getValueByteString(WhereClause where) {
+        return byteStringConverter.toByteString(where.getField(), where.getValue());
     }
 
     private Filters.Filter getFamilyQualifierFilter(SqlQuery sqlQuery) {

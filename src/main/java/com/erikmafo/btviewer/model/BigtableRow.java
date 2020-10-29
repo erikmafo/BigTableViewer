@@ -1,11 +1,14 @@
 package com.erikmafo.btviewer.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by erikmafo on 12.12.17.
  */
 public class BigtableRow {
+
+    private static final int MAX_PREVIOUS_VERSIONS = 100;
 
     private final String rowKey;
     private final List<BigtableCell> cells;
@@ -51,4 +54,33 @@ public class BigtableRow {
         return converter.convert(cell);
     }
 
+    public List<BigtableRow> getPreviousVersions() {
+        var versions = new ArrayList<BigtableRow>();
+        var current = this;
+        var previousVersion = getPreviousVersion();
+
+        while (previousVersion != null || versions.size() >= MAX_PREVIOUS_VERSIONS) {
+            versions.add(previousVersion);
+            current = previousVersion;
+            previousVersion = current.getPreviousVersion();
+        }
+
+        return versions;
+    }
+
+    public BigtableRow getPreviousVersion() {
+        if (cells.isEmpty()) {
+            return null;
+        }
+
+        var currentVersion = cells.stream().mapToLong(BigtableCell::getTimestamp).max().getAsLong();
+        var cellsCopy = new ArrayList<>(cells);
+        cellsCopy.removeIf(cell -> cell.getTimestamp() == currentVersion);
+
+        if (cellsCopy.isEmpty()) {
+            return null;
+        }
+
+        return new BigtableRow(rowKey, cellsCopy);
+    }
 }

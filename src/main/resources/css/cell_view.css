@@ -1,0 +1,10 @@
+.bigtable-cell-value {
+    -fx-padding: 5px;
+    -fx-border-insets: 5px;
+    -fx-background-insets: 5px;
+}
+
+.bigtable-cell-timestamp {
+    -fx-font-size: 9;
+    -fx-font-family: 'Verdana';
+}

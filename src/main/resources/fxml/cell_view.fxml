@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Label?>
+<fx:root type="BorderPane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         styleClass="container"
+         stylesheets="/css/cell_view.css">
+
+    <center>
+        <Label fx:id="valueLabel"
+               BorderPane.alignment="CENTER"
+               styleClass="bigtable-cell-value"/>
+    </center>
+
+    <bottom>
+        <Label fx:id="versionLabel"
+               BorderPane.alignment="BOTTOM_RIGHT"
+               styleClass="bigtable-cell-timestamp"/>
+    </bottom>
+
+</fx:root>
