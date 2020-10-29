@@ -27,7 +27,7 @@
                 </os>
             </activation>
             <properties>
-                <script.extension>exe</script.extension>
+                <jpackager.executable>./jpackager.exe</jpackager.executable>
             </properties>
         </profile>
         <profile>
@@ -38,7 +38,7 @@
                 </os>
             </activation>
             <properties>
-                <script.extension>sh</script.extension>
+                <jpackager.executable>./jpackager</jpackager.executable>
             </properties>
         </profile>
     </profiles>
@@ -150,7 +150,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>./jpackager.${script.extension}</executable>
+                            <executable>${jpackager.executable}</executable>
                             <arguments>
                                 <argument>create-installer</argument>
                                 <argument>--runtime-image</argument>
