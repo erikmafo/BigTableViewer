@@ -18,10 +18,6 @@ jobs:
           display-name: 'osx'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
     steps:
-      - name: Download jpackager
-        run: |
-          curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-          unzip jpackager.zip
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Java JDK
@@ -29,5 +25,9 @@ jobs:
         with:
           java-version: 11
           java-package: jdk+fx
+      - name: Download jpackager
+        run: |
+          curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
+          unzip jpackager.zip
       - name: Install with maven
         run: mvn install -e
