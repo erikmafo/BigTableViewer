@@ -112,7 +112,6 @@
                                 <argument>--add-modules=javafx.controls</argument>
                                 <argument>--add-modules=javafx.fxml</argument>
                                 <argument>--add-modules=javafx.graphics</argument>
-                                <argument>--add-modules=javafx.web</argument>
                                 <argument>--add-modules=javafx.media</argument>
                                 <argument>--add-modules=java.management</argument>
                                 <argument>--output=${project.build.directory}/image</argument>
