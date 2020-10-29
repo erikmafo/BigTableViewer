@@ -11,12 +11,15 @@ jobs:
         - os: windows-latest
           display-name: 'windows'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
+          jpackagerInstallDir: '${JAVA_HOME}/bin'
         - os: ubuntu-latest
           display-name: 'linux'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
+          jpackagerInstallDir: '.'
         - os: macos-latest
           display-name: 'osx'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
+          jpackagerInstallDir: '.'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -28,6 +31,6 @@ jobs:
       - name: Download jpackager
         run: |
           curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-          unzip jpackager.zip
+          unzip jpackager.zip -d ${{ matrix.jpackagerInstallDir }}
       - name: Install with maven
-        run: mvn install -e
+        run: mvn install -e -X
