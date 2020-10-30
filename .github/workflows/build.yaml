@@ -10,13 +10,13 @@ jobs:
         include:
         - os: windows-latest
           display-name: 'windows'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
+          installerName: 'installer.msi'
         - os: ubuntu-latest
           display-name: 'linux'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
+          installerName: 'installer.deb'
         - os: macos-latest
           display-name: 'osx'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
+          installerName: 'installer.dmg'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -47,3 +47,4 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: target/release/*
+          asset_name: ${{ matrix.installerName }}
