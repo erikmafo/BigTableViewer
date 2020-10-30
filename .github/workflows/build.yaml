@@ -27,6 +27,8 @@ jobs:
           java-package: jdk+fx
       - name: Install with maven
         run: mvn install -e
+  release:
+    steps:
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
