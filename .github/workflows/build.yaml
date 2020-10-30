@@ -26,9 +26,9 @@ jobs:
           java-version: 14
           java-package: jdk+fx
       - name: Install with maven
-        run: mvn install -e
+        run: mvn install -B -e
       - name: Show current dir
-        run: ls target
+        run: ls target/release
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
