@@ -28,21 +28,17 @@ jobs:
       - name: Install with maven
         run: mvn install -e
       - name: Show current dir
-        run: ls
+        run: ls target
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.installerName }}
           path: target/release/*
   release:
+    if: contains(github.ref, 'tags/v')
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: installer.msi
-      - name: Display downloaded files
-        run: ls -R
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
@@ -54,13 +50,24 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: false
-      - name: Upload msi installer
-        if: startsWith(github.ref, 'refs/tags/v')
+  upload:
+    needs: [build, release]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        extension: [msi, deb, dmg]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: installer.${{ matrix.extension }}
+      - name: Display downloaded files
+        run: ls -R
+      - name: Upload installer.${{ matrix.extension }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/release/
-          asset_name: installer.msi
+          asset_path: .
+          asset_name: installer.${{ matrix.extension }}
