@@ -27,12 +27,15 @@ jobs:
           java-package: jdk+fx
       - name: Install with maven
         run: mvn install -e
+      - name: Show current dir
+        run: ls
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.installerName }}
           path: target/release/*
   release:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
