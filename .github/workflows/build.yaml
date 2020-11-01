@@ -46,6 +46,8 @@ jobs:
     if: contains(github.ref, 'tags/v')
     needs: [build]
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -59,7 +61,7 @@ jobs:
           draft: true
           prerelease: false
   upload:
-    needs: [build, release]
+    needs: [release]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -67,15 +69,15 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.installerName }}
+          name: btviewer.${{ matrix.extension }}
       - name: Display downloaded files
         run: ls -R
-      - name: Upload ${{ matrix.installerName }}
+      - name: Upload btviewer.${{ matrix.extension }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: .
-          asset_name: ${{ matrix.installerName }}
+          asset_name: btviewer.${{ matrix.extension }}
