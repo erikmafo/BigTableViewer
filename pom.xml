@@ -143,7 +143,6 @@
                                 <argument>--add-modules</argument>
                                 <argument>javafx.media</argument>
 
-                                <argument>--output=${project.build.directory}/image</argument>
                             </arguments>
                         </configuration>
                     </execution>

@@ -25,10 +25,6 @@ jobs:
         with:
           java-version: 14
           java-package: jdk+fx
-      - name: show javafx jmods
-        run: ls $JAVA_HOME/jmods
-      - name: show javafx lib
-        run: ls $JAVA_HOME/bin
       - name: Install with maven
         run: mvn install -B -e -q
       - name: Show current dir
