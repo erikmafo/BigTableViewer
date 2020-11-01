@@ -10,15 +10,15 @@ jobs:
         include:
         - os: windows-latest
           display-name: 'windows'
-          installerName: 'installer.msi'
+          installerName: 'btviewer.msi'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
         - os: ubuntu-latest
           display-name: 'linux'
-          installerName: 'installer.deb'
+          installerName: 'btviewer.deb'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
         - os: macos-latest
           display-name: 'osx'
-          installerName: 'installer.dmg'
+          installerName: 'btviewer.dmg'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
     steps:
       - name: Checkout repository
@@ -67,10 +67,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: installer.${{ matrix.extension }}
+          name: ${{ matrix.installerName }}
       - name: Display downloaded files
         run: ls -R
-      - name: Upload installer.${{ matrix.extension }}
+      - name: Upload ${{ matrix.installerName }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
@@ -78,4 +78,4 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: .
-          asset_name: installer.${{ matrix.extension }}
+          asset_name: ${{ matrix.installerName }}
