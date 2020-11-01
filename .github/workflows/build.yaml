@@ -31,7 +31,7 @@ jobs:
       - name: Download jpackager
         run: curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
       - name: Unzip jpackager
-        run: unzip jpackager.zip
+        run: unzip jpackager.zip -d $JAVA_HOME/bin
       - name: Install with maven
         run: mvn install -B -e -q
       - name: Show current dir

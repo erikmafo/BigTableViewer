@@ -151,7 +151,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${script.extension}</executable>
+                            <executable>${java.home}/bin/jpackager</executable>
                             <arguments>
                                 <argument>create-installer</argument>
                                 <argument>--runtime-image</argument>
