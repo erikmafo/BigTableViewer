@@ -81,3 +81,4 @@ jobs:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: .
           asset_name: btviewer.${{ matrix.extension }}
+          asset_content_type: application/octet-stream
