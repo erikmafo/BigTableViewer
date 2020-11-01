@@ -30,7 +30,8 @@ jobs:
           java-package: jdk+fx
       - name: Download jpackager
         run: curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-      - name: unzip jpackager.zip
+      - name: Unzip jpackager
+        run: unzip jpackager.zip
       - name: Install with maven
         run: mvn install -B -e -q
       - name: Show current dir
