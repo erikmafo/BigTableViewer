@@ -26,7 +26,7 @@ jobs:
           java-version: 14
           java-package: jdk+fx
       - name: show javafx
-        run: ls ${{ JAVA_HOME }}
+        run: ls $(JAVA_HOME)
       - name: Install with maven
         run: mvn install -B -e -q
       - name: Show current dir
