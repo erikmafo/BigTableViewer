@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>bigtableviewer</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
     <name>bigtableviewer</name>
 
@@ -91,58 +91,62 @@
                 <version>1.6.0</version>
                 <executions>
                     <execution>
+                        <id>runtimeImage</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/jlink</executable>
+                            <arguments>
+                                <argument>--module-path=${java.home}/jmods/</argument>
+                                <argument>--add-modules=java.base</argument>
+                                <argument>--add-modules=java.prefs</argument>
+                                <argument>--add-modules=java.desktop</argument>
+                                <argument>--add-modules=java.net.http</argument>
+                                <argument>--add-modules=java.xml</argument>
+                                <argument>--add-modules=java.prefs</argument>
+                                <argument>--add-modules=java.logging</argument>
+                                <argument>--add-modules=java.sql</argument>
+                                <argument>--add-modules=javafx.base</argument>
+                                <argument>--add-modules=javafx.controls</argument>
+                                <argument>--add-modules=javafx.fxml</argument>
+                                <argument>--add-modules=javafx.graphics</argument>
+                                <argument>--add-modules=javafx.web</argument>
+                                <argument>--add-modules=javafx.media</argument>
+                                <argument>--add-modules=java.management</argument>
+                                <argument>--output=${project.build.directory}/image</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>installer</id>
                         <phase>install</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <longModulepath>false</longModulepath>
-                            <executable>${java.home}/bin/jpackage</executable>
+                            <executable>jpackager</executable>
                             <arguments>
-                                <argument>--verbose</argument>
+                                <argument>create-installer</argument>
+                                <argument>--runtime-image</argument>
+                                <argument>${project.build.directory}/image</argument>
+                                <argument>--output</argument>
+                                <argument>${project.build.directory}/release</argument>
                                 <argument>--input</argument>
                                 <argument>${project.build.directory}/app</argument>
-                                <argument>--dest</argument>
-                                <argument>${project.build.directory}/release</argument>
                                 <argument>--main-jar</argument>
                                 <argument>bigtableviewer-${project.version}.jar</argument>
-                                <argument>--main-class</argument>
+                                <argument>--class</argument>
                                 <argument>${mainClass}</argument>
                                 <argument>--name</argument>
                                 <argument>${project.name}</argument>
                                 <argument>--license-file</argument>
                                 <argument>LICENSE</argument>
-                                <argument>--mac-package-name</argument>
-                                <argument>btviewer</argument>
-                                <argument>--mac-package-identifier</argument>
+                                <argument>--identifier</argument>
                                 <argument>${project.groupId}.${project.artifactId}</argument>
-                                <argument>--app-version</argument>
+                                <argument>--version</argument>
                                 <argument>${project.version}</argument>
-
-                                <argument>--module-path</argument>
-                                <argument>${java.home}/jmods/</argument>
-                                <argument>--add-modules</argument>
-                                <argument>java.base</argument>
-                                <argument>--add-modules</argument>
-                                <argument>java.prefs</argument>
-                                <argument>--add-modules</argument>
-                                <argument>java.desktop</argument>
-                                <argument>--add-modules</argument>
-                                <argument>java.xml</argument>
-                                <argument>--add-modules</argument>
-                                <argument>java.logging</argument>
-                                <argument>--add-modules</argument>
-                                <argument>javafx.base</argument>
-                                <argument>--add-modules</argument>
-                                <argument>javafx.controls</argument>
-                                <argument>--add-modules</argument>
-                                <argument>javafx.fxml</argument>
-                                <argument>--add-modules</argument>
-                                <argument>javafx.graphics</argument>
-                                <argument>--add-modules</argument>
-                                <argument>javafx.media</argument>
-
                             </arguments>
                         </configuration>
                     </execution>
