@@ -73,6 +73,11 @@ jobs:
           path: ./
       - name: Display downloaded files
         run: ls -R
+      - name: Get asset name
+        run: |
+          ASSET_PATH=$(ls *.${{ matrix.extension }} | head -n 1)
+          ASSET_NAME=$(basename $ASSET_PATH)
+          echo ::set-env name=ASSET_NAME::${ASSET_NAME}
       - name: Upload btviewer.${{ matrix.extension }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
@@ -81,5 +86,5 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: .
-          asset_name: btviewer.${{ matrix.extension }}
+          asset_name: ${{ env.ASSET_NAME }}
           asset_content_type: application/octet-stream
