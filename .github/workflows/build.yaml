@@ -23,7 +23,7 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 14
           java-package: jdk+fx
       - name: show javafx jmods
         run: ls $JAVA_HOME/jmods
