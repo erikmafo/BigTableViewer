@@ -10,9 +10,9 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
@@ -166,6 +166,9 @@ public class BigtableViewController {
     private TreeTableColumn<BigtableRow, String> createRowKeyColumn() {
         TreeTableColumn<BigtableRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
+        tableColumn.setCellValueFactory(features -> features.getValue().isLeaf() ?
+                new ReadOnlyStringWrapper("") :
+                new ReadOnlyObjectWrapper<>(features.getValue().getValue().getRowKey()));
         tableColumn.setCellFactory(new RowCellFactory());
         return tableColumn;
     }

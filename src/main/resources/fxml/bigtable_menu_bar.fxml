@@ -10,7 +10,7 @@
     <menus>
         <Menu text="File">
             <items>
-                <MenuItem fx:id="credentialsMenu" onAction="#onManageCredentialsAction" text="Credentials"/>
+                <MenuItem fx:id="credentialsMenu" onAction="#onManageCredentialsAction" text="Set credentials"/>
             </items>
         </Menu>
 

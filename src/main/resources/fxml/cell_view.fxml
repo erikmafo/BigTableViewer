@@ -16,7 +16,7 @@
 
     <bottom>
         <Label fx:id="versionLabel"
-               BorderPane.alignment="BOTTOM_RIGHT"
+               BorderPane.alignment="BOTTOM_CENTER"
                styleClass="bigtable-cell-timestamp"/>
     </bottom>
 
