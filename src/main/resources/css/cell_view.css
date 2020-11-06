@@ -1,7 +1,7 @@
 .bigtable-cell-value {
-    -fx-padding: 5px;
-    -fx-border-insets: 5px;
-    -fx-background-insets: 5px;
+    -fx-padding: 2px;
+    -fx-border-insets: 0px;
+    -fx-background-insets: 0px;
 }
 
 .bigtable-cell-timestamp {
