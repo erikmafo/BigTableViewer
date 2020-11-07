@@ -1,7 +1,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TreeItem?>
+
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.erikmafo.btviewer.projectexplorer.ProjectExplorerController"
       stylesheets="/css/main.css"

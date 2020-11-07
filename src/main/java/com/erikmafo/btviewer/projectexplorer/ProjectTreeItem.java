@@ -54,6 +54,7 @@ public class ProjectTreeItem extends TreeItem<TreeItemData> {
     private InstanceTreeItem createChild(TreeItemData treeItemData) {
         var instanceItem = instanceTreeItemProvider.get();
         instanceItem.setValue(treeItemData);
+        treeItemData.setTreeItem(instanceItem);
         return instanceItem;
     }
 }
