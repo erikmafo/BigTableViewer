@@ -1,6 +1,7 @@
 # Bigtable Viewer
 
-[![Build Status](https://travis-ci.org/erikmafo/BigtableViewer.svg?branch=master)](https://travis-ci.org/erikmafo/BigtableViewer)
+[![Build Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/build/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
+[![CodeQL Analysis Status](https://github.com/erikmafo/BigtableViewer/workflows/codeql-analysis/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 
 Bigtable viewer is an application that lets you view and query the contents of Google Bigtable tables.
 
