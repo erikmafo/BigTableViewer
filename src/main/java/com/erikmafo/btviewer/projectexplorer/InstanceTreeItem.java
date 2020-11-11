@@ -1,10 +1,13 @@
 package com.erikmafo.btviewer.projectexplorer;
 
 import com.erikmafo.btviewer.services.ListTablesService;
+import com.erikmafo.btviewer.util.AlertUtil;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.util.stream.Collectors;
@@ -12,13 +15,10 @@ import java.util.stream.Collectors;
 public class InstanceTreeItem extends TreeItem<TreeItemData> {
 
     private final ListTablesService listTablesService;
-    private final BooleanProperty loadingProperty;
-
     private boolean loadedChildren;
 
     @Inject
     public InstanceTreeItem(ListTablesService listTablesService) {
-        this.loadingProperty = new SimpleBooleanProperty(false);
         this.listTablesService = listTablesService;
         this.expandedProperty().addListener((observable, prev, isExpanded) -> {
             if (isExpanded && !loadedChildren && !listTablesService.isRunning()) {
@@ -32,15 +32,11 @@ public class InstanceTreeItem extends TreeItem<TreeItemData> {
         return false;
     }
 
-    public ReadOnlyBooleanProperty loadingProperty() {
-        return loadingProperty;
-    }
-
-    private void loadChildren() {
+    public void loadChildren() {
         listTablesService.setInstance(getValue().toInstance());
-        loadingProperty.setValue(true);
+        getValue().setLoading(true);
         listTablesService.setOnSucceeded(event -> {
-            loadingProperty.set(false);
+            getValue().setLoading(false);
             var children = listTablesService
                     .getValue()
                     .stream()
@@ -51,8 +47,9 @@ public class InstanceTreeItem extends TreeItem<TreeItemData> {
             loadedChildren = true;
         });
         listTablesService.setOnFailed(event -> {
-            loadingProperty.set(false);
-            // TODO: show error
+            loadedChildren = false;
+            getValue().setLoading(false);
+            AlertUtil.displayError("Failed to load tables", event);
         });
         listTablesService.restart();
     }

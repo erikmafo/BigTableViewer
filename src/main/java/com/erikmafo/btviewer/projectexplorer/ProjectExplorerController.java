@@ -44,6 +44,7 @@ public class ProjectExplorerController {
 
     public void initialize() {
         treeView.setRoot(rootTreeItemProvider.get());
+
         treeView.setCellFactory(tableInfoTreeView -> new TreeCell<>() {
             @Override
             protected void updateItem(TreeItemData item, boolean empty) {
@@ -55,6 +56,15 @@ public class ProjectExplorerController {
                 } else {
                     setContextMenu(createContextMenu(item));
                     setText(item.getDisplayName());
+                    if (item.isInstance()) {
+                        var progressIndicator = new ProgressIndicator();
+                        progressIndicator.setStyle(" -fx-progress-color: grey;");
+                        progressIndicator.visibleProperty().bind(item.loadingProperty());
+                        progressIndicator.setPrefSize(15, 15);
+                        setGraphic(progressIndicator);
+                        setGraphicTextGap(5);
+                        setContentDisplay(ContentDisplay.RIGHT);
+                    }
                 }
             }
         });
@@ -98,6 +108,10 @@ public class ProjectExplorerController {
             });
 
             menu = new ContextMenu(addInstance, removeProject);
+        } else if (item.isInstance()) {
+            var refreshTables = new MenuItem("Refresh tables");
+            refreshTables.setOnAction(e -> ((InstanceTreeItem)item.getTreeItem()).loadChildren());
+            menu = new ContextMenu(refreshTables);
         }
 
         return menu;

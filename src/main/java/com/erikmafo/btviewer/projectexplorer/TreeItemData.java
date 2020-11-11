@@ -2,6 +2,11 @@ package com.erikmafo.btviewer.projectexplorer;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.TreeItem;
 
 import java.util.Objects;
 
@@ -10,6 +15,9 @@ public class TreeItemData {
     private String projectId;
     private String instanceId;
     private String tableId;
+
+    private final BooleanProperty loading = new SimpleBooleanProperty();
+    private final ObjectProperty<TreeItem<TreeItemData>> treeItem = new SimpleObjectProperty<>();
 
     public TreeItemData() {
     }
@@ -99,5 +107,29 @@ public class TreeItemData {
         result = 31 * result + (instanceId != null ? instanceId.hashCode() : 0);
         result = 31 * result + (tableId != null ? tableId.hashCode() : 0);
         return result;
+    }
+
+    public boolean isLoading() {
+        return loading.get();
+    }
+
+    public BooleanProperty loadingProperty() {
+        return loading;
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading.set(loading);
+    }
+
+    public TreeItem<TreeItemData> getTreeItem() {
+        return treeItem.get();
+    }
+
+    public ObjectProperty<TreeItem<TreeItemData>> treeItemProperty() {
+        return treeItem;
+    }
+
+    public void setTreeItem(TreeItem<TreeItemData> treeItem) {
+        this.treeItem.set(treeItem);
     }
 }
