@@ -166,9 +166,9 @@ public class BigtableViewController {
     private TreeTableColumn<BigtableRow, String> createRowKeyColumn() {
         TreeTableColumn<BigtableRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
-        tableColumn.setCellValueFactory(features -> features.getValue().isLeaf() ?
-                new ReadOnlyStringWrapper("") :
-                new ReadOnlyObjectWrapper<>(features.getValue().getValue().getRowKey()));
+        tableColumn.setCellValueFactory(features -> features.getValue().getParent() == root ?
+                new ReadOnlyStringWrapper(features.getValue().getValue().getRowKey()) :
+                new ReadOnlyStringWrapper(""));
         tableColumn.setCellFactory(new RowCellFactory());
         return tableColumn;
     }
