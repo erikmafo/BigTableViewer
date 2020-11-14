@@ -103,9 +103,11 @@
                                 <argument>--add-modules=java.base</argument>
                                 <argument>--add-modules=java.prefs</argument>
                                 <argument>--add-modules=java.desktop</argument>
+                                <argument>--add-modules=java.net.http</argument>
                                 <argument>--add-modules=java.xml</argument>
                                 <argument>--add-modules=java.prefs</argument>
                                 <argument>--add-modules=java.logging</argument>
+                                <argument>--add-modules=java.management</argument>
                                 <argument>--add-modules=javafx.base</argument>
                                 <argument>--add-modules=javafx.controls</argument>
                                 <argument>--add-modules=javafx.fxml</argument>
