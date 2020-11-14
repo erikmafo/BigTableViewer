@@ -64,7 +64,7 @@ public class TableSettingsDialog extends DialogPane {
     @FXML
     private GridPane schemaGridPane;
 
-    private List<ObservableCell> observableCells = new ArrayList<>();
+    private final List<ObservableCell> observableCells = new ArrayList<>();
 
     private int currentSchemaRow = 1;
 
@@ -156,9 +156,9 @@ public class TableSettingsDialog extends DialogPane {
 
     private static class ObservableCell {
 
-        private StringProperty valueType = new SimpleStringProperty();
-        private StringProperty family = new SimpleStringProperty();
-        private StringProperty qualifier = new SimpleStringProperty();
+        private final StringProperty valueType = new SimpleStringProperty();
+        private final StringProperty family = new SimpleStringProperty();
+        private final StringProperty qualifier = new SimpleStringProperty();
 
         public String getValueType() {
             return valueType.get();

@@ -2,12 +2,7 @@ package com.erikmafo.btviewer.projectexplorer;
 
 import com.erikmafo.btviewer.services.ListTablesService;
 import com.erikmafo.btviewer.util.AlertUtil;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.util.stream.Collectors;

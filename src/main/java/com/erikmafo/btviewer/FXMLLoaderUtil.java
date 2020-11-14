@@ -1,8 +1,5 @@
 package com.erikmafo.btviewer;
 
-import com.erikmafo.btviewer.services.ServicesModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;

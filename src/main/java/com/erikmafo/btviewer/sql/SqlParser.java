@@ -62,7 +62,7 @@ public class SqlParser {
                     break;
                 case SELECT_FROM:
                     if (token.getTokenType() != SqlTokenType.FROM) {
-                        throw new IllegalArgumentException(String.format("Expected 'FROM' but was ", token.getValue()));
+                        throw new IllegalArgumentException(String.format("Expected 'FROM' but was %s", token.getValue()));
                     }
                     step = SqlParserStep.SELECT_FROM_TABLE;
                     break;

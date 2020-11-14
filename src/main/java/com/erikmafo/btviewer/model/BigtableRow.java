@@ -1,7 +1,6 @@
 package com.erikmafo.btviewer.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by erikmafo on 12.12.17.

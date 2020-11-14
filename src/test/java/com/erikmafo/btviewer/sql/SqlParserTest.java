@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 public class SqlParserTest {
 
-    private SqlParser parser = new SqlParser();
+    private final SqlParser parser = new SqlParser();
 
     @Test
     public void shouldParseSelectStatement() {

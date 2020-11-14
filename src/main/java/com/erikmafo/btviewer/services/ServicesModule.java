@@ -2,8 +2,6 @@ package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.config.AppConfig;
 import com.erikmafo.btviewer.config.ApplicationEnvironment;
-import com.erikmafo.btviewer.services.internal.BigtableEmulatorSettingsProvider;
-import com.erikmafo.btviewer.services.internal.TestDataUtil;
 import com.erikmafo.btviewer.services.internal.*;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.inject.*;

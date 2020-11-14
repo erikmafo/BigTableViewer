@@ -5,7 +5,6 @@ import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.erikmafo.btviewer.sql.QueryConverter;
 import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;

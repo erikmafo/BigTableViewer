@@ -5,7 +5,6 @@ import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 public interface AppDataStorage {

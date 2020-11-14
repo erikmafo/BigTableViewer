@@ -1,10 +1,8 @@
 package com.erikmafo.btviewer.sql;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
 
 public class SqlTokenizerTest {
 
