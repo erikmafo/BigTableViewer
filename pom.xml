@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>bigtableviewer</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.8</version>
     <packaging>jar</packaging>
     <name>bigtableviewer</name>
 
@@ -103,18 +103,13 @@
                                 <argument>--add-modules=java.base</argument>
                                 <argument>--add-modules=java.prefs</argument>
                                 <argument>--add-modules=java.desktop</argument>
-                                <argument>--add-modules=java.net.http</argument>
                                 <argument>--add-modules=java.xml</argument>
                                 <argument>--add-modules=java.prefs</argument>
                                 <argument>--add-modules=java.logging</argument>
-                                <argument>--add-modules=java.sql</argument>
                                 <argument>--add-modules=javafx.base</argument>
                                 <argument>--add-modules=javafx.controls</argument>
                                 <argument>--add-modules=javafx.fxml</argument>
                                 <argument>--add-modules=javafx.graphics</argument>
-                                <argument>--add-modules=javafx.web</argument>
-                                <argument>--add-modules=javafx.media</argument>
-                                <argument>--add-modules=java.management</argument>
                                 <argument>--output=${project.build.directory}/image</argument>
                             </arguments>
                         </configuration>
