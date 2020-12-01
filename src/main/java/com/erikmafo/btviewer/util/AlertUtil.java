@@ -17,8 +17,13 @@ public class AlertUtil {
     }
 
     public static void displayError(String errorText, Throwable cause) {
-        var alert = new Alert(Alert.AlertType.ERROR, errorText + ": " + cause.getLocalizedMessage(), ButtonType.CLOSE);
+        var alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.CLOSE);
         alert.setTitle("Computer says no!");
+        alert.setHeaderText(errorText);
+        if (cause != null) {
+            alert.setContentText(cause.toString());
+        }
+
         alert.showAndWait();
     }
 }

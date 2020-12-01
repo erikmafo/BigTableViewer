@@ -1,11 +1,14 @@
 package com.erikmafo.btviewer.services.internal;
 
+import com.google.inject.Singleton;
+
 import java.nio.file.Path;
 import java.util.prefs.Preferences;
 
 /**
  * Created by erikmafo on 25.12.17.
  */
+@Singleton
 public class CredentialsManager {
 
     private static final String BIGTABLE_VIEWER = "BigtableViewer";
