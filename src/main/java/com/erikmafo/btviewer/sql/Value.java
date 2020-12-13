@@ -1,6 +1,23 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.sql.functions.FunctionExpression;
+
 public class Value {
+
+    public static Value from(SqlToken token) {
+        Value value;
+        if (token.getTokenType() == SqlTokenType.INTEGER) {
+            value = new Value(token.getValue(), ValueType.NUMBER);
+        } else if (token.getTokenType() == SqlTokenType.QUOTED_STRING) {
+            value = new Value(token.getUnquotedValue(), ValueType.STRING);
+        } else if (token.getTokenType() == SqlTokenType.FUNCTION_EXPRESSION) {
+            value = FunctionExpression.evaluate(token.getSubTokens());
+        } else {
+            throw new IllegalArgumentException(String.format("Expected a number, quoted string or a function expression but was %s", token.getValue()));
+        }
+
+        return value;
+    }
 
     private final String value;
     private final ValueType valueType;

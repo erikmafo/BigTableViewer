@@ -5,7 +5,17 @@
     -fx-font-weight: bold;
 }
 .string {
-    -fx-fill: purple;
+    -fx-fill: red;
+}
+
+.function {
+    -fx-fill: magenta;
+    -fx-font-weight: bold;
+}
+
+.logical-operator {
+    -fx-fill: grey;
+    -fx-font-weight: bold;
 }
 
 .comment {

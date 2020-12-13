@@ -3,7 +3,7 @@
 [![Build Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 [![CodeQL Analysis Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 
-Bigtable viewer is an application that lets you view and query the contents of Google Bigtable tables.
+Bigtable viewer is an application that lets you view and query the contents of Google Bigtable tables with SQL. 
 
 ## Installation
 
@@ -13,30 +13,56 @@ for your operating system
 Set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of a file containing the 
 credentials for a service account with access to your Bigtable tables.
 
-## Usage
+## Basic Usage
 
-When the application has started, click on the 'Add Bigtable instance' button
+When the application has started, click on the 'Add instance' button
 
-![Add Bigtable instance](https://user-images.githubusercontent.com/11388438/85906811-bf328200-b80f-11ea-9bf3-13fd426f83ba.png)
+Enter the project and instance id of a Bigtable instance. The application should display all the tables of the instance.
 
-Enter the projectId and the instanceId of a Bigtable instance. The application 
-should display all tables of the instance:
+Click on the table that you would like to query. A default query, selecting the first 1000 rows of the selected table, 
+should appear in the query box. Click 'Execute' to execute the query.
 
-![Display tables](https://user-images.githubusercontent.com/11388438/85920814-4535e380-b877-11ea-9f95-81924eb57691.png)
+To use different credentials than GOOGLE_APPLICATION_CREDENTIALS, click on 'File'->'Set credentials'
 
-Select the table that you would like to view. The application should display the first few rows of the table
+## Table schema
 
-![Display rows](https://user-images.githubusercontent.com/11388438/85920819-49fa9780-b877-11ea-9df8-d87f9fd3f50c.png)
+Bigtable viewer works best with tables where the data in each column corresponds to a standard data type. By clicking 
+on 'Table settings' you can configure how the application should interpret the columns in your table.
 
-By clicking on the 'Configure value types' button you can configure how the application should interpret 
-the columns in your table
+## Query examples
 
-![Configure value types](https://user-images.githubusercontent.com/11388438/85920859-abbb0180-b877-11ea-9d9e-2833feb1f8e1.png)
-
-Click OK and the application updates the view of the table
-
-![Display rows with value types](https://user-images.githubusercontent.com/11388438/85920860-ad84c500-b877-11ea-91c1-bb16ad1d51aa.png)
-
+Use 'KEY' to reference the row key:
+```sql
+SELECT * FROM 'table-0' WHERE KEY LIKE 'row-.*' LIMIT 1000
+```
+Use "." to reference a column in a column family:
+```sql
+SELECT * FROM 'table-0' WHERE myFamily.myIntColumn > 0 LIMIT 1000
+```
+Filter rows based on the value of a column or row key by using standard operators '>', '<', '>=', '<=', '=', '!=', e.g.
+```sql
+SELECT * FROM 'table-0' WHERE myFamily.myStringColumn = 'foo' LIMIT 1000
+```
+Use 'AND' to combine filters:
+```sql
+SELECT * FROM 'table-0' WHERE KEY LIKE 'rowkey' AND myFamily.myStringColumn = 'foo' LIMIT 1000
+```
+Only select data from a specific column family:
+```sql
+SELECT myFamily FROM 'table-0' LIMIT 1000
+```
+or list of columns:
+```sql
+SELECT myFamily.column1, myFamily.column2  FROM 'table-0' LIMIT 1000
+```
+To work with reverse row keys, use the built-in REVERSE function:
+```sql
+SELECT * FROM 'table-0' WHERE KEY LIKE REVERSE('yekwor') LIMIT 1000
+```
+in combination with CONCAT:
+```sql
+SELECT * FROM 'table-0' WHERE KEY LIKE CONCAT(REVERSE('yekwor'), '#', '2020-12.*') LIMIT 1000
+```
 ## Licence
 
 See [licence file](LICENSE).
