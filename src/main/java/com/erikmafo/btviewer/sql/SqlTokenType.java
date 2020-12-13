@@ -14,4 +14,8 @@ public enum SqlTokenType {
     OPERATOR,
     AND,
     LIMIT,
+    FUNCTION_EXPRESSION,
+    FUNCTION_NAME,
+    OPENING_PARENTHESES,
+    CLOSING_PARENTHESES,
 }

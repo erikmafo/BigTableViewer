@@ -1,7 +1,6 @@
 package com.erikmafo.btviewer.sql;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
@@ -66,5 +65,12 @@ public class SqlTokenizerTest {
         var reader = new SqlTokenizer("§");
         var token = reader.next();
         assertEquals(SqlTokenType.INVALID, token.getTokenType());
+    }
+
+    @Test
+    public void shouldReadFunctionExpression() {
+        var tokens = new SqlTokenizer("REVERSE('foo')").all();
+        assertEquals("should be one token", 1, tokens.size());
+        assertEquals(SqlTokenType.FUNCTION_EXPRESSION, tokens.stream().findFirst().get().getTokenType());
     }
 }
