@@ -10,19 +10,15 @@ Bigtable viewer is an application that lets you query the contents of Google Big
 Download and run the [installer](https://github.com/erikmafo/BigtableViewer/releases/latest) 
 for your operating system
 
-Set the environment variable GOOGLE_APPLICATION_CREDENTIALS to the path of a file containing the 
-credentials for a service account with access to your Bigtable tables.
-
 ## Basic Usage
 
-When the application has started, click on the 'Add instance' button
+To use different credentials than GOOGLE_APPLICATION_CREDENTIALS, click on 'File'->'Set credentials'.
 
-Enter the project and instance id of a Bigtable instance. The application should display all the tables of the instance.
+To add a Bigtable instance click on 'Add instance', enter the project and instance id and click 'Ok'. 
+The application should display all the tables of the instance.
 
 Click on the table that you would like to query. A default query, selecting the first 1000 rows of the selected table, 
 should appear in the query box. Click 'Execute' to execute the query.
-
-To use different credentials than GOOGLE_APPLICATION_CREDENTIALS, click on 'File'->'Set credentials'
 
 ## Table schema
 
