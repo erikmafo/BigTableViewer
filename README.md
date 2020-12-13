@@ -3,7 +3,7 @@
 [![Build Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 [![CodeQL Analysis Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 
-Bigtable viewer is an application that lets you view and query the contents of Google Bigtable tables with SQL. 
+Bigtable viewer is an application that lets you query the contents of Google Bigtable tables with SQL. 
 
 ## Installation
 
@@ -35,7 +35,7 @@ Use 'KEY' to reference the row key:
 ```sql
 SELECT * FROM 'table-0' WHERE KEY LIKE 'row-.*' LIMIT 1000
 ```
-Use "." to reference a column in a column family:
+Use . to reference a column in a column family:
 ```sql
 SELECT * FROM 'table-0' WHERE myFamily.myIntColumn > 0 LIMIT 1000
 ```
@@ -51,7 +51,7 @@ Only select data from a specific column family:
 ```sql
 SELECT myFamily FROM 'table-0' LIMIT 1000
 ```
-or list of columns:
+or a list of columns:
 ```sql
 SELECT myFamily.column1, myFamily.column2  FROM 'table-0' LIMIT 1000
 ```
