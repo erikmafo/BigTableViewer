@@ -75,6 +75,7 @@ public class SyntaxHighlightingUtil {
             case "FROM":
             case "LIMIT":
             case "KEY":
+            case "TIMESTAMP":
                 return KEYWORD_STYLE_CLASS;
             case "AND":
                 return OPERATOR_STYLE_CLASS;

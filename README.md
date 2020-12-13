@@ -8,7 +8,7 @@ Bigtable viewer is an application that lets you query the contents of Google Big
 ## Installation
 
 Download and run the [installer](https://github.com/erikmafo/BigtableViewer/releases/latest) 
-for your operating system
+for your operating system.
 
 ## Basic Usage
 
@@ -41,7 +41,7 @@ SELECT * FROM 'table-0' WHERE myFamily.myStringColumn = 'foo' LIMIT 1000
 ```
 Use 'AND' to combine filters:
 ```sql
-SELECT * FROM 'table-0' WHERE KEY LIKE 'rowkey' AND myFamily.myStringColumn = 'foo' LIMIT 1000
+SELECT * FROM 'table-0' WHERE KEY LIKE 'rowkey.*' AND myFamily.myStringColumn = 'foo' LIMIT 1000
 ```
 Only select data from a specific column family:
 ```sql
@@ -50,6 +50,10 @@ SELECT myFamily FROM 'table-0' LIMIT 1000
 or a list of columns:
 ```sql
 SELECT myFamily.column1, myFamily.column2  FROM 'table-0' LIMIT 1000
+```
+Filter data based on the cell timestamp:
+```sql
+SELECT * FROM 'table-0' WHERE TIMESTAMP < '2020-12-13 12:54' LIMIT 1000
 ```
 To work with reverse row keys, use the built-in REVERSE function:
 ```sql
