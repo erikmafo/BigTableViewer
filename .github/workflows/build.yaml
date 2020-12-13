@@ -88,8 +88,8 @@ jobs:
         run: |
           ASSET_PATH=$(ls *.${{ matrix.extension }} | head -n 1)
           ASSET_NAME=$(basename $ASSET_PATH)
-          echo ::set-env name=ASSET_NAME::${ASSET_NAME}
-          echo ::set-env name=ASSET_PATH::${ASSET_PATH}
+          echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
+          echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_ENV
       - name: Upload btviewer.${{ matrix.extension }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
