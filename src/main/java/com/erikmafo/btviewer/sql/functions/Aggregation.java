@@ -24,7 +24,7 @@ public class Aggregation {
      * @throws IllegalArgumentException if the sql token cannot be evaluated into an Aggregation.
      */
     public static Aggregation from(SqlToken token) {
-        return AggregateFunctionExpression.evaluate(token.getSubTokens());
+        return AggregationExpression.evaluate(token.getSubTokens());
     }
 
     private final Type type;

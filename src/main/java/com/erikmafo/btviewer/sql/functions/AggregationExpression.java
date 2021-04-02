@@ -5,10 +5,10 @@ import com.erikmafo.btviewer.sql.SqlToken;
 
 import java.util.List;
 
-public class AggregateFunctionExpression extends FunctionExpression {
+public class AggregationExpression extends FunctionExpression {
 
     public static Aggregation evaluate(List<SqlToken> tokens) {
-        var expression = new AggregateFunctionExpression();
+        var expression = new AggregationExpression();
         expression.read(tokens);
         return expression.evaluate();
     }

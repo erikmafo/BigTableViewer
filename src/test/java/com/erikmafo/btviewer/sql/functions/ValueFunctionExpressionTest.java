@@ -1,8 +1,7 @@
-package com.erikmafo.btviewer;
+package com.erikmafo.btviewer.sql.functions;
 
 import com.erikmafo.btviewer.sql.SqlTokenizer;
 import com.erikmafo.btviewer.sql.ValueType;
-import com.erikmafo.btviewer.sql.functions.ValueFunctionExpression;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

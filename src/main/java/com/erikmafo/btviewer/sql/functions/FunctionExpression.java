@@ -1,6 +1,8 @@
 package com.erikmafo.btviewer.sql.functions;
 
 import com.erikmafo.btviewer.sql.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,13 @@ public abstract class FunctionExpression {
      */
     protected abstract void onInputToken(SqlToken inputToken);
 
-    protected void read(List<SqlToken> tokens) {
+    protected void read(@NotNull List<SqlToken> tokens) {
         for (var token : tokens) {
             handleNextToken(token);
         }
     }
 
-    protected final void handleNextToken(SqlToken token) {
+    protected final void handleNextToken(@NotNull SqlToken token) {
         token.ensureValid();
 
         switch (step) {
@@ -81,7 +83,7 @@ public abstract class FunctionExpression {
         step= Step.INPUT_COMMA;
     }
 
-    private void inputComma(SqlToken token) {
+    private void inputComma(@NotNull SqlToken token) {
         if (token.getTokenType() == SqlTokenType.COMMA) {
             step = Step.INPUT;
         } else if (token.getTokenType() == SqlTokenType.CLOSING_PARENTHESES) {
@@ -96,13 +98,14 @@ public abstract class FunctionExpression {
         step = Step.COMPLETE;
     }
 
-    private void ensureExpectedToken(SqlToken token, SqlTokenType expectedType) {
+    private void ensureExpectedToken(@NotNull SqlToken token, SqlTokenType expectedType) {
         if (token.getTokenType() != expectedType) {
             throwWrongTokenType(token, String.format("Expected a %s", expectedType));
         }
     }
 
-    private void throwWrongTokenType(SqlToken token, String expected) {
+    @Contract("_, _ -> fail")
+    private void throwWrongTokenType(@NotNull SqlToken token, String expected) {
         throw new IllegalArgumentException(String.format("%s but was %s", expected, token.getValue()));
     }
 }
