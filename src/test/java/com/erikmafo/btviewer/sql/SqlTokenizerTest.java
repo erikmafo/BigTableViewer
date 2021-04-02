@@ -68,9 +68,20 @@ public class SqlTokenizerTest {
     }
 
     @Test
-    public void shouldReadFunctionExpression() {
+    public void shouldReadReverseExpression() {
         var tokens = new SqlTokenizer("REVERSE('foo')").all();
         assertEquals("should be one token", 1, tokens.size());
         assertEquals(SqlTokenType.FUNCTION_EXPRESSION, tokens.stream().findFirst().get().getTokenType());
+    }
+
+    @Test
+    public void shouldReadCountExpression() {
+        var tokens = new SqlTokenizer("COUNT(*)").all();
+        assertEquals("should be one token", 1, tokens.size());
+        assertEquals(SqlTokenType.FUNCTION_EXPRESSION, tokens.stream().findFirst().get().getTokenType());
+        var token = tokens.get(0);
+        assertEquals("COUNT(*) should have 4 tokens", 4, token.getSubTokens().size());
+        var firstSubToken = token.getSubTokens().get(0);
+        assertEquals(firstSubToken.getTokenType(), SqlTokenType.FUNCTION_NAME);
     }
 }

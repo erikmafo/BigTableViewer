@@ -2,6 +2,9 @@ package com.erikmafo.btviewer.model;
 
 import java.util.Objects;
 
+/**
+ * Represents an instance in a bigtable cluster. A bigtable instance has and instance id and a project id.
+ */
 public class BigtableInstance {
 
     private String instanceId;

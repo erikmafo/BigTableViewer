@@ -64,4 +64,10 @@ public class SqlToken {
     public String getError() {
         return error;
     }
+
+    public void ensureValid() {
+        if (SqlTokenType.INVALID == tokenType) {
+            throw new IllegalArgumentException(getError());
+        }
+    }
 }

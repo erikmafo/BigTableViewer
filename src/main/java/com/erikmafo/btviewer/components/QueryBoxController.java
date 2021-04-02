@@ -1,12 +1,13 @@
 package com.erikmafo.btviewer.components;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
-import com.erikmafo.btviewer.model.BigtableRow;
+import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.model.BigtableTable;
-import com.erikmafo.btviewer.services.ReadRowsService;
+import com.erikmafo.btviewer.services.BigtableQueryService;
 import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
 
 import javafx.beans.binding.Bindings;
@@ -40,6 +41,9 @@ public class QueryBoxController {
     private Button executeQueryButton;
 
     @FXML
+    private Button cancelQueryButton;
+
+    @FXML
     private ProgressBar progressBar;
 
     @FXML
@@ -47,22 +51,22 @@ public class QueryBoxController {
 
     private Subscription codeAreaSubscription;
 
-    private final ReadRowsService readRowsService;
+    private final BigtableQueryService bigtableQueryService;
 
     private final ObjectProperty<BigtableInstance> instance = new SimpleObjectProperty<>();
     private final ObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
     private final ObjectProperty<SqlQuery> query = new SimpleObjectProperty<>();
-    private final ObservableList<BigtableRow> queryResult = FXCollections.observableArrayList();
+    private final ObservableList<QueryResultRow> queryResult = FXCollections.observableArrayList();
 
     @Inject
-    public QueryBoxController(ReadRowsService readRowsService) {
-        this.readRowsService = readRowsService;
+    public QueryBoxController(BigtableQueryService bigtableQueryService) {
+        this.bigtableQueryService = bigtableQueryService;
     }
 
     @FXML
     public void initialize() {
-        progressBar.visibleProperty().bind(readRowsService.runningProperty());
-        progressBar.progressProperty().bind(readRowsService.progressProperty());
+        progressBar.visibleProperty().bind(bigtableQueryService.runningProperty());
+        progressBar.progressProperty().bind(bigtableQueryService.progressProperty());
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeAreaSubscription = codeArea
                 .multiPlainChanges()
@@ -70,11 +74,15 @@ public class QueryBoxController {
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
         table.bind(Bindings.createObjectBinding(this::createTable, instance, query));
         instance.addListener(this::onInstanceChanged);
+        executeQueryButton.disableProperty().bind(Bindings
+                .createBooleanBinding(() ->
+                        StringUtil.isNullOrEmpty(codeArea.textProperty().getValue()), codeArea.textProperty()));
+        cancelQueryButton.disableProperty().bind(bigtableQueryService.runningProperty().not());
     }
 
     public ObjectProperty<BigtableTable> tableProperty() { return table; }
 
-    public ObservableList<BigtableRow> getQueryResult() { return queryResult; }
+    public ObservableList<QueryResultRow> getQueryResult() { return queryResult; }
 
     public void setQuery(String sql) {
         codeArea.clear();
@@ -90,15 +98,18 @@ public class QueryBoxController {
         try {
             queryResult.clear();
             query.set(new SqlParser().parse(codeArea.getText()).ensureValid());
-            readRowsService.setInstance(instance.get());
-            readRowsService.setQuery(query.get());
-            readRowsService.setOnSucceeded(event -> queryResult.setAll(readRowsService.getValue()));
-            readRowsService.setOnFailed(stateEvent -> Platform.runLater(() -> AlertUtil.displayError("Failed to execute query: ", stateEvent)));
-            readRowsService.restart();
+            bigtableQueryService.setInstance(instance.get());
+            bigtableQueryService.setQuery(query.get());
+            bigtableQueryService.setOnSucceeded(event -> queryResult.setAll(bigtableQueryService.getValue()));
+            bigtableQueryService.setOnFailed(stateEvent -> Platform.runLater(() -> AlertUtil.displayError("Failed to execute query: ", stateEvent)));
+            bigtableQueryService.restart();
         } catch (Exception ex) {
             AlertUtil.displayError("Invalid query", ex);
         }
     }
+
+    @FXML
+    private void onCancelQueryButtonPressed(ActionEvent actionEvent) { bigtableQueryService.cancel(); }
 
     @FXML
     private void onKeyPressedInCodeArea(KeyEvent keyEvent) {

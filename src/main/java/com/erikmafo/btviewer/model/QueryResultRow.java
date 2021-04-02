@@ -1,22 +1,46 @@
 package com.erikmafo.btviewer.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Created by erikmafo on 12.12.17.
+ * Represents a row that is returned from the query. This could be a Bigtable row or a list of aggregations.
  */
-public class BigtableRow {
+public class QueryResultRow {
 
     private static final int MAX_PREVIOUS_VERSIONS = 100;
 
     private final String rowKey;
     private final List<BigtableCell> cells;
+    private final List<AggregationEntry> aggregations;
 
-    public BigtableRow(String rowKey, List<BigtableCell> cells) {
+    /**
+     * Creates a QueryResultRow from a Bigtable row.
+     * @param rowKey the key of the bigtable row.
+     * @param cells the cells in the row that was returned from the query.
+     */
+    public QueryResultRow(String rowKey, List<BigtableCell> cells) {
         this.rowKey = rowKey;
         this.cells = cells;
+        this.aggregations = new ArrayList<>();
     }
+
+    /**
+     * Creates a QueryResultRow from a list of aggregation results.
+     * @param aggregations aggregation results from the query.
+     */
+    public QueryResultRow(AggregationEntry... aggregations) {
+        this.rowKey = null;
+        this.cells = new ArrayList<>();
+        this.aggregations = new ArrayList<>();
+        this.aggregations.addAll(Arrays.asList(aggregations));
+    }
+
+    /**
+     * Checks whether this QueryResultRow is created from a Bigtable row.
+     *
+     * @return true if this is created from a Bigtable row, false otherwise.
+     */
+    public boolean isBigtableRow() { return rowKey != null; }
 
     public String getRowKey() {
         return rowKey;
@@ -25,6 +49,10 @@ public class BigtableRow {
     public List<BigtableCell> getCells() {
         return cells;
     }
+
+    public List<AggregationEntry> getAggregations() { return aggregations; }
+
+    public AggregationEntry getAggregation(String name) { return aggregations.stream().filter(a -> a.getName().equals(name)).findFirst().orElse(null);}
 
     public BigtableCell getLatestCell(String family, String qualifier) {
         return cells.stream()
@@ -54,8 +82,8 @@ public class BigtableRow {
         return converter.convert(cell);
     }
 
-    public List<BigtableRow> getPreviousVersions() {
-        var versions = new ArrayList<BigtableRow>();
+    public List<QueryResultRow> getPreviousVersions() {
+        var versions = new ArrayList<QueryResultRow>();
         var current = this;
         var previousVersion = getPreviousVersion();
 
@@ -68,7 +96,7 @@ public class BigtableRow {
         return versions;
     }
 
-    public BigtableRow getPreviousVersion() {
+    public QueryResultRow getPreviousVersion() {
         if (cells.isEmpty()) {
             return null;
         }
@@ -81,6 +109,6 @@ public class BigtableRow {
             return null;
         }
 
-        return new BigtableRow(rowKey, cellsCopy);
+        return new QueryResultRow(rowKey, cellsCopy);
     }
 }

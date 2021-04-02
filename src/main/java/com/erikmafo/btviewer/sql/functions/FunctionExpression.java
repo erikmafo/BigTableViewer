@@ -1,25 +1,17 @@
 package com.erikmafo.btviewer.sql.functions;
 
-import com.erikmafo.btviewer.sql.SqlToken;
-import com.erikmafo.btviewer.sql.SqlTokenType;
-import com.erikmafo.btviewer.sql.Value;
-import com.erikmafo.btviewer.sql.ValueType;
+import com.erikmafo.btviewer.sql.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionExpression {
+/**
+ * Represents a part of a sql expression that involves a function call, e.g. COUNT(fieldName).
+ */
+public abstract class FunctionExpression {
 
-    public static Value evaluate(List<SqlToken> tokens) {
-        var expression = new FunctionExpression();
-        for (var token : tokens) {
-            expression.handleNextToken(token);
-        }
-        return expression.evaluate();
-    }
-
-    enum Step {
+    private enum Step {
         FUNCTION_TYPE,
         OPENING_PARENTHESES,
         INPUT,
@@ -29,19 +21,28 @@ public class FunctionExpression {
     }
 
     private Function function;
-    private List<Value> args = new ArrayList<>();
     private Step step = Step.FUNCTION_TYPE;
 
-    Value evaluate() {
-        switch (function) {
-            case REVERSE: return reverse(args);
-            case CONCAT: return concat(args);
-            default: throw new IllegalStateException(
-                    String.format("The %s(...) function expression is not complete", function.value()));
+    protected Function getFunction() {
+        return function;
+    }
+
+    /**
+     * Handles the sql token that is input to the function.
+     *
+     * @param inputToken a sql token that represents the input to the function.
+     */
+    protected abstract void onInputToken(SqlToken inputToken);
+
+    protected void read(List<SqlToken> tokens) {
+        for (var token : tokens) {
+            handleNextToken(token);
         }
     }
 
-    void handleNextToken(SqlToken token) {
+    protected final void handleNextToken(SqlToken token) {
+        token.ensureValid();
+
         switch (step) {
             case FUNCTION_TYPE:
                 functionType(token);
@@ -76,7 +77,7 @@ public class FunctionExpression {
     }
 
     private void input(SqlToken token) {
-        args.add(Value.from(token));
+        onInputToken(token);
         step= Step.INPUT_COMMA;
     }
 
@@ -103,23 +104,5 @@ public class FunctionExpression {
 
     private void throwWrongTokenType(SqlToken token, String expected) {
         throw new IllegalArgumentException(String.format("%s but was %s", expected, token.getValue()));
-    }
-
-    private Value concat(List<Value> args) {
-        var stringValue = args.stream().map(Value::asString).collect(Collectors.joining(""));
-        return new Value(stringValue, ValueType.STRING);
-    }
-
-    private Value reverse(List<Value> args) {
-        if (args.size() != 1) {
-            throw new IllegalArgumentException(String.format("%s(...) takes exactly one argument", Function.REVERSE));
-        }
-        var arg = args.get(0);
-        if (arg.getValueType() != ValueType.STRING) {
-            throw new IllegalArgumentException(String.format("%s(...) takes only string as argument", Function.REVERSE));
-        }
-
-        var reversed = new StringBuilder(arg.asString()).reverse().toString();
-        return new Value(reversed, ValueType.STRING);
     }
 }

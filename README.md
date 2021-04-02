@@ -55,6 +55,14 @@ Filter data based on the cell timestamp:
 ```sql
 SELECT * FROM 'table-0' WHERE TIMESTAMP < '2020-12-13 12:54' LIMIT 1000
 ```
+Count the number of rows satisfying a condition:
+```sql
+SELECT COUNT(*) FROM 'table-0' WHERE TIMESTAMP < '2020-12-13 12:54'
+```
+Count the number of rows within a column family satisfying a condition:
+```sql
+SELECT COUNT(myFamily) FROM 'table-0' WHERE TIMESTAMP < '2020-12-13 12:54'
+```
 To work with reverse row keys, use the built-in REVERSE function:
 ```sql
 SELECT * FROM 'table-0' WHERE KEY LIKE REVERSE('yekwor') LIMIT 1000

@@ -20,12 +20,12 @@ public class MainController {
     private ProjectExplorerController projectExplorerController;
 
     @FXML
-    private BigtableViewController bigtableViewController;
+    private QueryResultViewController queryResultViewController;
 
     @FXML
     private void initialize() {
-        bigtableViewController.tableProperty().bind(queryBoxController.tableProperty());
-        bigtableViewController.setRows(queryBoxController.getQueryResult());
+        queryResultViewController.tableProperty().bind(queryBoxController.tableProperty());
+        queryResultViewController.setRows(queryBoxController.getQueryResult());
         queryBoxController.instanceProperty().bind(projectExplorerController.selectedInstanceProperty());
         projectExplorerController
                 .selectedTableProperty()

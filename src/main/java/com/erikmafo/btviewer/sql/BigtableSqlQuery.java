@@ -1,29 +1,50 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.sql.functions.Aggregation;
 import com.google.cloud.bigtable.data.v2.models.Filters;
 import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Range;
 import com.google.protobuf.ByteString;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.cloud.bigtable.data.v2.models.Filters.FILTERS;
 
-public class QueryConverter {
+/**
+ * Used to convert a {@link SqlQuery} to a {@link Query} that can be applied to Bigtable.
+ */
+public class BigtableSqlQuery {
+
+    private final SqlQuery sqlQuery;
     private final ByteStringConverter byteStringConverter;
 
-    public QueryConverter(ByteStringConverter byteStringConverter) {
+    /**
+     * Creates an instance of BigtableSqlQuery from a {@link SqlQuery} and a {@link ByteStringConverter} which
+     * converts field values from the sql query to byte strings.
+     *
+     * @param sqlQuery a sql query expression.
+     * @param byteStringConverter an object that converts values to byte string.
+     */
+    public BigtableSqlQuery(SqlQuery sqlQuery, ByteStringConverter byteStringConverter) {
+        this.sqlQuery = sqlQuery;
         this.byteStringConverter = byteStringConverter;
     }
 
-    public Query toBigtableQuery(SqlQuery sqlQuery) {
+    /**
+     * Converts the sql query expression to a query object that can be applied to Bigtable.
+     *
+     * @return a bigtable query object
+     */
+    public Query toBigtableQuery() {
         var bigtableQuery = Query.create(sqlQuery.getTableName());
         setRowRange(bigtableQuery, sqlQuery);
         bigtableQuery.filter(getFilter(sqlQuery));
-        bigtableQuery.limit(sqlQuery.getLimit());
+        if (!sqlQuery.isAggregation()) {
+            bigtableQuery.limit(sqlQuery.getLimit());
+        }
         return bigtableQuery;
     }
 
@@ -73,12 +94,31 @@ public class QueryConverter {
                 .collect(Collectors.toList());
     }
 
-    private Filters.Filter getFilter(SqlQuery sqlQuery) {
-        return chain(Arrays.asList(
+    private Filters.Filter getFilter(SqlQuery sqlQuery) { return chain(getFilters(sqlQuery)); }
+
+    private List<Filters.Filter> getFilters(SqlQuery sqlQuery) {
+        var filters = Stream.of(
                 getRowKeyRegexFilter(sqlQuery),
                 getTimestampFilter(sqlQuery),
                 getValueFilter(sqlQuery),
-                getFamilyQualifierFilter(sqlQuery)));
+                getFamilyQualifierFilter(sqlQuery),
+                getAggregationFilter(sqlQuery));
+
+        return filters.filter(f -> !f.equals(FILTERS.pass())).collect(Collectors.toList());
+    }
+
+    private Filters.Filter getAggregationFilter(SqlQuery sqlQuery) {
+        if (sqlQuery.getAggregations().isEmpty()) {
+            return FILTERS.pass();
+        }
+
+        if (sqlQuery.getAggregations().stream().allMatch(a -> a.getType() == Aggregation.Type.COUNT)) {
+            return FILTERS.chain()
+                    .filter(FILTERS.limit().cellsPerColumn(1))
+                    .filter(FILTERS.value().strip());
+        }
+
+        return FILTERS.limit().cellsPerColumn(1);
     }
 
     private Filters.Filter getRowKeyRegexFilter(SqlQuery sqlQuery) {

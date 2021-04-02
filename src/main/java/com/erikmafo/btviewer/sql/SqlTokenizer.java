@@ -1,34 +1,42 @@
 package com.erikmafo.btviewer.sql;
 import com.erikmafo.btviewer.sql.functions.Function;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+/**
+ * Used to break a string into tokens. Each token is represented by a {@link SqlToken}.
+ */
 public class SqlTokenizer {
 
-    public static final char QUOTE = '\'';
-    public static final char OPENING_PARENTHESES = '(';
-    public static final char CLOSING_PARENTHESES = ')';
-    public static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^([A-Za-z]+\\w*)(\\.[A-Za-z]+\\w*)?\\b");
-    public static final Pattern INTEGER_PATTERN = Pattern.compile("^(0|[1-9][0-9]*)\\b");
-    public static final Pattern BOOL_PATTERN = Pattern.compile("^(?i)(true|false)\\b");
+    private static final char QUOTE = '\'';
+    private static final char OPENING_PARENTHESES = '(';
+    private static final char CLOSING_PARENTHESES = ')';
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^([A-Za-z]+\\w*)(\\.[A-Za-z]+\\w*)?\\b");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^(0|[1-9][0-9]*)\\b");
+    private static final Pattern BOOL_PATTERN = Pattern.compile("^(?i)(true|false)\\b");
 
     private final String sql;
     private int position;
 
+    /**
+     * Creates a new tokenizer from the given sql query.
+     * @param sql the sql query to tokenize.
+     */
     public SqlTokenizer(String sql) {
         this.sql = sql;
     }
 
-    public SqlTokenizer(String sql, int skip, int take) {
-        this.sql = sql.substring(0, skip + take);
-        this.position = skip;
-    }
-
+    /**
+     * Returns the next {@link SqlToken} in the sql query string.
+     *
+     * @return a SqlToken, or null if there are no more tokens.
+     */
     public SqlToken next() {
-
         if (position >= sql.length()) {
             return null;
         }
@@ -85,6 +93,11 @@ public class SqlTokenizer {
         return new SqlToken(remainingSql, SqlTokenType.INVALID, position, null, String.format("Unable to parse: '%s'", remainingSql));
     }
 
+    /**
+     * Returns a list of all the tokens in the query string.
+     *
+     * @return a list of {@link SqlToken}'s.
+     */
     public List<SqlToken> all() {
         var tokens = new ArrayList<SqlToken>();
         SqlToken current = next();
@@ -106,8 +119,9 @@ public class SqlTokenizer {
         return next(sql, position, indexOfNextQuote + 1, SqlTokenType.QUOTED_STRING);
     }
 
+    @Contract("_ -> new")
     @NotNull
-    private SqlToken nextReservedWord(ReservedWord word) {
+    private SqlToken nextReservedWord(@NotNull ReservedWord word) {
         position += word.length();
         if (!word.isSupported()) {
             return new SqlToken(word.value(), SqlTokenType.INVALID, position, null, String.format("'%s' is not supported", word.value()));
@@ -115,23 +129,61 @@ public class SqlTokenizer {
         return new SqlToken(word.value(), word.tokenType(), position);
     }
 
+    @Contract("_, _, _, _ -> new")
     @NotNull
-    private SqlToken next(String remainingSql, int start, int end, SqlTokenType tokenType) {
+    private SqlToken next(@NotNull String remainingSql, int start, int end, SqlTokenType tokenType) {
         var token = remainingSql.substring(start, end);
         position += token.length();
         return new SqlToken(token, tokenType, position);
     }
 
     @NotNull
-    private SqlToken nextFuncExpression(Function functionName, String remainingSql) {
-        var funcExpression = functionName.extractExpression(remainingSql);
-        var subTokens = new ArrayList<SqlToken>();
-        subTokens.add(new SqlToken(functionName.value(), SqlTokenType.FUNCTION_NAME, position + functionName.length()));
-        var skip = position + functionName.length();
-        var take = funcExpression.length() - functionName.length();
-        var funcExpressionSkipNameTokenizer = new SqlTokenizer(sql, skip, take);
-        subTokens.addAll(funcExpressionSkipNameTokenizer.all());
-        position += funcExpression.length();
-        return new SqlToken(funcExpression, SqlTokenType.FUNCTION_EXPRESSION, position, subTokens);
+    private SqlToken nextFuncExpression(Function function, String remainingSql) {
+        var startIndex = position;
+        var subTokens = extractExpression(function, remainingSql);
+        position = subTokens.get(subTokens.size() - 1).getEnd();
+        var funcExpressionSql = remainingSql.substring(startIndex, position);
+        return new SqlToken(funcExpressionSql, SqlTokenType.FUNCTION_EXPRESSION, position, subTokens);
+    }
+
+    @NotNull
+    private List<SqlToken> extractExpression(@NotNull Function function, String sql) {
+        if (!function.matchesStartOf(sql)) {
+            throw new IllegalArgumentException(sql + "does not start with a function expression of type " + this);
+        }
+
+        var openingParenthesesIndex = sql.indexOf(OPENING_PARENTHESES);
+        var closingParenthesesIndex = 0;
+        var numberOfOpeningParentheses = 1;
+        var numberOfClosingParentheses = 0;
+        var index = openingParenthesesIndex + 1;
+        while (index < sql.length()) {
+            var ch = sql.charAt(index);
+            if (ch == OPENING_PARENTHESES) {
+                openingParenthesesIndex = index;
+                numberOfOpeningParentheses++;
+            } else if (ch == CLOSING_PARENTHESES) {
+                closingParenthesesIndex = index;
+                numberOfClosingParentheses++;
+            }
+            if (numberOfClosingParentheses == numberOfOpeningParentheses) {
+                break;
+            }
+            index++;
+        }
+
+        var openingParenthesesPosition = position + openingParenthesesIndex + 1;
+        var sqlInsideParentheses = sql.substring(openingParenthesesIndex + 1, closingParenthesesIndex);
+        var insideParenthesesTokens = new SqlTokenizer(sqlInsideParentheses).all().stream()
+                .map(token -> new SqlToken(token.getValue(), token.getTokenType(), openingParenthesesPosition + token.getEnd()))
+                .collect(Collectors.toList());
+
+        var tokens = new ArrayList<SqlToken>();
+        tokens.add(new SqlToken(function.name(), SqlTokenType.FUNCTION_NAME, position + function.length()));
+        tokens.add(new SqlToken("" + OPENING_PARENTHESES, SqlTokenType.OPENING_PARENTHESES, position + openingParenthesesIndex + 1));
+        tokens.addAll(insideParenthesesTokens);
+        tokens.add(new SqlToken("" + CLOSING_PARENTHESES, SqlTokenType.CLOSING_PARENTHESES, position + closingParenthesesIndex + 1));
+
+        return tokens;
     }
 }

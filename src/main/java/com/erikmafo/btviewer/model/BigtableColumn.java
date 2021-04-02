@@ -2,6 +2,9 @@ package com.erikmafo.btviewer.model;
 
 import java.util.Objects;
 
+/**
+ * Represents a column (within a column family) in a bigtable table.
+ */
 public class BigtableColumn {
 
     private final String family;
@@ -14,10 +17,20 @@ public class BigtableColumn {
         this.qualifier = qualifier;
     }
 
+    /**
+     * Returns the name of the column qualifier.
+     *
+     * @return the name of the column qualifier.
+     */
     public String getQualifier() {
         return qualifier;
     }
 
+    /**
+     * Returns the name of the column family that the column belongs to.
+     *
+     * @return the name of the column family.
+     */
     public String getFamily() {
         return family;
     }

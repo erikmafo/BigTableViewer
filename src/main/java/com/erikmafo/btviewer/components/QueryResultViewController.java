@@ -10,7 +10,6 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -24,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BigtableViewController {
+public class QueryResultViewController {
 
     private static final String ROW_KEY = "key";
 
@@ -38,7 +37,7 @@ public class BigtableViewController {
     private Button tableSettingsButton;
 
     @FXML
-    private TreeTableView<BigtableRow> tableView;
+    private TreeTableView<QueryResultRow> tableView;
 
     private final BigtableRowTreeItem root;
 
@@ -51,7 +50,7 @@ public class BigtableViewController {
     private final LoadTableSettingsService loadTableSettingsService;
 
     @Inject
-    public BigtableViewController(
+    public QueryResultViewController(
             SaveTableSettingsService saveTableSettingsService,
             LoadTableSettingsService loadTableSettingsService) {
         this.root = new BigtableRowTreeItem(null);
@@ -66,7 +65,6 @@ public class BigtableViewController {
         vBox.visibleProperty().bind(tableProperty().isNotNull());
         tableView.setRoot(root);
         tableView.setShowRoot(false);
-        tableView.getColumns().add(createRowKeyColumn());
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.setContextMenu(createTableViewContextMenu());
@@ -88,19 +86,14 @@ public class BigtableViewController {
         return contextMenu;
     }
 
-    public void setRows(ObservableList<BigtableRow> rows) {
+    public void setRows(ObservableList<QueryResultRow> rows) {
         rows.addListener(this::onBigtableRowsChange);
     }
 
-    private void onBigtableRowsChange(ListChangeListener.Change<? extends BigtableRow> change) {
+    private void onBigtableRowsChange(ListChangeListener.Change<? extends QueryResultRow> change) {
         tableView.getColumns().clear();
-        var rowKeyColumn = createRowKeyColumn();
-        tableView.getColumns().add(rowKeyColumn);
         while (change.next()) {
-            change.getAddedSubList()
-                    .stream()
-                    .flatMap(r -> r.getCells().stream())
-                    .forEach(cell -> addColumn(cell.getFamily(), cell.getQualifier()));
+            change.getAddedSubList().forEach(this::addColumns);
         }
         var treeItems = change.getList()
                 .stream()
@@ -140,10 +133,7 @@ public class BigtableViewController {
                 .collect(Collectors.groupingBy(TablePositionBase::getRow))
                 .values()
                 .stream()
-                .map(cells -> cells
-                        .stream()
-                        .map(this::getCellValue)
-                        .collect(Collectors.joining(", ")))
+                .map(cells -> cells.stream().map(this::getCellValue).collect(Collectors.joining(", ")))
                 .collect(Collectors.joining("\n"));
 
         var clipboardContent = new ClipboardContent();
@@ -151,8 +141,8 @@ public class BigtableViewController {
         Clipboard.getSystemClipboard().setContent(clipboardContent);
     }
 
-    private String getCellValue(TreeTablePosition<BigtableRow, ?> position) {
-        var row = (BigtableRow)position.getTreeItem().getValue();
+    private String getCellValue(TreeTablePosition<QueryResultRow, ?> position) {
+        var row = (QueryResultRow)position.getTreeItem().getValue();
         if (position.getColumn() == 0) {
             return row.getRowKey();
         }
@@ -163,22 +153,44 @@ public class BigtableViewController {
         return row.getCellValue(family, qualifier, valueConverter.get()).toString();
     }
 
-    private TreeTableColumn<BigtableRow, String> createRowKeyColumn() {
-        TreeTableColumn<BigtableRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
+    private TreeTableColumn<QueryResultRow, String> createRowKeyColumn() {
+        TreeTableColumn<QueryResultRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
         tableColumn.setCellValueFactory(features -> features.getValue().getParent() == root ?
                 new ReadOnlyStringWrapper(features.getValue().getValue().getRowKey()) :
                 new ReadOnlyStringWrapper(""));
-        tableColumn.setCellFactory(new RowCellFactory());
+        tableColumn.setCellFactory(new RowKeyTableCellFactory());
         return tableColumn;
     }
 
-    private void addColumn(String family, String qualifier) {
-        var familyColumn = getFamilyTableColumn(family);
+    private void addColumns(QueryResultRow row) {
+        if (row.isBigtableRow()) {
+            row.getCells().forEach(cell -> addBigtableRowColumn(cell.getFamily(), cell.getQualifier()));
+        } else {
+            row.getAggregations().forEach(aggregation -> addAggregationColumn(aggregation.getName()));
+        }
+    }
+
+    private void addAggregationColumn(String name) {
+        var column = getColumn(name);
+        if (column == null) {
+            column = new TreeTableColumn<QueryResultRow, String>(name);
+            column.setCellValueFactory(c -> new ReadOnlyObjectWrapper(c.getValue().getValue().getAggregation(name)));
+            tableView.getColumns().add(column);
+        }
+    }
+
+    private void addBigtableRowColumn(String family, String qualifier) {
+        var rowKeyColumn = getColumn(ROW_KEY);
+        if (rowKeyColumn == null) {
+            tableView.getColumns().add(createRowKeyColumn());
+        }
+
+        var familyColumn = getColumn(family);
         var qualifierColumn = getQualifierTableColumn(family, qualifier);
 
         if (familyColumn == null) {
-            familyColumn = new TreeTableColumn<BigtableRow, String>(family);
+            familyColumn = new TreeTableColumn<QueryResultRow, String>(family);
             familyColumn.getColumns().add(qualifierColumn);
             tableView.getColumns().add(familyColumn);
         } else if (familyColumn.getColumns().stream().noneMatch(c -> c.getText().equals(qualifier))) {
@@ -186,17 +198,17 @@ public class BigtableViewController {
         }
     }
 
-    private TreeTableColumn<BigtableRow, BigtableCell> getQualifierTableColumn(String family, String qualifier) {
-        TreeTableColumn<BigtableRow, BigtableCell> qualifierColumn = new TreeTableColumn<>(qualifier);
+    private TreeTableColumn<QueryResultRow, BigtableCell> getQualifierTableColumn(String family, String qualifier) {
+        TreeTableColumn<QueryResultRow, BigtableCell> qualifierColumn = new TreeTableColumn<>(qualifier);
         qualifierColumn.setCellValueFactory(new CellValueFactory(family, qualifier));
         qualifierColumn.setCellFactory(new CellFactory());
         return qualifierColumn;
     }
 
-    private TreeTableColumn<BigtableRow, ?> getFamilyTableColumn(String family) {
+    private TreeTableColumn<QueryResultRow, ?> getColumn(String name) {
         return tableView.getColumns()
                 .stream()
-                .filter(c -> c.getText().equals(family))
+                .filter(c -> c.getText().equals(name))
                 .findFirst()
                 .orElse(null);
     }
@@ -238,7 +250,7 @@ public class BigtableViewController {
                 new BigtableValueConverter(Collections.emptyList());
     }
 
-    static class CellValueFactory implements Callback<TreeTableColumn.CellDataFeatures<BigtableRow, BigtableCell>, ObservableValue<BigtableCell>>
+    private static class CellValueFactory implements Callback<TreeTableColumn.CellDataFeatures<QueryResultRow, BigtableCell>, ObservableValue<BigtableCell>>
     {
         private final String family;
         private final String qualifier;
@@ -249,15 +261,15 @@ public class BigtableViewController {
         }
 
         @Override
-        public ObservableValue<BigtableCell> call(TreeTableColumn.CellDataFeatures<BigtableRow, BigtableCell> param) {
+        public ObservableValue<BigtableCell> call(TreeTableColumn.CellDataFeatures<QueryResultRow, BigtableCell> param) {
             return new ReadOnlyObjectWrapper<>(param.getValue().getValue().getLatestCell(family, qualifier));
         }
     }
 
-    static class RowCellFactory implements Callback<TreeTableColumn<BigtableRow, String>, TreeTableCell<BigtableRow, String>> {
+    private static class RowKeyTableCellFactory implements Callback<TreeTableColumn<QueryResultRow, String>, TreeTableCell<QueryResultRow, String>> {
 
         @Override
-        public TreeTableCell<BigtableRow, String> call(TreeTableColumn<BigtableRow, String> column) {
+        public TreeTableCell<QueryResultRow, String> call(TreeTableColumn<QueryResultRow, String> column) {
             return new TreeTableCell<>() {
                 @Override
                 protected void updateItem(String rowKey, boolean empty) {
@@ -274,10 +286,10 @@ public class BigtableViewController {
         }
     }
 
-    class CellFactory implements Callback<TreeTableColumn<BigtableRow, BigtableCell>, TreeTableCell<BigtableRow, BigtableCell>>
+    private class CellFactory implements Callback<TreeTableColumn<QueryResultRow, BigtableCell>, TreeTableCell<QueryResultRow, BigtableCell>>
     {
         @Override
-        public TreeTableCell<BigtableRow, BigtableCell> call(TreeTableColumn<BigtableRow, BigtableCell> column) {
+        public TreeTableCell<QueryResultRow, BigtableCell> call(TreeTableColumn<QueryResultRow, BigtableCell> column) {
             return new TreeTableCell<>() {
                 @Override
                 protected void updateItem(BigtableCell item, boolean empty) {

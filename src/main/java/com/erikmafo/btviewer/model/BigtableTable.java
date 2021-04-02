@@ -1,5 +1,4 @@
 package com.erikmafo.btviewer.model;
-import com.google.bigtable.admin.v2.Table;
 import com.google.bigtable.admin.v2.TableName;
 
 import java.util.Objects;

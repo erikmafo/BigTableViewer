@@ -15,6 +15,11 @@
                 text="Execute"
                 styleClass="btn-success"
                 onAction="#onExecuteQueryButtonPressed"/>
+        <Button
+                fx:id="cancelQueryButton"
+                text="Cancel"
+                styleClass="btn-danger"
+                onAction="#onCancelQueryButtonPressed"/>
         <ProgressBar
                 fx:id="progressBar"
                 styleClass="progress-bar-success"/>

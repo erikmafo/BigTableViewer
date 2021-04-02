@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -34,18 +36,36 @@ public class BigtableValueConverter {
             return null;
         }
 
+        CellDefinition cellDefinition = getCellDefinition(cell);
+
+        try {
+            return convertUsingValueType(cell, cellDefinition.getValueType());
+        } catch (BufferUnderflowException ex) {
+            throw new IllegalArgumentException(String.format(cell.getValueAsString() + " is not a %s", cellDefinition.getValueType()));
+        }
+    }
+
+    public boolean isNumber(BigtableCell cell) {
+        var cellDefinition = getCellDefinition(cell);
+
+        switch (cellDefinition.getValueType().toLowerCase()) {
+            case "double":
+            case "integer":
+            case "float":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @NotNull
+    private CellDefinition getCellDefinition(BigtableCell cell) {
         var cellDefinition = cellDefinitions.stream()
                 .filter(c -> c.getFamily().equals(cell.getFamily())
                         && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
                 .orElse(new CellDefinition("string", cell.getFamily(), cell.getQualifier()));
-
-        try {
-            return convertUsingValueType(cell, cellDefinition.getValueType());
-        } catch (BufferUnderflowException ex) {
-            return String.format("not a %s", cellDefinition.getValueType());
-        }
-
+        return cellDefinition;
     }
 
     private Object convertUsingValueType(BigtableCell cell, String valueType) {
