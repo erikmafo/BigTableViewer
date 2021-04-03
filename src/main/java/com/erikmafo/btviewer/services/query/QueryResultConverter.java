@@ -2,8 +2,8 @@ package com.erikmafo.btviewer.services.query;
 
 import com.erikmafo.btviewer.model.Aggregation;
 import com.erikmafo.btviewer.model.BigtableCell;
-import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
+import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.sql.functions.AggregationExpression;
@@ -12,7 +12,7 @@ import com.google.cloud.bigtable.data.v2.models.RowCell;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

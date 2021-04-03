@@ -1,7 +1,8 @@
 package com.erikmafo.btviewer;
+
 import com.erikmafo.btviewer.config.AppConfig;
 import com.erikmafo.btviewer.config.ApplicationEnvironment;
-import com.erikmafo.btviewer.services.*;
+import com.erikmafo.btviewer.services.ServicesModule;
 import com.google.inject.Guice;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -1,4 +1,5 @@
 package com.erikmafo.btviewer.sql;
+
 import com.erikmafo.btviewer.sql.functions.Function;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -6,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Used to break a string into tokens. Each token is represented by a {@link SqlToken}.

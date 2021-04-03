@@ -1,9 +1,10 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
-import com.erikmafo.btviewer.ui.components.AddInstanceDialog;
+
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
-import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import com.erikmafo.btviewer.services.instance.SaveInstanceService;
+import com.erikmafo.btviewer.services.project.RemoveProjectService;
+import com.erikmafo.btviewer.ui.components.AddInstanceDialog;
 import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.inject.Provider;
 import javafx.beans.property.ReadOnlyObjectProperty;

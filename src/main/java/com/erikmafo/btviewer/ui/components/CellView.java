@@ -1,10 +1,13 @@
 package com.erikmafo.btviewer.ui.components;
 
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
+import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;

@@ -1,8 +1,9 @@
 package com.erikmafo.btviewer.ui.controllers;
 
-import com.erikmafo.btviewer.ui.components.*;
-import com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController;
 import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.ui.components.QueryBoxController;
+import com.erikmafo.btviewer.ui.components.QueryResultViewController;
+import com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController;
 import javafx.fxml.FXML;
 
 /**

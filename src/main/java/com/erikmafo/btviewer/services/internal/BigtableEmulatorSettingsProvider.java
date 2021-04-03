@@ -1,7 +1,6 @@
 package com.erikmafo.btviewer.services.internal;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
-import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.emulator.v2.Emulator;

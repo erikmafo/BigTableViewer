@@ -1,7 +1,7 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
 
-import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import com.erikmafo.btviewer.services.instance.SaveInstanceService;
+import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;

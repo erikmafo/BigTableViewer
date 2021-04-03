@@ -1,15 +1,14 @@
 package com.erikmafo.btviewer.ui.components;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
-import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.model.BigtableTable;
+import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.query.BigtableQueryService;
 import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.util.AlertUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

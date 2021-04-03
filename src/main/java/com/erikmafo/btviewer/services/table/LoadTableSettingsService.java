@@ -4,8 +4,6 @@ import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.util.AlertUtil;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 

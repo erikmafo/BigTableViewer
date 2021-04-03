@@ -1,7 +1,6 @@
 package com.erikmafo.btviewer.services.query;
 
 import com.erikmafo.btviewer.model.*;
-import com.erikmafo.btviewer.services.query.QueryResultConverter;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.erikmafo.btviewer.sql.QueryConverter;
@@ -13,7 +12,7 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**

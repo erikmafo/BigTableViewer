@@ -1,9 +1,10 @@
 package com.erikmafo.btviewer.ui.components;
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
+
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.model.CellDefinition;
+import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;

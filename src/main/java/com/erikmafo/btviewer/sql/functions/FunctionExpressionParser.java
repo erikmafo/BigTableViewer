@@ -1,12 +1,11 @@
 package com.erikmafo.btviewer.sql.functions;
 
-import com.erikmafo.btviewer.sql.*;
+import com.erikmafo.btviewer.sql.SqlToken;
+import com.erikmafo.btviewer.sql.SqlTokenType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a part of a sql expression that involves a function call, e.g. COUNT(fieldName).
