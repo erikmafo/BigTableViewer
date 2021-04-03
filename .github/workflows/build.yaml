@@ -19,21 +19,18 @@ jobs:
         os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
         include:
         - os: windows-latest
-            env:
-              - _JAVA_OPTIONS: "-Dtestfx.robot=awt -Dtestfx.awt.scale=true -Dglass.win.uiScale=200%"
           display-name: 'windows'
+          javaOpts: "-Dtestfx.robot=awt -Dtestfx.awt.scale=true -Dglass.win.uiScale=200%"
           installerName: 'btviewer.msi'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
         - os: ubuntu-latest
-            env:
-              - _JAVA_OPTIONS: "-Dtestfx.robot=awt"
           display-name: 'linux'
+          javaOpts: "-Dtestfx.robot=awt"
           installerName: 'btviewer.deb'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
         - os: macos-latest
-            env:
-              - _JAVA_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
           display-name: 'osx'
+          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
           installerName: 'btviewer.dmg'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
     steps:
@@ -50,6 +47,8 @@ jobs:
         run: unzip jpackager.zip -d $JAVA_HOME/bin
         shell: bash
       - name: Install with maven
+        env:
+          _JAVA_OPTIONS: ${{javaOpts}}
         run: mvn install -B -e -q
       - name: Show current dir
         run: ls target/release
