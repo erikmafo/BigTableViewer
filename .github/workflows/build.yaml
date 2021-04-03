@@ -48,7 +48,7 @@ jobs:
         shell: bash
       - name: Install with maven
         env:
-          _JAVA_OPTIONS: ${{javaOpts}}
+          _JAVA_OPTIONS: ${{ matrix.javaOpts }}
         run: mvn install -B -e -q
       - name: Show current dir
         run: ls target/release
