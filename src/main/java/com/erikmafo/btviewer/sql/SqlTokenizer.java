@@ -31,6 +31,11 @@ public class SqlTokenizer {
         this.sql = sql;
     }
 
+    private SqlTokenizer(@NotNull String sql, int skip, int take) {
+        this.sql = sql.substring(0, skip + take);
+        this.position = skip;
+    }
+
     /**
      * Returns the next {@link SqlToken} in the sql query string.
      *
@@ -138,32 +143,32 @@ public class SqlTokenizer {
     }
 
     @NotNull
-    private SqlToken nextFuncExpression(Function function, String remainingSql) {
-        var startIndex = position;
-        var subTokens = extractExpression(function, remainingSql);
-        position = subTokens.get(subTokens.size() - 1).getEnd();
-        var funcExpressionSql = remainingSql.substring(startIndex, position);
-        return new SqlToken(funcExpressionSql, SqlTokenType.FUNCTION_EXPRESSION, position, subTokens);
+    private SqlToken nextFuncExpression(Function functionName, String remainingSql) {
+        var funcExpression = extractExpression(functionName, remainingSql);
+        var subTokens = new ArrayList<SqlToken>();
+        subTokens.add(new SqlToken(functionName.value(), SqlTokenType.FUNCTION_NAME, position + functionName.length()));
+        var skip = position + functionName.length();
+        var take = funcExpression.length() - functionName.length();
+        var funcExpressionSkipNameTokenizer = new SqlTokenizer(sql, skip, take);
+        subTokens.addAll(funcExpressionSkipNameTokenizer.all());
+        position += funcExpression.length();
+        return new SqlToken(funcExpression, SqlTokenType.FUNCTION_EXPRESSION, position, subTokens);
     }
 
     @NotNull
-    private List<SqlToken> extractExpression(@NotNull Function function, String sql) {
+    private String extractExpression(@NotNull Function function, String sql) {
         if (!function.matchesStartOf(sql)) {
             throw new IllegalArgumentException(sql + "does not start with a function expression of type " + this);
         }
 
-        var openingParenthesesIndex = sql.indexOf(OPENING_PARENTHESES);
-        var closingParenthesesIndex = 0;
         var numberOfOpeningParentheses = 1;
         var numberOfClosingParentheses = 0;
-        var index = openingParenthesesIndex + 1;
+        var index = sql.indexOf("(") + 1;
         while (index < sql.length()) {
             var ch = sql.charAt(index);
-            if (ch == OPENING_PARENTHESES) {
-                openingParenthesesIndex = index;
+            if (ch == '(') {
                 numberOfOpeningParentheses++;
-            } else if (ch == CLOSING_PARENTHESES) {
-                closingParenthesesIndex = index;
+            } else if (ch == ')') {
                 numberOfClosingParentheses++;
             }
             if (numberOfClosingParentheses == numberOfOpeningParentheses) {
@@ -172,18 +177,6 @@ public class SqlTokenizer {
             index++;
         }
 
-        var openingParenthesesPosition = position + openingParenthesesIndex + 1;
-        var sqlInsideParentheses = sql.substring(openingParenthesesIndex + 1, closingParenthesesIndex);
-        var insideParenthesesTokens = new SqlTokenizer(sqlInsideParentheses).all().stream()
-                .map(token -> new SqlToken(token.getValue(), token.getTokenType(), openingParenthesesPosition + token.getEnd()))
-                .collect(Collectors.toList());
-
-        var tokens = new ArrayList<SqlToken>();
-        tokens.add(new SqlToken(function.name(), SqlTokenType.FUNCTION_NAME, position + function.length()));
-        tokens.add(new SqlToken("" + OPENING_PARENTHESES, SqlTokenType.OPENING_PARENTHESES, position + openingParenthesesIndex + 1));
-        tokens.addAll(insideParenthesesTokens);
-        tokens.add(new SqlToken("" + CLOSING_PARENTHESES, SqlTokenType.CLOSING_PARENTHESES, position + closingParenthesesIndex + 1));
-
-        return tokens;
+        return sql.substring(0, index + 1);
     }
 }

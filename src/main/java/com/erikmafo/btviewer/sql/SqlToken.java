@@ -70,4 +70,11 @@ public class SqlToken {
             throw new IllegalArgumentException(getError());
         }
     }
+
+    @Override
+    public String toString() {
+        return "SqlToken{" +
+                "value='" + value + '\'' +
+                '}';
+    }
 }

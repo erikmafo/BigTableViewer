@@ -11,7 +11,7 @@ public class QueryResultRow {
 
     private final String rowKey;
     private final List<BigtableCell> cells;
-    private final List<AggregationEntry> aggregations;
+    private final List<Aggregation> aggregations;
 
     /**
      * Creates a QueryResultRow from a Bigtable row.
@@ -28,7 +28,7 @@ public class QueryResultRow {
      * Creates a QueryResultRow from a list of aggregation results.
      * @param aggregations aggregation results from the query.
      */
-    public QueryResultRow(AggregationEntry... aggregations) {
+    public QueryResultRow(Aggregation... aggregations) {
         this.rowKey = null;
         this.cells = new ArrayList<>();
         this.aggregations = new ArrayList<>();
@@ -50,9 +50,9 @@ public class QueryResultRow {
         return cells;
     }
 
-    public List<AggregationEntry> getAggregations() { return aggregations; }
+    public List<Aggregation> getAggregations() { return aggregations; }
 
-    public AggregationEntry getAggregation(String name) { return aggregations.stream().filter(a -> a.getName().equals(name)).findFirst().orElse(null);}
+    public Aggregation getAggregation(String name) { return aggregations.stream().filter(a -> a.getName().equals(name)).findFirst().orElse(null);}
 
     public BigtableCell getLatestCell(String family, String qualifier) {
         return cells.stream()

@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.sql;
 
-import com.erikmafo.btviewer.sql.functions.Aggregation;
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 
 public class SqlParser {
 
@@ -186,7 +186,7 @@ public class SqlParser {
                 sqlQuery.addField(new Field(token.getValue()));
                 step = Step.SELECT_FROM;
             } else if (token.getTokenType() == SqlTokenType.FUNCTION_EXPRESSION) {
-                var aggregation = Aggregation.from(token);
+                var aggregation = AggregationExpression.from(token);
                 sqlQuery.addAggregation(aggregation);
                 step = Step.SELECT_FROM;
             }

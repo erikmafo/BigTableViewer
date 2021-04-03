@@ -3,34 +3,52 @@ package com.erikmafo.btviewer.sql.functions;
 import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.SqlToken;
 
-import java.util.List;
+/**
+ * Represents an aggregation of a field in a sql query.
+ */
+public class AggregationExpression {
 
-public class AggregationExpression extends FunctionExpression {
-
-    public static Aggregation evaluate(List<SqlToken> tokens) {
-        var expression = new AggregationExpression();
-        expression.read(tokens);
-        return expression.evaluate();
+    /**
+     * An enumeration of the different types of supported aggregations.
+     */
+    public enum Type {
+        COUNT,
+        SUM,
+        AVG
     }
 
-    private Field field;
-
-    protected Aggregation evaluate() {
-        switch (getFunction()) {
-            case COUNT: return new Aggregation(Aggregation.Type.COUNT, field);
-            case SUM: return new Aggregation(Aggregation.Type.SUM, field);
-            case AVG: return new Aggregation(Aggregation.Type.AVG, field);
-            default: throw new IllegalArgumentException(
-                    String.format("The %s(...) expression could not be evaluated", getFunction().value()));
-        }
+    /**
+     * Creates an aggregation from the given sql token.
+     * @param token a sql token that expresses an aggregation.
+     * @return an {@link AggregationExpression}
+     * @throws IllegalArgumentException if the sql token cannot be evaluated into an AggregationExpression.
+     */
+    public static AggregationExpression from(SqlToken token) {
+        return AggregationExpressionParser.parse(token.getSubTokens());
     }
 
-    @Override
-    protected void onInputToken(SqlToken inputToken) {
-        if (field != null) {
-            throw new IllegalArgumentException(String.format(
-                    "Invalid token %s, %s only accepts a single argument", getFunction(), inputToken.getValue()));
+    private final Type type;
+    private final Field field;
+
+    public AggregationExpression(Type type, Field field) {
+
+        switch (type) {
+            case SUM:
+            case AVG:
+                field.ensureHasFamilyAndQualifier(
+                        "Syntax error: " + "family and qualifier must be specified in " + type + "(...)");
+                break;
         }
-        field = new Field(inputToken.getValue());
+
+        this.type = type;
+        this.field = field;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public Field getField() {
+        return field;
     }
 }

@@ -1,12 +1,12 @@
 package com.erikmafo.btviewer.query;
 
-import com.erikmafo.btviewer.model.AggregationEntry;
+import com.erikmafo.btviewer.model.Aggregation;
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.sql.functions.Aggregation;
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import org.jetbrains.annotations.Contract;
@@ -71,7 +71,7 @@ public class QueryResultConverter {
 
     @NotNull
     @Contract(pure = true)
-    private AggregationEntry[] combineAggregationEntries(@NotNull AggregationEntry[] first, @NotNull AggregationEntry[] second) {
+    private Aggregation[] combineAggregationEntries(@NotNull Aggregation[] first, @NotNull Aggregation[] second) {
 
         for (int i = 0; i < first.length; i++) {
             first[i].updateFrom(second[i]);
@@ -81,9 +81,9 @@ public class QueryResultConverter {
     }
 
     @NotNull
-    private AggregationEntry[] toAggregationEntries(@NotNull Row row) {
+    private Aggregation[] toAggregationEntries(@NotNull Row row) {
         var noOfAggregations = sqlQuery.getAggregations().size();
-        var entries = new AggregationEntry[noOfAggregations];
+        var entries = new Aggregation[noOfAggregations];
 
         for (var i=0; i < noOfAggregations; i++) {
             entries[i] = createAggregationEntry(row, sqlQuery.getAggregations().get(i));
@@ -101,25 +101,25 @@ public class QueryResultConverter {
     }
 
     @NotNull
-    private AggregationEntry createAggregationEntry(@NotNull Row row, @NotNull Aggregation aggregation) {
-        return getCells(row, aggregation.getField())
+    private Aggregation createAggregationEntry(@NotNull Row row, @NotNull AggregationExpression aggregationExpression) {
+        return getCells(row, aggregationExpression.getField())
                 .stream()
-                .filter(c -> matches(aggregation.getField(), c))
+                .filter(c -> matches(aggregationExpression.getField(), c))
                 .findFirst()
-                .map(rowCell -> createAggregationEntry(aggregation, rowCell))
-                .orElseGet(() -> createAggregationEntry(aggregation));
+                .map(rowCell -> createAggregationEntry(aggregationExpression, rowCell))
+                .orElseGet(() -> createAggregationEntry(aggregationExpression));
     }
 
     @Contract("_ -> new")
     @NotNull
-    private AggregationEntry createAggregationEntry(@NotNull Aggregation aggregation) {
-        return new AggregationEntry(aggregation.getType(), aggregation.getField().getName());
+    private Aggregation createAggregationEntry(@NotNull AggregationExpression aggregationExpression) {
+        return new Aggregation(aggregationExpression.getType(), aggregationExpression.getField().getName());
     }
 
     @NotNull
-    private AggregationEntry createAggregationEntry(Aggregation aggregation, RowCell cell) {
-        var entry = createAggregationEntry(aggregation);
-        switch (aggregation.getType()) {
+    private Aggregation createAggregationEntry(AggregationExpression aggregationExpression, RowCell cell) {
+        var entry = createAggregationEntry(aggregationExpression);
+        switch (aggregationExpression.getType()) {
             case AVG:
             case SUM:
                 entry.updateSum(getDouble(BigtableCell.from(cell)));

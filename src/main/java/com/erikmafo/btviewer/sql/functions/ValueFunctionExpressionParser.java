@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ValueFunctionExpression extends FunctionExpression {
+public class ValueFunctionExpressionParser extends FunctionExpressionParser {
 
-    public static Value evaluate(List<SqlToken> tokens) {
-        var expression = new ValueFunctionExpression();
+    public static Value parse(List<SqlToken> tokens) {
+        var expression = new ValueFunctionExpressionParser();
         expression.read(tokens);
-        return expression.evaluate();
+        return expression.parse();
     }
 
     private final List<Value> args = new ArrayList<>();
 
-    public Value evaluate() {
+    public Value parse() {
         switch (getFunction()) {
             case REVERSE: return reverse(args);
             case CONCAT: return concat(args);

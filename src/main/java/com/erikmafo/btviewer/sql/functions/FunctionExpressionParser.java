@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a part of a sql expression that involves a function call, e.g. COUNT(fieldName).
  */
-public abstract class FunctionExpression {
+public abstract class FunctionExpressionParser {
 
     private enum Step {
         FUNCTION_TYPE,

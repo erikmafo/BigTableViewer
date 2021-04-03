@@ -1,7 +1,6 @@
 package com.erikmafo.btviewer.sql;
 
-import com.erikmafo.btviewer.sql.functions.Aggregation;
-import com.erikmafo.btviewer.sql.functions.Function;
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,7 @@ public class SqlQuery {
     private QueryType queryType;
     private String tableName;
     private final List<Field> fields = new ArrayList<>();
-    private final List<Aggregation> aggregations = new ArrayList<>();
+    private final List<AggregationExpression> aggregationExpressions = new ArrayList<>();
     private final List<WhereClause> whereClauses = new ArrayList<>();
     private int limit = Integer.MAX_VALUE;
 
@@ -70,14 +69,14 @@ public class SqlQuery {
     }
 
     public boolean isAggregation() {
-        return aggregations != null && !aggregations.isEmpty();
+        return aggregationExpressions != null && !aggregationExpressions.isEmpty();
     }
 
-    public List<Aggregation> getAggregations() {
-        return aggregations;
+    public List<AggregationExpression> getAggregations() {
+        return aggregationExpressions;
     }
 
-    public void addAggregation(Aggregation aggregation) {
-        this.aggregations.add(aggregation);
+    public void addAggregation(AggregationExpression aggregationExpression) {
+        this.aggregationExpressions.add(aggregationExpression);
     }
 }

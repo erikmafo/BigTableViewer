@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.sql;
 
-import com.erikmafo.btviewer.sql.functions.Aggregation;
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 import com.google.cloud.bigtable.data.v2.models.Filters;
 import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Range;
@@ -112,7 +112,7 @@ public class BigtableSqlQuery {
             return FILTERS.pass();
         }
 
-        if (sqlQuery.getAggregations().stream().allMatch(a -> a.getType() == Aggregation.Type.COUNT)) {
+        if (sqlQuery.getAggregations().stream().allMatch(a -> a.getType() == AggregationExpression.Type.COUNT)) {
             return FILTERS.chain()
                     .filter(FILTERS.limit().cellsPerColumn(1))
                     .filter(FILTERS.value().strip());

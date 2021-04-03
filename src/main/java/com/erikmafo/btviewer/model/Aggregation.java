@@ -1,23 +1,24 @@
 package com.erikmafo.btviewer.model;
 
-import com.erikmafo.btviewer.sql.functions.Aggregation;
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 
-public class AggregationEntry {
+public class Aggregation {
 
-    private final Aggregation.Type type;
+    private final AggregationExpression.Type type;
     private final String fieldName;
 
     private int count;
     private double sum;
 
-    public AggregationEntry(Aggregation.Type type, String fieldName) {
+    public Aggregation(AggregationExpression.Type type, String fieldName) {
         this.type = type;
         this.fieldName = fieldName;
     }
 
-    public void updateFrom(AggregationEntry other) {
+    public void updateFrom(Aggregation other) {
         if (other.type != type) {
-            return;
+            throw new AssertionError(
+                    String.format("Expected aggregation types to be equal but was %s and %s", type, other.type));
         }
         switch (type) {
             case COUNT:

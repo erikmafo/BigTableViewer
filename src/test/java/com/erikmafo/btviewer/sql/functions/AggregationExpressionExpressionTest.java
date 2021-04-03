@@ -9,16 +9,16 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class AggregationExpressionTest {
+public class AggregationExpressionExpressionTest {
 
     @Test
     @Parameters({
             "SUM(foo.bar), SUM",
             "COUNT(foo.bar), COUNT",
             "AVG(foo.bar), AVG"})
-    public void shouldEvaluateAggregationExpression(String expression, Aggregation.Type aggregationType) {
+    public void shouldEvaluateAggregationExpression(String expression, AggregationExpression.Type aggregationType) {
         var tokens = new SqlTokenizer(expression).next().getSubTokens();
-        var aggregation = AggregationExpression.evaluate(tokens);
+        var aggregation = AggregationExpressionParser.parse(tokens);
 
         assertEquals(aggregationType, aggregation.getType());
         assertEquals("foo.bar", aggregation.getField().getName());
@@ -32,14 +32,14 @@ public class AggregationExpressionTest {
             "AVG(foo)"})
     public void shouldThrowIfFamilyOrQualifierIsUnspecified(String expression) {
         var tokens = new SqlTokenizer(expression).next().getSubTokens();
-        assertThrows(IllegalArgumentException.class, () -> AggregationExpression.evaluate(tokens));
+        assertThrows(IllegalArgumentException.class, () -> AggregationExpressionParser.parse(tokens));
     }
 
     @Test
     public void shouldAllowWildcardWithCount() {
         var tokens = new SqlTokenizer("COUNT(*)").next().getSubTokens();
-        var aggregation = AggregationExpression.evaluate(tokens);
-        assertEquals(Aggregation.Type.COUNT, aggregation.getType());
+        var aggregation = AggregationExpressionParser.parse(tokens);
+        assertEquals(AggregationExpression.Type.COUNT, aggregation.getType());
         assertTrue(aggregation.getField().isAsterisk());
     }
 }

@@ -3,7 +3,7 @@ package com.erikmafo.btviewer.sql;
 public enum ReservedWord {
 
     SELECT("SELECT", SqlTokenType.SELECT, true),
-    ASTERISK("*", SqlTokenType.ASTERISK, true),
+    ASTERISK("*", SqlTokenType.ASTERISK, false),
     COMMA(",", SqlTokenType.COMMA, false),
     FROM("FROM", SqlTokenType.FROM, true),
     WHERE("WHERE", SqlTokenType.WHERE, true),
