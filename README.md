@@ -1,5 +1,6 @@
 # Bigtable Viewer
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e70e5faa1bc418093f4454f945336ed)](https://app.codacy.com/gh/erikmafo/BigtableViewer?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigtableViewer&utm_campaign=Badge_Grade_Settings)
 [![Build Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 [![CodeQL Analysis Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 
