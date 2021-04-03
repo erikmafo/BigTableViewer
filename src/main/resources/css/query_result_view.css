@@ -1,28 +1,25 @@
-.tree-table-row-cell {
-}
-
 .has-spacing {
-    -fx-spacing: 10px;
+  -fx-spacing: 10px;
 }
 
 .tree-table-row-cell {
-    -fx-background-color: #F8F9FB;
+  -fx-background-color: #F8F9FB;
+  -fx-background-insets: 0, 0 0 1 0;
+  -fx-padding: 0.0em;
+}
+
+.tree-table-row-cell:odd {
+  -fx-background-color: #E6E7E9;
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em;
 }
 
-.tree-table-row-cell:odd{
-    -fx-background-color: #E6E7E9;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-
-.tree-table-row-cell:empty{
-    -fx-background-color: #F8F9FB;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
+.tree-table-row-cell:empty {
+  -fx-background-color: #F8F9FB;
+  -fx-background-insets: 0, 0 0 1 0;
+  -fx-padding: 0.0em;
 }
 
 .tree-disclosure-node {
-    -fx-padding: 10 5 0 5;
+  -fx-padding: 10 5 0 5;
 }
