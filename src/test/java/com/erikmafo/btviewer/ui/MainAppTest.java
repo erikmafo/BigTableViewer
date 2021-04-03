@@ -24,14 +24,14 @@ public class MainAppTest extends ApplicationTest {
     }
 
     @Test
-    public void should_start() {
+    public void shouldStart() {
         verifyThat("#addInstanceButton", isVisible());
         verifyThat("#projectExplorer", isVisible());
         verifyThat("#menuBar", isVisible());
     }
 
     @Test
-    public void should_open_add_instance_dialog() {
+    public void shouldOpenAddInstanceDialog() {
         // when:
         clickOn("#addInstanceButton", MouseButton.PRIMARY);
 
