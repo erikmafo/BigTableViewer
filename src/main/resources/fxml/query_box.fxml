@@ -6,7 +6,7 @@
 <VBox styleClass="queryBox, has-spacing"
       stylesheets="/css/query_box.css"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.btviewer.components.QueryBoxController">
+      fx:controller="com.erikmafo.btviewer.ui.components.QueryBoxController">
 
     <CodeArea fx:id="codeArea" onKeyPressed="#onKeyPressedInCodeArea"/>
     <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">

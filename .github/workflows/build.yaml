@@ -19,14 +19,20 @@ jobs:
         os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
         include:
         - os: windows-latest
+            env:
+              - _JAVA_OPTIONS: "-Dtestfx.robot=awt -Dtestfx.awt.scale=true -Dglass.win.uiScale=200%"
           display-name: 'windows'
           installerName: 'btviewer.msi'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
         - os: ubuntu-latest
+            env:
+              - _JAVA_OPTIONS: "-Dtestfx.robot=awt"
           display-name: 'linux'
           installerName: 'btviewer.deb'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
         - os: macos-latest
+            env:
+              - _JAVA_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
           display-name: 'osx'
           installerName: 'btviewer.dmg'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'

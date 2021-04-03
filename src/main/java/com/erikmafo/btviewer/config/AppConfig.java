@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.config;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -15,8 +16,10 @@ public class AppConfig {
                 String.format("config.%s.properties", environment.getName());
     }
 
-    private final boolean useBigtableEmulator;
-    private final boolean useInMemoryDatabase;
+    private boolean useBigtableEmulator;
+    private boolean useInMemoryDatabase;
+
+    public AppConfig() {}
 
     @Inject
     public AppConfig(@Named("USE_BIGTABLE_EMULATOR") boolean useBigtableEmulator,
@@ -25,11 +28,19 @@ public class AppConfig {
         this.useInMemoryDatabase = useInMemoryDatabase;
     }
 
-    public boolean useBigtableEmulator() {
-        return useBigtableEmulator;
+    public boolean useBigtableEmulator() { return useBigtableEmulator; }
+
+    @VisibleForTesting
+    public void setUseBigtableEmulator(boolean useBigtableEmulator) {
+        this.useBigtableEmulator = useBigtableEmulator;
     }
 
+    @VisibleForTesting
     public boolean useInMemoryDatabase() {
         return useInMemoryDatabase;
+    }
+
+    public void setUseInMemoryDatabase(boolean useInMemoryDatabase) {
+        this.useInMemoryDatabase = useInMemoryDatabase;
     }
 }

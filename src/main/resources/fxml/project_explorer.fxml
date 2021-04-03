@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Button?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.btviewer.projectexplorer.ProjectExplorerController"
+      fx:controller="com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController"
       stylesheets="/css/main.css"
       styleClass="has-spacing">
         <Button fx:id="addInstanceButton" styleClass="btn">Add Instance</Button>
