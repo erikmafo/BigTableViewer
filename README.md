@@ -1,7 +1,8 @@
 # Bigtable Viewer
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e70e5faa1bc418093f4454f945336ed)](https://app.codacy.com/gh/erikmafo/BigtableViewer?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigtableViewer&utm_campaign=Badge_Grade_Settings)
 [![Build Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/9364e25dcac647f2b0019e61235a5f00)](https://www.codacy.com/gh/erikmafo/BigtableViewer/dashboard?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigtableViewer&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e70e5faa1bc418093f4454f945336ed)](https://app.codacy.com/gh/erikmafo/BigtableViewer?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigtableViewer&utm_campaign=Badge_Grade_Settings)
 [![CodeQL Analysis Actions Status](https://github.com/erikmafo/BigtableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/BigtableViewer/actions)
 
 Bigtable viewer is an application that lets you query the contents of Google Bigtable tables with SQL. 
