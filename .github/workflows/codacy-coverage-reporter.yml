@@ -18,7 +18,7 @@ jobs:
       - name: Build with maven
         env:
           JAVA_TOOLS_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
-        run: mvn -B package jacoco:report --file pom.xml
+        run: mvn -B package jacoco:report
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
         with:
