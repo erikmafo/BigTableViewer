@@ -2,10 +2,16 @@ package com.erikmafo.btviewer.sql.functions;
 
 import java.util.Arrays;
 
+/**
+ * An enumeration of all function expressions that are allowed in a {@link com.erikmafo.btviewer.sql.SqlQuery}.
+ */
 public enum Function {
 
     REVERSE("REVERSE"),
-    CONCAT("CONCAT");
+    CONCAT("CONCAT"),
+    COUNT("COUNT"),
+    SUM("SUM"),
+    AVG("AVG");
 
     private final String value;
 
@@ -13,14 +19,26 @@ public enum Function {
         this.value = value;
     }
 
+    /**
+     * Returns the Function with name equal to the specified value (ignores case).
+     * @param value a string representation of a {@link Function}.
+     * @return a {@link Function}.
+     * @throws java.util.NoSuchElementException if there is no Function with name equal to the given value.
+     */
     public static Function of(String value) {
         return Arrays
                 .stream(values())
-                .filter(function -> function.value.equals(value))
+                .filter(function -> function.value.equalsIgnoreCase(value))
                 .findFirst()
                 .orElseThrow();
     }
 
+    /**
+     * Checks if a sql expression starts with a call to this function.
+     *
+     * @param sql a sql expression, or part of a sql expression.
+     * @return true if the sql expression starts with an invocation of this function, false otherwise.
+     */
     public boolean matchesStartOf(String sql) {
 
         var matchStartOf = value + "(";
@@ -42,34 +60,18 @@ public enum Function {
         return true;
     }
 
+    /**
+     * The name of this function.
+     * @return name of the function.
+     */
     public String value() {
         return value;
     }
 
-    public String extractExpression(String sql) {
-        if (!matchesStartOf(sql)) {
-            throw new IllegalArgumentException(sql + "does not start with a function expression of type " + this);
-        }
-
-        var numberOfOpeningParentheses = 1;
-        var numberOfClosingParentheses = 0;
-        var index = sql.indexOf("(") + 1;
-        while (index < sql.length()) {
-            var ch = sql.charAt(index);
-            if (ch == '(') {
-                numberOfOpeningParentheses++;
-            } else if (ch == ')') {
-                numberOfClosingParentheses++;
-            }
-            if (numberOfClosingParentheses == numberOfOpeningParentheses) {
-                break;
-            }
-            index++;
-        }
-
-        return sql.substring(0, index + 1);
-    }
-
+    /**
+     * Returns the number of characters in this functions name.
+     * @return - the length of the sequence of characters of the function name.
+     */
     public int length() {
         return value.length();
     }

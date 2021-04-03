@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.components;
 
-import com.erikmafo.btviewer.model.BigtableRow;
+import com.erikmafo.btviewer.model.QueryResultRow;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BigtableRowTreeItem extends TreeItem<BigtableRow> {
+public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
 
     private boolean isLeaf;
 
@@ -18,12 +18,12 @@ public class BigtableRowTreeItem extends TreeItem<BigtableRow> {
     // used to cache the result of get children
     private boolean isFirstTimeChildren = true;
 
-    public BigtableRowTreeItem(BigtableRow row) {
+    public BigtableRowTreeItem(QueryResultRow row) {
         super(row);
         this.isLeaf = false;
     }
 
-    public BigtableRowTreeItem(BigtableRow row, boolean isLeaf) {
+    public BigtableRowTreeItem(QueryResultRow row, boolean isLeaf) {
         super(row);
         this.isLeaf = isLeaf;
         this.isFirstTimeLeaf = false;
@@ -40,7 +40,7 @@ public class BigtableRowTreeItem extends TreeItem<BigtableRow> {
     }
 
     @Override
-    public ObservableList<TreeItem<BigtableRow>> getChildren() {
+    public ObservableList<TreeItem<QueryResultRow>> getChildren() {
 
         if (isFirstTimeChildren) {
             isFirstTimeChildren = false;
@@ -70,7 +70,7 @@ public class BigtableRowTreeItem extends TreeItem<BigtableRow> {
                 .collect(Collectors.toList());
     }
 
-    private static BigtableRowTreeItem createChild(BigtableRow row) {
+    private static BigtableRowTreeItem createChild(QueryResultRow row) {
         return new BigtableRowTreeItem(row, true);
     }
 }

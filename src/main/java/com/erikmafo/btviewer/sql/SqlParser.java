@@ -1,7 +1,16 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+
 public class SqlParser {
 
+    /**
+     * Takes inn a raw sql query and converts this into a structured query object.
+     *
+     * @param sql a rqw query string.
+     * @return a {@link SqlQuery} object.
+     * @throws IllegalArgumentException if the raw query string is invalid.
+     */
     public SqlQuery parse(String sql) {
 
         var tokenizer = new SqlTokenizer(sql);
@@ -20,7 +29,7 @@ public class SqlParser {
 
         enum Step {
             QUERY_TYPE,
-            SELECT_FIELD,
+            FIELD,
             SELECT_COMMA,
             SELECT_FROM,
             SELECT_FROM_TABLE,
@@ -50,7 +59,7 @@ public class SqlParser {
                 case QUERY_TYPE:
                     queryType(token);
                     break;
-                case SELECT_FIELD:
+                case FIELD:
                     selectField(token);
                     break;
                 case SELECT_COMMA:
@@ -161,7 +170,7 @@ public class SqlParser {
 
         private void selectComma(SqlToken token) {
             if (token.getTokenType() == SqlTokenType.COMMA) {
-                step = Step.SELECT_FIELD;
+                step = Step.FIELD;
             } else if (token.getTokenType() == SqlTokenType.FROM) {
                 step = Step.SELECT_FROM_TABLE;
             } else {
@@ -176,6 +185,10 @@ public class SqlParser {
             } else if (token.getTokenType() == SqlTokenType.ASTERISK) {
                 sqlQuery.addField(new Field(token.getValue()));
                 step = Step.SELECT_FROM;
+            } else if (token.getTokenType() == SqlTokenType.FUNCTION_EXPRESSION) {
+                var aggregation = AggregationExpression.from(token);
+                sqlQuery.addAggregation(aggregation);
+                step = Step.SELECT_FROM;
             }
             else {
                 throw new IllegalArgumentException(String.format("Expected a field identifier or '*' but was '%s'", token.getValue()));
@@ -183,11 +196,12 @@ public class SqlParser {
         }
 
         private void queryType(SqlToken token) {
-            if (token.getTokenType() != SqlTokenType.SELECT) {
+            if (token.getTokenType() == SqlTokenType.SELECT) {
+                sqlQuery.setQueryType(QueryType.SELECT);
+            } else {
                 throw new IllegalArgumentException("Only SELECT queries are supported");
             }
-            sqlQuery.setQueryType(QueryType.SELECT);
-            step = Step.SELECT_FIELD;
+            step = Step.FIELD;
         }
     }
 }

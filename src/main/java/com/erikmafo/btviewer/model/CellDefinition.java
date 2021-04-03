@@ -2,8 +2,18 @@ package com.erikmafo.btviewer.model;
 
 import java.util.Objects;
 
+/**
+ * Specifies how the value of a cell should be interpreted by assigning a value type.
+ */
 public class CellDefinition {
 
+    /**
+     * Creates a new instance of {@code CellDefinition}.
+     *
+     * @param valueType the value type of the cell.
+     * @param family the name of the column family that the cell belongs to.
+     * @param qualifier the name of the column qualifier that the cell belong to.
+     */
     public CellDefinition(String valueType, String family, String qualifier) {
         this.valueType = valueType;
         this.family = family;

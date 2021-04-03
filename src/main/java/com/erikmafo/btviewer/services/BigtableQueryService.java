@@ -1,25 +1,25 @@
 package com.erikmafo.btviewer.services;
 
 import com.erikmafo.btviewer.model.*;
+import com.erikmafo.btviewer.query.QueryResultConverter;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.erikmafo.btviewer.sql.QueryConverter;
 import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.util.AlertUtil;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
-import com.google.cloud.bigtable.data.v2.models.Row;
-import com.google.cloud.bigtable.data.v2.models.RowCell;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
-public class ReadRowsService extends Service<List<BigtableRow>> {
+/**
+ * A service that executes queries against Bigtable.
+ */
+public class BigtableQueryService extends Service<List<QueryResultRow>> {
 
     private final BigtableSettingsProvider settingsProvider;
     private final AppDataStorage storage;
@@ -31,7 +31,7 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
     private SqlQuery query;
 
     @Inject
-    public ReadRowsService(BigtableSettingsProvider settingsProvider, AppDataStorage storage) {
+    public BigtableQueryService(BigtableSettingsProvider settingsProvider, AppDataStorage storage) {
         this.settingsProvider = settingsProvider;
         this.storage = storage;
     }
@@ -41,49 +41,24 @@ public class ReadRowsService extends Service<List<BigtableRow>> {
     public void setQuery(SqlQuery query) { this.query = query; }
 
     @Override
-    protected Task<List<BigtableRow>> createTask() {
+    protected Task<List<QueryResultRow>> createTask() {
         var instance = this.instance;
         var sqlQuery = this.query;
         var tableId = sqlQuery.getTableName();
 
         return new Task<>() {
+
             @Override
-            protected List<BigtableRow> call() throws Exception {
+            protected List<QueryResultRow> call() throws Exception {
                 var tableSettings = storage.getTableSettings(new BigtableTable(instance, tableId));
-                var queryConverter = new QueryConverter(new ByteStringConverterImpl(tableSettings));
-                var btQuery = queryConverter.toBigtableQuery(sqlQuery);
-                var rowIterator = getOrCreateNewClient(instance).readRows(btQuery).iterator();
-                var bigtableRows = new LinkedList<BigtableRow>();
-                while (rowIterator.hasNext()) {
-                    bigtableRows.add(toBigtableRow(rowIterator.next()));
-                    updateProgress(bigtableRows.size(), sqlQuery.getLimit());
-                    if (isCancelled()) {
-                        break;
-                    }
-                }
-                return bigtableRows;
+                var queryConverter = new QueryConverter(sqlQuery, new ByteStringConverterImpl(tableSettings));
+                var valueConverter = new BigtableValueConverter(tableSettings.getCellDefinitions());
+                var btQuery = queryConverter.toBigtableQuery();
+                var rows = getOrCreateNewClient(instance).readRows(btQuery);
+                var rowStream = StreamSupport.stream(rows.spliterator(), true);
+                return new QueryResultConverter(sqlQuery, valueConverter).toQueryResultRows(rowStream);
             }
         };
-    }
-
-    private static BigtableRow toBigtableRow(Row row) {
-        return new BigtableRow(row.getKey().toStringUtf8(), getBigtableCells(row));
-    }
-
-    private static List<BigtableCell> getBigtableCells(Row row) {
-        return row
-                .getCells()
-                .stream()
-                .map(ReadRowsService::toBigtableCell)
-                .collect(Collectors.toList());
-    }
-
-    private static BigtableCell toBigtableCell(RowCell cell) {
-        return new BigtableCell(
-                cell.getFamily(),
-                cell.getQualifier().toStringUtf8(),
-                cell.getValue(),
-                cell.getTimestamp());
     }
 
     private BigtableDataClient getOrCreateNewClient(BigtableInstance instance) throws IOException {

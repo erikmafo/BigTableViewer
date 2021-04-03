@@ -1,6 +1,8 @@
 package com.erikmafo.btviewer.sql;
 
 
+import java.util.Objects;
+
 public class Field {
 
     private final String name;
@@ -19,10 +21,10 @@ public class Field {
     }
 
     public boolean isRowKey() {
-        return name.toUpperCase().equals("KEY");
+        return name.equalsIgnoreCase("KEY");
     }
 
-    public boolean isTimestamp() { return name.toUpperCase().equals("TIMESTAMP"); }
+    public boolean isTimestamp() { return name.equalsIgnoreCase("TIMESTAMP"); }
 
     public boolean isAsterisk() {
         return name.equals("*");
@@ -32,9 +34,9 @@ public class Field {
         return getFamilyAndQualifier()[0];
     }
 
-    public void ensureHasFamilyAndQualifier() {
+    public void ensureHasFamilyAndQualifier(String message) {
         if (getFamilyAndQualifier().length != 2) {
-            throw new IllegalArgumentException("Field name was not on the format {family}.{qualifier}");
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -48,6 +50,19 @@ public class Field {
             return null;
         }
         return parts[1];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Field field = (Field) o;
+        return Objects.equals(name, field.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     private String[] getFamilyAndQualifier() {

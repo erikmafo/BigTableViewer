@@ -19,7 +19,7 @@
         <fx:include fx:id="projectExplorer" source="project_explorer.fxml"/>
     </left>
     <center>
-        <fx:include fx:id="bigtableView" source="bigtable_view.fxml"/>
+        <fx:include fx:id="queryResultView" source="query_result_view.fxml"/>
     </center>
     <bottom>
         <fx:include fx:id="queryBox" source="query_box.fxml"/>

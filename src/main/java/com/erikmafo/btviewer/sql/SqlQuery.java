@@ -1,8 +1,14 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a Sql query expression.
+ */
 public class SqlQuery {
 
     public static String getDefaultSql(String tableName) {
@@ -12,12 +18,13 @@ public class SqlQuery {
     private QueryType queryType;
     private String tableName;
     private final List<Field> fields = new ArrayList<>();
+    private final List<AggregationExpression> aggregationExpressions = new ArrayList<>();
     private final List<WhereClause> whereClauses = new ArrayList<>();
-    private int limit = 10_000;
+    private int limit = Integer.MAX_VALUE;
 
-    public void addField(Field field) {
-        fields.add(field);
-    }
+    public void addField(Field field) { fields.add(field); }
+
+    public void addFields(Collection<Field> fields) { this.fields.addAll(fields); }
 
     public void addWhereClause(WhereClause whereClause) {
         whereClauses.add(whereClause);
@@ -35,10 +42,7 @@ public class SqlQuery {
         return tableName;
     }
 
-    public void setTableName(String tableName) {
-
-        this.tableName = tableName;
-    }
+    public void setTableName(String tableName) { this.tableName = tableName; }
 
     public List<Field> getFields() {
         return fields;
@@ -62,5 +66,17 @@ public class SqlQuery {
         }
 
         return this;
+    }
+
+    public boolean isAggregation() {
+        return aggregationExpressions != null && !aggregationExpressions.isEmpty();
+    }
+
+    public List<AggregationExpression> getAggregations() {
+        return aggregationExpressions;
+    }
+
+    public void addAggregation(AggregationExpression aggregationExpression) {
+        this.aggregationExpressions.add(aggregationExpression);
     }
 }

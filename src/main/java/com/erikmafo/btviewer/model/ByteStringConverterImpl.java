@@ -5,6 +5,7 @@ import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.Value;
 import com.erikmafo.btviewer.util.ByteStringConverterUtil;
 import com.google.protobuf.ByteString;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class ByteStringConverterImpl implements ByteStringConverter {
     private final List<CellDefinition> cellDefinitions;
 
-    public ByteStringConverterImpl(BigtableTableSettings config) {
+    public ByteStringConverterImpl(@NotNull BigtableTableSettings config) {
         this(config.getCellDefinitions() != null ? config.getCellDefinitions() : Collections.emptyList());
     }
 
