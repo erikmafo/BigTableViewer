@@ -4,19 +4,16 @@ import com.erikmafo.btviewer.model.*;
 import com.erikmafo.btviewer.query.QueryResultConverter;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
-import com.erikmafo.btviewer.sql.BigtableSqlQuery;
+import com.erikmafo.btviewer.sql.QueryConverter;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
-import com.google.cloud.bigtable.data.v2.models.Row;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -54,9 +51,9 @@ public class BigtableQueryService extends Service<List<QueryResultRow>> {
             @Override
             protected List<QueryResultRow> call() throws Exception {
                 var tableSettings = storage.getTableSettings(new BigtableTable(instance, tableId));
-                var bigtableSqlQuery = new BigtableSqlQuery(sqlQuery, new ByteStringConverterImpl(tableSettings));
+                var queryConverter = new QueryConverter(sqlQuery, new ByteStringConverterImpl(tableSettings));
                 var valueConverter = new BigtableValueConverter(tableSettings.getCellDefinitions());
-                var btQuery = bigtableSqlQuery.toBigtableQuery();
+                var btQuery = queryConverter.toBigtableQuery();
                 var rows = getOrCreateNewClient(instance).readRows(btQuery);
                 var rowStream = StreamSupport.stream(rows.spliterator(), true);
                 return new QueryResultConverter(sqlQuery, valueConverter).toQueryResultRows(rowStream);

@@ -16,19 +16,19 @@ import static com.google.cloud.bigtable.data.v2.models.Filters.FILTERS;
 /**
  * Used to convert a {@link SqlQuery} to a {@link Query} that can be applied to Bigtable.
  */
-public class BigtableSqlQuery {
+public class QueryConverter {
 
     private final SqlQuery sqlQuery;
     private final ByteStringConverter byteStringConverter;
 
     /**
-     * Creates an instance of BigtableSqlQuery from a {@link SqlQuery} and a {@link ByteStringConverter} which
+     * Creates an instance of QueryConverter from a {@link SqlQuery} and a {@link ByteStringConverter} which
      * converts field values from the sql query to byte strings.
      *
      * @param sqlQuery a sql query expression.
      * @param byteStringConverter an object that converts values to byte string.
      */
-    public BigtableSqlQuery(SqlQuery sqlQuery, ByteStringConverter byteStringConverter) {
+    public QueryConverter(SqlQuery sqlQuery, ByteStringConverter byteStringConverter) {
         this.sqlQuery = sqlQuery;
         this.byteStringConverter = byteStringConverter;
     }
