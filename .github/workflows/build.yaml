@@ -25,7 +25,7 @@ jobs:
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
         - os: ubuntu-latest
           display-name: 'linux'
-          javaOpts: "-Dtestfx.robot=awt"
+          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw"
           installerName: 'btviewer.deb'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
         - os: macos-latest
