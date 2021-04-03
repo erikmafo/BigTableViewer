@@ -14,11 +14,11 @@ import javafx.stage.Stage;
  */
 public class MainApp extends Application {
 
+    private AppConfig appConfig;
+
     public static void main(String[] args) {
         launch(args);
     }
-
-    private AppConfig appConfig;
 
     public AppConfig getAppConfig() {
         return appConfig;

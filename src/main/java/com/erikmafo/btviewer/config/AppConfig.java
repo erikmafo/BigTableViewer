@@ -6,20 +6,14 @@ import com.google.inject.name.Named;
 
 public class AppConfig {
 
-    public static AppConfig load(ApplicationEnvironment environment) {
-        return ConfigInjectionUtil.loadConfigProperties(getConfigName(environment), AppConfig.class);
-    }
-
-    private static String getConfigName(ApplicationEnvironment environment) {
-        return environment.isProduction() ?
-                "config.properties" :
-                String.format("config.%s.properties", environment.getName());
-    }
-
     private boolean useBigtableEmulator;
     private boolean useInMemoryDatabase;
 
     public AppConfig() {}
+
+    public static AppConfig load(ApplicationEnvironment environment) {
+        return ConfigInjectionUtil.loadConfigProperties(getConfigName(environment), AppConfig.class);
+    }
 
     @Inject
     public AppConfig(@Named("USE_BIGTABLE_EMULATOR") boolean useBigtableEmulator,
@@ -42,5 +36,11 @@ public class AppConfig {
 
     public void setUseInMemoryDatabase(boolean useInMemoryDatabase) {
         this.useInMemoryDatabase = useInMemoryDatabase;
+    }
+
+    private static String getConfigName(ApplicationEnvironment environment) {
+        return environment.isProduction() ?
+                "config.properties" :
+                String.format("config.%s.properties", environment.getName());
     }
 }

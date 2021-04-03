@@ -20,7 +20,7 @@ jobs:
         include:
         - os: windows-latest
           display-name: 'windows'
-          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
+          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dheadless.geometry=1280x800"
           installerName: 'btviewer.msi'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
         - os: ubuntu-latest
