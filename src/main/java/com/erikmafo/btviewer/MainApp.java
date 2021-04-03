@@ -1,5 +1,8 @@
 package com.erikmafo.btviewer;
-import com.erikmafo.btviewer.services.*;
+
+import com.erikmafo.btviewer.config.AppConfig;
+import com.erikmafo.btviewer.config.ApplicationEnvironment;
+import com.erikmafo.btviewer.services.ServicesModule;
 import com.google.inject.Guice;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,14 +15,32 @@ import javafx.stage.Stage;
  */
 public class MainApp extends Application {
 
+    private AppConfig appConfig;
+
     public static void main(String[] args) {
         launch(args);
     }
 
+    public AppConfig getAppConfig() {
+        return appConfig;
+    }
+
+    public void setAppConfig(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void init() throws Exception {
+        super.init();
+        if (appConfig == null) {
+            appConfig = AppConfig.load(ApplicationEnvironment.get());
+        }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
-        var injector = Guice.createInjector(new ServicesModule());
+        var injector = Guice.createInjector(new ServicesModule(getAppConfig()));
         loader.setControllerFactory(injector::getInstance);
         Parent root = loader.load();
         primaryStage.setTitle("Bigtable Viewer");

@@ -1,15 +1,12 @@
 package com.erikmafo.btviewer.services.internal;
 
-import com.erikmafo.btviewer.model.*;
+import com.erikmafo.btviewer.model.BigtableInstance;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
-import com.google.protobuf.ByteString;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import static com.erikmafo.btviewer.util.ByteStringConverterUtil.toByteString;
 

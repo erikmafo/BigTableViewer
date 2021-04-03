@@ -5,7 +5,8 @@
 <fx:root type="DialogPane"
          xmlns:fx="http://javafx.com/fxml"
          headerText="Add Bigtable Instance"
-         prefHeight="250.0" prefWidth="450.0">
+         prefHeight="250.0"
+         prefWidth="450.0">
 
     <content>
         <GridPane vgap="20" hgap="10">

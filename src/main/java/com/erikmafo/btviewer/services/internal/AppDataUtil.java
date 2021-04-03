@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.services.internal;
 
 import com.sun.javafx.PlatformUtil;
+
 import java.nio.file.Path;
 
 class AppDataUtil {
