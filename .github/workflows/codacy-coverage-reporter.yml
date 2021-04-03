@@ -1,9 +1,7 @@
 name: codacy-coverage-reporter
 
-on:
-  push:
-    branches:
-      - master
+on: ["push"]
+
 jobs:
   report-test-coverage:
     runs-on: ubuntu-latest
@@ -17,7 +15,7 @@ jobs:
           java-package: jdk+fx
       - name: Build with maven
         env:
-          JAVA_TOOLS_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
+          JAVA_TOOLS_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
         run: mvn -B package jacoco:report
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@master
