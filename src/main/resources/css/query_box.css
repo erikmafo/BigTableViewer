@@ -1,21 +1,21 @@
 @import "main.css"
 
 .keyword {
-    -fx-fill: blue;
-    -fx-font-weight: bold;
+  -fx-fill: blue;
+  -fx-font-weight: bold;
 }
 .string {
-    -fx-fill: red;
+  -fx-fill: red;
 }
 
 .function {
-    -fx-fill: magenta;
-    -fx-font-weight: bold;
+  -fx-fill: magenta;
+  -fx-font-weight: bold;
 }
 
 .logical-operator {
-    -fx-fill: grey;
-    -fx-font-weight: bold;
+  -fx-fill: grey;
+  -fx-font-weight: bold;
 }
 
 .comment {
@@ -23,5 +23,5 @@
 }
 
 .paragraph-box:has-caret {
-    -fx-background-color: #f2f9fc;
+  -fx-background-color: #f2f9fc;
 }
