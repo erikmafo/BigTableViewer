@@ -25,20 +25,6 @@ public class AddInstanceDialog extends DialogPane {
     }
 
     @NotNull
-    @Contract(" -> new")
-    private BigtableInstance getBigtableInstance() {
-        return new BigtableInstance(
-                projectIdTextField.getText(),
-                instanceIdTextField.getText());
-    }
-
-    public void preFillProjectId(String projectId) {
-        projectIdTextField.setText(projectId);
-        projectIdTextField.setEditable(false);
-        instanceIdTextField.requestFocus();
-    }
-
-    @NotNull
     public static CompletableFuture<BigtableInstance> displayAndAwaitResult() {
         return displayAndAwaitResult(null);
     }
@@ -67,5 +53,19 @@ public class AddInstanceDialog extends DialogPane {
         dialog.show();
 
         return future;
+    }
+
+    public void preFillProjectId(String projectId) {
+        projectIdTextField.setText(projectId);
+        projectIdTextField.setEditable(false);
+        instanceIdTextField.requestFocus();
+    }
+
+    @NotNull
+    @Contract(" -> new")
+    private BigtableInstance getBigtableInstance() {
+        return new BigtableInstance(
+                projectIdTextField.getText(),
+                instanceIdTextField.getText());
     }
 }

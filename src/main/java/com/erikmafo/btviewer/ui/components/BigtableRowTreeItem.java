@@ -53,6 +53,12 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
         return super.getChildren();
     }
 
+    @NotNull
+    @Contract("_ -> new")
+    private static BigtableRowTreeItem createChild(QueryResultRow row) {
+        return new BigtableRowTreeItem(row, true);
+    }
+
     private boolean isRoot() {
         return getValue() == null;
     }
@@ -69,11 +75,5 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
                 .stream()
                 .map(BigtableRowTreeItem::createChild)
                 .collect(Collectors.toList());
-    }
-
-    @NotNull
-    @Contract("_ -> new")
-    private static BigtableRowTreeItem createChild(QueryResultRow row) {
-        return new BigtableRowTreeItem(row, true);
     }
 }

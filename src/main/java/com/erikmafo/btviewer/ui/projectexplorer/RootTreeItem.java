@@ -25,20 +25,6 @@ public class RootTreeItem extends TreeItem<TreeItemData> {
         setValue(new TreeItemData());
     }
 
-    private void loadChildren(LoadProjectsService loadProjectsService) {
-        this.loadProjectsService.setOnSucceeded(event -> {
-            var children = loadProjectsService
-                    .getValue()
-                    .stream()
-                    .map(TreeItemData::new)
-                    .map(this::createProjectTreeItem)
-                    .collect(Collectors.toList());
-            getChildren().setAll(children);
-        });
-        this.loadProjectsService.setOnFailed(event -> AlertUtil.displayError("Failed to load projects", event));
-        this.loadProjectsService.restart();
-    }
-
     public void reloadOrAddProject(String projectId) {
         getChildren()
                 .stream()
@@ -53,15 +39,29 @@ public class RootTreeItem extends TreeItem<TreeItemData> {
         getChildren().removeIf(item -> item.getValue().getProjectId().equals(projectId));
     }
 
+    @Override
+    public boolean isLeaf() {
+        return false;
+    }
+
+    private void loadChildren(LoadProjectsService loadProjectsService) {
+        this.loadProjectsService.setOnSucceeded(event -> {
+            var children = loadProjectsService
+                    .getValue()
+                    .stream()
+                    .map(TreeItemData::new)
+                    .map(this::createProjectTreeItem)
+                    .collect(Collectors.toList());
+            getChildren().setAll(children);
+        });
+        this.loadProjectsService.setOnFailed(event -> AlertUtil.displayError("Failed to load projects", event));
+        this.loadProjectsService.restart();
+    }
+
     @NotNull
     private ProjectTreeItem createProjectTreeItem(TreeItemData info) {
         var treeItem = projectTreeItemProvider.get();
         treeItem.setValue(info);
         return treeItem;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return false;
     }
 }

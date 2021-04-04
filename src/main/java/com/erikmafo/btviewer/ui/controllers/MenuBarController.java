@@ -35,12 +35,14 @@ public class MenuBarController {
         this.saveCredentialsPathService = saveCredentialsPathService;
     }
 
+    @FXML
     public void initialize() {
         if (PlatformUtil.isMac()) {
             menuBar.useSystemMenuBarProperty().set(true);
         }
     }
 
+    @FXML
     public void onManageCredentialsAction(ActionEvent event) {
         loadCredentialsPathService.setOnSucceeded(e ->
                 displaySpecifyCredentialsDialog(loadCredentialsPathService.getValue()));

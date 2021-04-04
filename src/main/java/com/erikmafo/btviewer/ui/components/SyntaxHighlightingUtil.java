@@ -20,8 +20,8 @@ public class SyntaxHighlightingUtil {
     private static final String FUNCTION_STYLE_CLASS = "function";
     private static final String OPERATOR_STYLE_CLASS = "logical-operator";
 
-    public static StyleSpans<Collection<String>> computeSyntaxHighlighting(String text) {
-        var sqlTokenizer = new SqlTokenizer(text);
+    public static StyleSpans<Collection<String>> computeSyntaxHighlighting(String queryText) {
+        var sqlTokenizer = new SqlTokenizer(queryText);
         var token = sqlTokenizer.next();
         int lastHighlightEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
@@ -31,7 +31,7 @@ public class SyntaxHighlightingUtil {
             }
             token = sqlTokenizer.next();
         }
-        spansBuilder.add(Collections.emptyList(),text.length() - lastHighlightEnd);
+        spansBuilder.add(Collections.emptyList(),queryText.length() - lastHighlightEnd);
         return spansBuilder.create();
     }
 

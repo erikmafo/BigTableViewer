@@ -30,6 +30,10 @@ public class TableSettingsDialog extends DialogPane {
 
     private int currentSchemaRow = 1;
 
+    private TableSettingsDialog() {
+        FXMLLoaderUtil.loadFxml("/fxml/table_settings_dialog.fxml", this);
+    }
+
     @NotNull
     public static CompletableFuture<BigtableTableSettings> displayAndAwaitResult(
             @NotNull List<BigtableColumn> columns,
@@ -62,10 +66,6 @@ public class TableSettingsDialog extends DialogPane {
         dialog.show();
 
         return future;
-    }
-
-    private TableSettingsDialog() {
-        FXMLLoaderUtil.loadFxml("/fxml/table_settings_dialog.fxml", this);
     }
 
     @FXML
