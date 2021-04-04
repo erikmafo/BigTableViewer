@@ -44,6 +44,7 @@ public class ProjectExplorerController {
         this.selectedInstanceProperty = new SimpleObjectProperty<>();
     }
 
+    @FXML
     public void initialize() {
         treeView.setRoot(rootTreeItemProvider.get());
 

@@ -79,6 +79,20 @@ public class QueryResultViewController {
         displayTimestamps.bind(timestampsCheckBox.selectedProperty());
     }
 
+    @FXML
+    public void handleTableSettingsButtonPressed(ActionEvent actionEvent) {
+        TableSettingsDialog
+                .displayAndAwaitResult(getColumns(), tableSettings.getValue())
+                .whenComplete((configuration, throwable) -> updateTableConfiguration(table.get(), configuration));
+    }
+
+    @FXML
+    public void onTableViewKeyPressed(KeyEvent keyEvent) {
+        if (isCopyOperation(keyEvent)) {
+            copySelectedCellsToClipboard();
+        }
+    }
+
     @NotNull
     private ContextMenu createTableViewContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
@@ -93,6 +107,10 @@ public class QueryResultViewController {
         rows.addListener(this::onBigtableRowsChange);
     }
 
+    public SimpleObjectProperty<BigtableTable> tableProperty() {
+        return table;
+    }
+
     private void onBigtableRowsChange(@NotNull ListChangeListener.Change<? extends QueryResultRow> change) {
         tableView.getColumns().clear();
         while (change.next()) {
@@ -103,24 +121,6 @@ public class QueryResultViewController {
                 .map(BigtableRowTreeItem::new)
                 .collect(Collectors.toList());
         root.getChildren().setAll(treeItems);
-    }
-
-    public SimpleObjectProperty<BigtableTable> tableProperty() {
-        return table;
-    }
-
-    @FXML
-    private void handleTableSettingsButtonPressed(ActionEvent actionEvent) {
-        TableSettingsDialog
-                .displayAndAwaitResult(getColumns(), tableSettings.getValue())
-                .whenComplete((configuration, throwable) -> updateTableConfiguration(table.get(), configuration));
-    }
-
-    @FXML
-    private void onTableViewKeyPressed(KeyEvent keyEvent) {
-        if (isCopyOperation(keyEvent)) {
-            copySelectedCellsToClipboard();
-        }
     }
 
     private boolean isCopyOperation(KeyEvent keyEvent) {

@@ -9,6 +9,8 @@ import javax.inject.Inject;
 
 public class ProjectItemMenuController {
 
+    private final RemoveProjectService removeProjectService;
+
     @FXML
     private MenuItem addInstance;
 
@@ -16,8 +18,6 @@ public class ProjectItemMenuController {
     private MenuItem removeProject;
 
     private String projectId;
-
-    private final RemoveProjectService removeProjectService;
 
     @Inject
     public ProjectItemMenuController(RemoveProjectService removeProjectService) {

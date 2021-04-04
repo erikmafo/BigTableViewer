@@ -11,8 +11,4 @@ public class TableItemMenuController {
     @FXML
     private MenuItem selectFirst;
 
-    @FXML
-    private void initialize() {
-
-    }
 }

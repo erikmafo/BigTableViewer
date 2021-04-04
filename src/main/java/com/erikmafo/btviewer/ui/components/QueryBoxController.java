@@ -94,7 +94,7 @@ public class QueryBoxController {
     }
 
     @FXML
-    private void onExecuteQueryButtonPressed(ActionEvent actionEvent) {
+    public void onExecuteQueryButtonPressed(ActionEvent actionEvent) {
         try {
             queryResult.clear();
             query.set(new SqlParser().parse(codeArea.getText()).ensureValid());
@@ -109,10 +109,10 @@ public class QueryBoxController {
     }
 
     @FXML
-    private void onCancelQueryButtonPressed(ActionEvent actionEvent) { bigtableQueryService.cancel(); }
+    public void onCancelQueryButtonPressed(ActionEvent actionEvent) { bigtableQueryService.cancel(); }
 
     @FXML
-    private void onKeyPressedInCodeArea(@NotNull KeyEvent keyEvent) {
+    public void onKeyPressedInCodeArea(@NotNull KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             int caretPosition = codeArea.getCaretPosition();
             int currentParagraph = codeArea.getCurrentParagraph();

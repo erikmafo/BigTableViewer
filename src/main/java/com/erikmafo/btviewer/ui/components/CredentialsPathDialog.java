@@ -24,18 +24,6 @@ public class CredentialsPathDialog extends DialogPane {
         FXMLLoaderUtil.loadFxml("/fxml/credentials_path_dialog.fxml", this);
     }
 
-    @FXML
-    private void handleEditCredentialsPathAction(ActionEvent event) {
-        var fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("json files (*.json)", "*.json");
-        fileChooser.getExtensionFilters().add(extFilter);
-        var file = fileChooser.showOpenDialog(getScene().getWindow());
-        if (file != null)
-        {
-            credentialsPathTextField.setText(file.getPath());
-        }
-    }
-
     @NotNull
     public static CompletableFuture<Path> displayAndAwaitResult(Path currentPath) {
         CompletableFuture<Path> result = new CompletableFuture<>();
@@ -62,6 +50,18 @@ public class CredentialsPathDialog extends DialogPane {
         dialog.show();
 
         return result;
+    }
+
+    @FXML
+    public void handleEditCredentialsPathAction(ActionEvent event) {
+        var fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("json files (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(extFilter);
+        var file = fileChooser.showOpenDialog(getScene().getWindow());
+        if (file != null)
+        {
+            credentialsPathTextField.setText(file.getPath());
+        }
     }
 
     private static boolean validatePath(String pathAsString) {
