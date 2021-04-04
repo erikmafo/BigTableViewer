@@ -9,6 +9,7 @@ import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class BigtableQueryService extends Service<List<QueryResultRow>> {
         return client;
     }
 
+    @Nullable
     private BigtableInstance getClientInstance() {
         if (client == null) {
             return null;

@@ -21,7 +21,7 @@ public class TestDataUtil {
         try {
             createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_0);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to start emulator", e);
+            throw new IllegalStateException("Unable to start emulator", e);
         }
     }
 

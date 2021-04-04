@@ -12,18 +12,9 @@ public class AppConfig {
     @Inject @Named("USE_IN_MEMORY_DATABASE")
     private boolean useInMemoryDatabase;
 
-    public AppConfig() {}
-
     public static AppConfig load(ApplicationEnvironment environment) {
         return ConfigInjectionUtil.loadConfigProperties(getConfigName(environment), AppConfig.class);
     }
-
-    /*@Inject
-    public AppConfig(@Named("USE_BIGTABLE_EMULATOR") boolean useBigtableEmulator,
-                     @Named("USE_IN_MEMORY_DATABASE") boolean useInMemoryDatabase) {
-        this.useBigtableEmulator = useBigtableEmulator;
-        this.useInMemoryDatabase = useInMemoryDatabase;
-    }*/
 
     public boolean useBigtableEmulator() { return useBigtableEmulator; }
 

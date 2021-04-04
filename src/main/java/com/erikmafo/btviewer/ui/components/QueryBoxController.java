@@ -37,6 +37,8 @@ public class QueryBoxController {
 
     private static final Pattern WHITE_SPACE = Pattern.compile("^\\s+");
 
+    private final BigtableQueryService bigtableQueryService;
+
     @FXML
     private Button executeQueryButton;
 
@@ -48,10 +50,6 @@ public class QueryBoxController {
 
     @FXML
     private CodeArea codeArea;
-
-    private Subscription codeAreaSubscription;
-
-    private final BigtableQueryService bigtableQueryService;
 
     private final ObjectProperty<BigtableInstance> instance = new SimpleObjectProperty<>();
     private final ObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
@@ -68,8 +66,7 @@ public class QueryBoxController {
         progressBar.visibleProperty().bind(bigtableQueryService.runningProperty());
         progressBar.progressProperty().bind(bigtableQueryService.progressProperty());
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeAreaSubscription = codeArea
-                .multiPlainChanges()
+        codeArea.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
         table.bind(Bindings.createObjectBinding(this::createTable, instance, query));

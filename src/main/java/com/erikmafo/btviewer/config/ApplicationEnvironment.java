@@ -1,10 +1,21 @@
 package com.erikmafo.btviewer.config;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 public class ApplicationEnvironment {
 
     private static final String DEVELOPMENT = "development";
     private static final String PRODUCTION = "production";
 
+    private final String name;
+
+    public ApplicationEnvironment(String name) {
+        this.name = name;
+    }
+
+    @NotNull
+    @Contract(" -> new")
     public static ApplicationEnvironment get() {
 
         var env = System.getenv("APPLICATION_ENVIRONMENT");
@@ -14,12 +25,6 @@ public class ApplicationEnvironment {
         }
 
         return new ApplicationEnvironment(env.toLowerCase());
-    }
-
-    private final String name;
-
-    public ApplicationEnvironment(String name) {
-        this.name = name;
     }
 
     public String getName() {
