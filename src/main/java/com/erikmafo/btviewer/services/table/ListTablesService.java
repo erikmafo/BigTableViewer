@@ -6,6 +6,8 @@ import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class ListTablesService extends Service<List<BigtableTable>> {
         this.instance = instance;
     }
 
-    public void addInstances(List<BigtableInstance> instances) {
+    public void addInstances(@NotNull List<BigtableInstance> instances) {
         for(var instance : instances) {
             addInstance(instance);
         }
@@ -54,10 +56,14 @@ public class ListTablesService extends Service<List<BigtableTable>> {
         };
     }
 
-    private BigtableTable toBigtableTable(BigtableInstance instance, String tableId) {
+    @NotNull
+    @Contract("_, _ -> new")
+    private BigtableTable toBigtableTable(@NotNull BigtableInstance instance, String tableId) {
         return new BigtableTable(instance.getProjectId(), instance.getInstanceId(), tableId);
     }
 
+    @NotNull
+    @Contract("null -> fail")
     private BigtableTableAdminClient createClient(BigtableInstance instance) throws IOException {
         if (instance == null) {
             throw new IllegalStateException("Cannot list tables when bigtable instance is not specified");
