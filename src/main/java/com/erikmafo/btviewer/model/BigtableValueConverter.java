@@ -82,12 +82,11 @@ public class BigtableValueConverter {
 
     @NotNull
     private CellDefinition getCellDefinition(@NotNull BigtableCell cell) {
-        var cellDefinition = cellDefinitions.stream()
+        return cellDefinitions.stream()
                 .filter(c -> c.getFamily().equals(cell.getFamily())
                         && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
                 .orElse(new CellDefinition("string", cell.getFamily(), cell.getQualifier()));
-        return cellDefinition;
     }
 
     private Object convertUsingValueType(BigtableCell cell, @NotNull String valueType) {

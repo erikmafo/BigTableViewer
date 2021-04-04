@@ -5,6 +5,7 @@ import com.erikmafo.btviewer.sql.SqlTokenType;
 import com.erikmafo.btviewer.sql.SqlTokenizer;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class SyntaxHighlightingUtil {
         return lastHighlightEnd;
     }
 
+    @NotNull
     private static List<SqlToken> getTokenAndSubTokens(SqlToken token) {
         var tokens = new ArrayList<SqlToken>();
         tokens.add(token);
@@ -56,7 +58,7 @@ public class SyntaxHighlightingUtil {
     }
 
     @Nullable
-    private static String getStyleClass(SqlToken token) {
+    private static String getStyleClass(@NotNull SqlToken token) {
         if (SqlTokenType.QUOTED_STRING.equals(token.getTokenType())) {
             return STRING_STYLE_CLASS;
         }

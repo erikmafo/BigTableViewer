@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -13,7 +15,7 @@ public class BigtableInstance {
 
     public BigtableInstance() {}
 
-    public BigtableInstance(BigtableInstance instance) {
+    public BigtableInstance(@NotNull BigtableInstance instance) {
         this.projectId = instance.getProjectId();
         this.instanceId = instance.getInstanceId();
     }

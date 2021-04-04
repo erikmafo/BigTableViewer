@@ -4,6 +4,7 @@ import com.erikmafo.btviewer.model.BigtableInstance;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.emulator.v2.Emulator;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -12,9 +13,6 @@ public class BigtableEmulatorSettingsProvider implements BigtableSettingsProvide
 
     private static final String LOCALHOST = "localhost";
     private Emulator emulator;
-
-    public BigtableEmulatorSettingsProvider() {
-    }
 
     public void startEmulator() {
 
@@ -26,7 +24,7 @@ public class BigtableEmulatorSettingsProvider implements BigtableSettingsProvide
             this.emulator = Emulator.createBundled();
             emulator.start();
         } catch (IOException | TimeoutException | InterruptedException e) {
-            throw new RuntimeException("Failed to start emulator", e);
+            throw new IllegalStateException("Failed to start emulator", e);
         }
     }
 
@@ -37,7 +35,7 @@ public class BigtableEmulatorSettingsProvider implements BigtableSettingsProvide
     }
 
     @Override
-    public BigtableTableAdminSettings getTableAdminSettings(BigtableInstance instance) throws IOException {
+    public BigtableTableAdminSettings getTableAdminSettings(@NotNull BigtableInstance instance) throws IOException {
         return BigtableTableAdminSettings
                 .newBuilderForEmulator(LOCALHOST, emulator.getPort())
                 .setProjectId(instance.getProjectId())
@@ -46,7 +44,7 @@ public class BigtableEmulatorSettingsProvider implements BigtableSettingsProvide
     }
 
     @Override
-    public BigtableDataSettings getDataSettings(BigtableInstance instance) {
+    public BigtableDataSettings getDataSettings(@NotNull BigtableInstance instance) {
         return BigtableDataSettings
                 .newBuilderForEmulator(LOCALHOST, emulator.getPort())
                 .setProjectId(instance.getProjectId())

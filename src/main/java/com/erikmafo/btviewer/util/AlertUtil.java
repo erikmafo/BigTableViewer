@@ -3,16 +3,11 @@ package com.erikmafo.btviewer.util;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import org.jetbrains.annotations.NotNull;
 
 public class AlertUtil {
 
-    public static void displayError(String errorText) {
-        var alert = new Alert(Alert.AlertType.ERROR, errorText, ButtonType.CLOSE);
-        alert.setTitle("Computer says no!");
-        alert.showAndWait();
-    }
-
-    public static void displayError(String errorText, WorkerStateEvent event) {
+    public static void displayError(String errorText, @NotNull WorkerStateEvent event) {
         displayError(errorText, event.getSource().getException());
     }
 

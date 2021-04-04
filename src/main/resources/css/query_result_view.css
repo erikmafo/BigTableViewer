@@ -3,19 +3,19 @@
 }
 
 .tree-table-row-cell {
-  -fx-background-color: #F8F9FB;
+  -fx-background-color: #f8f9fb
   -fx-background-insets: 0, 0 0 1 0;
   -fx-padding: 0.0em;
 }
 
 .tree-table-row-cell:odd {
-  -fx-background-color: #E6E7E9;
+  -fx-background-color: #e6e7e9;
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em;
 }
 
 .tree-table-row-cell:empty {
-  -fx-background-color: #F8F9FB;
+  -fx-background-color: #f8f9fb;
   -fx-background-insets: 0, 0 0 1 0;
   -fx-padding: 0.0em;
 }

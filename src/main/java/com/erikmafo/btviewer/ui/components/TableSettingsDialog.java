@@ -9,9 +9,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -22,89 +23,57 @@ import java.util.stream.Collectors;
  */
 public class TableSettingsDialog extends DialogPane {
 
-    public static CompletableFuture<BigtableTableSettings> displayAndAwaitResult(
-            List<BigtableColumn> columns,
-            BigtableTableSettings current) {
-
-        if (current == null) {
-            current = new BigtableTableSettings();
-        }
-
-        CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
-        try {
-            Dialog<BigtableTableSettings> dialog = new Dialog<>();
-            TableSettingsDialog settingsDialog = new TableSettingsDialog();
-            current.getCellDefinitions().forEach(settingsDialog::addSchemaRow);
-            columns.forEach(settingsDialog::addSchemaRow);
-            if (settingsDialog.observableCells.isEmpty()) {
-                settingsDialog.addSchemaRow();
-            }
-
-            dialog.setDialogPane(settingsDialog);
-            dialog.getResult();
-            dialog.setResultConverter(buttonType -> {
-                if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
-                    return settingsDialog.getBigtableTableConfiguration();
-                }
-                return null;
-            });
-
-            dialog.setOnHidden(event -> {
-                BigtableTableSettings configuration = dialog.getResult();
-                future.complete(configuration);
-            });
-
-            dialog.show();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return future;
-    }
+    private final List<ObservableCell> observableCells = new ArrayList<>();
 
     @FXML
     private GridPane schemaGridPane;
 
-    private List<ObservableCell> observableCells = new ArrayList<>();
-
     private int currentSchemaRow = 1;
 
-    private BigtableTable table;
+    @NotNull
+    public static CompletableFuture<BigtableTableSettings> displayAndAwaitResult(
+            @NotNull List<BigtableColumn> columns,
+            BigtableTableSettings currentSettings) {
+
+        var settings = currentSettings != null ? currentSettings : new BigtableTableSettings();
+        CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
+        Dialog<BigtableTableSettings> dialog = new Dialog<>();
+        TableSettingsDialog settingsDialog = new TableSettingsDialog();
+        settings.getCellDefinitions().forEach(settingsDialog::addSchemaRow);
+        columns.forEach(settingsDialog::addSchemaRow);
+        if (settingsDialog.observableCells.isEmpty()) {
+            settingsDialog.addSchemaRow();
+        }
+
+        dialog.setDialogPane(settingsDialog);
+        dialog.getResult();
+        dialog.setResultConverter(buttonType -> {
+            if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
+                return settingsDialog.getBigtableTableConfiguration();
+            }
+            return null;
+        });
+
+        dialog.setOnHidden(event -> {
+            BigtableTableSettings configuration = dialog.getResult();
+            future.complete(configuration);
+        });
+
+        dialog.show();
+
+        return future;
+    }
 
     private TableSettingsDialog() {
         FXMLLoaderUtil.loadFxml("/fxml/table_settings_dialog.fxml", this);
     }
 
+    @FXML
     public void onAddTableRow(ActionEvent event) {
         addSchemaRow();
     }
 
-    private void deleteRow(GridPane grid, final int row) {
-        Set<Node> deleteNodes = new HashSet<>();
-        for (Node child : grid.getChildren()) {
-            // get index from child
-            Integer rowIndex = GridPane.getRowIndex(child);
-
-            // handle null values for index=0
-            int r = rowIndex == null ? 0 : rowIndex;
-
-            if (r > row) {
-                // decrement rows for rows after the deleted row
-                GridPane.setRowIndex(child, r - 1);
-            } else if (r == row) {
-                // collect matching rows for deletion
-                deleteNodes.add(child);
-            }
-        }
-
-        // remove nodes from row
-        grid.getChildren().removeAll(deleteNodes);
-    }
-
-    private void setBigtableTable(BigtableTable table) {
-        this.table = table;
-    }
-
+    @NotNull
     private BigtableTableSettings getBigtableTableConfiguration() {
         var cellDefinitionList = observableCells
                 .stream()
@@ -113,7 +82,9 @@ public class TableSettingsDialog extends DialogPane {
         return new BigtableTableSettings(cellDefinitionList);
     }
 
-    private CellDefinition toCellDefinition(ObservableCell cell) {
+    @NotNull
+    @Contract("_ -> new")
+    private CellDefinition toCellDefinition(@NotNull ObservableCell cell) {
         return new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier());
     }
 
@@ -125,7 +96,7 @@ public class TableSettingsDialog extends DialogPane {
         addSchemaRow(column, null);
     }
 
-    private void addSchemaRow(CellDefinition cellDefinition) {
+    private void addSchemaRow(@NotNull CellDefinition cellDefinition) {
         addSchemaRow(new BigtableColumn(
                 cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
     }
@@ -157,9 +128,9 @@ public class TableSettingsDialog extends DialogPane {
 
     private static class ObservableCell {
 
-        private StringProperty valueType = new SimpleStringProperty();
-        private StringProperty family = new SimpleStringProperty();
-        private StringProperty qualifier = new SimpleStringProperty();
+        private final StringProperty valueType = new SimpleStringProperty();
+        private final StringProperty family = new SimpleStringProperty();
+        private final StringProperty qualifier = new SimpleStringProperty();
 
         public String getValueType() {
             return valueType.get();

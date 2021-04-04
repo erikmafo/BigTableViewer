@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 
@@ -92,7 +93,7 @@ public class ProjectExplorerController {
         return selectedTableProperty;
     }
 
-    public ContextMenu createContextMenu(TreeItemData item){
+    public ContextMenu createContextMenu(@NotNull TreeItemData item){
         ContextMenu menu = null;
         if (item.isProject()) {
             var addInstance = new MenuItem("Add instance");

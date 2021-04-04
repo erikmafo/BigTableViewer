@@ -1,6 +1,5 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
 
-import com.erikmafo.btviewer.services.instance.SaveInstanceService;
 import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,19 +18,10 @@ public class ProjectItemMenuController {
     private String projectId;
 
     private final RemoveProjectService removeProjectService;
-    private final SaveInstanceService saveInstanceService;
 
     @Inject
-    public ProjectItemMenuController(
-            RemoveProjectService removeProjectService,
-            SaveInstanceService saveInstanceService) {
+    public ProjectItemMenuController(RemoveProjectService removeProjectService) {
         this.removeProjectService = removeProjectService;
-        this.saveInstanceService = saveInstanceService;
-    }
-
-    @FXML
-    public void initialize() {
-
     }
 
     public void setProjectId(String projectId) {
@@ -42,10 +32,5 @@ public class ProjectItemMenuController {
     public void handleRemoveProject(ActionEvent actionEvent) {
         removeProjectService.setProjectId(projectId);
         removeProjectService.restart();
-    }
-
-    @FXML
-    public void handleAddInstance(ActionEvent actionEvent) {
-
     }
 }

@@ -6,7 +6,10 @@ import com.google.inject.name.Named;
 
 public class AppConfig {
 
+    @Inject @Named("USE_BIGTABLE_EMULATOR")
     private boolean useBigtableEmulator;
+
+    @Inject @Named("USE_IN_MEMORY_DATABASE")
     private boolean useInMemoryDatabase;
 
     public AppConfig() {}
@@ -15,12 +18,12 @@ public class AppConfig {
         return ConfigInjectionUtil.loadConfigProperties(getConfigName(environment), AppConfig.class);
     }
 
-    @Inject
+    /*@Inject
     public AppConfig(@Named("USE_BIGTABLE_EMULATOR") boolean useBigtableEmulator,
                      @Named("USE_IN_MEMORY_DATABASE") boolean useInMemoryDatabase) {
         this.useBigtableEmulator = useBigtableEmulator;
         this.useInMemoryDatabase = useInMemoryDatabase;
-    }
+    }*/
 
     public boolean useBigtableEmulator() { return useBigtableEmulator; }
 

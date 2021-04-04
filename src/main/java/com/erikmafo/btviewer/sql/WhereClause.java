@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.util.Check;
+
 public class WhereClause {
 
     private final Field field;
@@ -8,17 +10,9 @@ public class WhereClause {
 
     public WhereClause(Field field, Operator operator, Value value) {
 
-        if (field == null) {
-            throw new NullPointerException("'field' cannot be null");
-        }
-
-        if (operator == null) {
-            throw new NullPointerException("'operator' cannot be null");
-        }
-
-        if (value == null) {
-            throw new NullPointerException("'value' cannot be null");
-        }
+        Check.notNull(field, "field");
+        Check.notNull(operator, "operator");
+        Check.notNull(value, "value");
 
         this.field = field;
         this.operator = operator;

@@ -8,6 +8,9 @@ import com.erikmafo.btviewer.sql.SqlToken;
  */
 public class AggregationExpression {
 
+    private final Type type;
+    private final Field field;
+
     /**
      * An enumeration of the different types of supported aggregations.
      */
@@ -27,17 +30,11 @@ public class AggregationExpression {
         return AggregationExpressionParser.parse(token.getSubTokens());
     }
 
-    private final Type type;
-    private final Field field;
-
     public AggregationExpression(Type type, Field field) {
 
-        switch (type) {
-            case SUM:
-            case AVG:
-                field.ensureHasFamilyAndQualifier(
-                        "Syntax error: " + "family and qualifier must be specified in " + type + "(...)");
-                break;
+        if (type == Type.SUM || type == Type.AVG) {
+            field.ensureHasFamilyAndQualifier(
+                    "Syntax error: " + "family and qualifier must be specified in " + type + "(...)");
         }
 
         this.type = type;

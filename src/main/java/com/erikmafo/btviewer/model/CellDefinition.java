@@ -7,6 +7,10 @@ import java.util.Objects;
  */
 public class CellDefinition {
 
+    private String valueType;
+    private String family;
+    private String qualifier;
+
     /**
      * Creates a new instance of {@code CellDefinition}.
      *
@@ -19,10 +23,6 @@ public class CellDefinition {
         this.family = family;
         this.qualifier = qualifier;
     }
-
-    private String valueType;
-    private String family;
-    private String qualifier;
 
     public String getValueType() {
         return valueType;

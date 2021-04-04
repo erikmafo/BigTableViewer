@@ -5,6 +5,7 @@ import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -14,21 +15,17 @@ public class TestDataUtil {
 
     private static final String PROJECT_0 = "project-0";
     private static final String INSTANCE_0 = "instance-0";
-    private static final String INSTANCE_1 = "instance-1";
     private static final String TABLE_0 = "table-0";
-    private static final String TABLE_1 = "table-1";
 
     public static void injectWithTestData(BigtableEmulatorSettingsProvider settingsProvider) {
         try {
             createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_0);
-            // createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_0), TABLE_1);
-            // createTableWithTestData(settingsProvider, new BigtableInstance(PROJECT_0, INSTANCE_1), TABLE_0);
         } catch (IOException e) {
             throw new RuntimeException("Unable to start emulator", e);
         }
     }
 
-    private static void createTableWithTestData(BigtableEmulatorSettingsProvider settingsProvider, BigtableInstance instance, String tableName) throws IOException {
+    private static void createTableWithTestData(@NotNull BigtableEmulatorSettingsProvider settingsProvider, BigtableInstance instance, String tableName) throws IOException {
         var tableAdminSettings = settingsProvider.getTableAdminSettings(instance);
         try(var adminClient = BigtableTableAdminClient.create(tableAdminSettings)) {
             adminClient.createTable(CreateTableRequest.of(tableName)

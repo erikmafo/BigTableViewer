@@ -10,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BigtableCell {
 
+    private final String family;
+    private final String qualifier;
+    private final ByteString bytes;
+    private final long timestamp;
+
     /**
      * Converts a {@link RowCell} into the equivalent {@link BigtableCell} representation.
      * @param cell a bigtable row cell.
@@ -24,11 +29,6 @@ public class BigtableCell {
                 cell.getValue(),
                 cell.getTimestamp());
     }
-
-    private final String family;
-    private final String qualifier;
-    private final ByteString bytes;
-    private final long timestamp;
 
     /**
      * Creates a new instance of BigtableCell.

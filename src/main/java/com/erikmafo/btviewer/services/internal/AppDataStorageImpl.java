@@ -20,6 +20,11 @@ public class AppDataStorageImpl implements AppDataStorage {
     public static final String INSTANCES = "instances";
     public static final String TABLE_SETTINGS = "table-settings";
 
+    private final DB database;
+    private final ConcurrentMap<String, BigtableInstance> instances;
+    private final ConcurrentMap<String, BigtableTableSettings> tableSettings;
+
+    @NotNull
     public static AppDataStorage createInMemory() {
         var database = DBMaker
                 .memoryDB()
@@ -29,6 +34,7 @@ public class AppDataStorageImpl implements AppDataStorage {
         return new AppDataStorageImpl(database);
     }
 
+    @NotNull
     public static AppDataStorage createInstance() {
         var storageDir = AppDataUtil.getStorageFolder();
         if (!Files.exists(storageDir)) {
@@ -66,10 +72,6 @@ public class AppDataStorageImpl implements AppDataStorage {
             return gson.fromJson(input.readUTF(), clazz);
         }
     }
-
-    private final DB database;
-    private final ConcurrentMap<String, BigtableInstance> instances;
-    private final ConcurrentMap<String, BigtableTableSettings> tableSettings;
 
     public AppDataStorageImpl(DB database) {
         this.database = database;
@@ -128,12 +130,12 @@ public class AppDataStorageImpl implements AppDataStorage {
     }
 
     @NotNull
-    private String getKey(BigtableInstance instance) {
+    private String getKey(@NotNull BigtableInstance instance) {
         return String.format("projects/%s/instances/%s", instance.getProjectId(), instance.getInstanceId());
     }
 
     @NotNull
-    private String getKey(BigtableTable table) {
+    private String getKey(@NotNull BigtableTable table) {
         return String.format("projects/%s/instances/%s/tables/%s", table.getProjectId(), table.getInstanceId(), table.getTableId());
     }
 

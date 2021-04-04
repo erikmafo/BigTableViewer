@@ -1,5 +1,8 @@
 package com.erikmafo.btviewer.sql;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,7 +24,7 @@ public class DateTimeFormatUtil {
         return TimeUnit.MILLISECONDS.toMicros(toEpochMilli(dateTime));
     }
 
-    private static long toEpochMilli(String dateTime) {
+    private static long toEpochMilli(@NotNull String dateTime) {
         String format;
         var isDate = false;
         if (dateTime.length() == DATE.length()) {
@@ -42,12 +45,12 @@ public class DateTimeFormatUtil {
     }
 
     private static long toMillis(String dateTime, String format, boolean isDate) {
-        dateTime = dateTime.trim();
+        var trimmedDateTime = dateTime.trim();
         var offset = ZoneOffset.ofHours(0);
         var formatter = DateTimeFormatter.ofPattern(format);
         var dt = isDate ?
-                LocalDateTime.of(LocalDate.parse(dateTime, formatter), LocalTime.of(0, 0, 0)) :
-                LocalDateTime.parse(dateTime, formatter);
+                LocalDateTime.of(LocalDate.parse(trimmedDateTime, formatter), LocalTime.of(0, 0, 0)) :
+                LocalDateTime.parse(trimmedDateTime, formatter);
         return dt.toInstant(offset).toEpochMilli();
     }
 
@@ -56,6 +59,8 @@ public class DateTimeFormatUtil {
                 dateTime, String.join("\n", supportedFormats()));
     }
 
+    @NotNull
+    @Contract(value = " -> new", pure = true)
     private static List<String> supportedFormats() {
         return Arrays.asList(
                 DATE,

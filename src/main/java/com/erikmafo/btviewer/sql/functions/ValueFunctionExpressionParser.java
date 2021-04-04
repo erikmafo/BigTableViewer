@@ -3,6 +3,8 @@ package com.erikmafo.btviewer.sql.functions;
 import com.erikmafo.btviewer.sql.SqlToken;
 import com.erikmafo.btviewer.sql.Value;
 import com.erikmafo.btviewer.sql.ValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +12,13 @@ import java.util.stream.Collectors;
 
 public class ValueFunctionExpressionParser extends FunctionExpressionParser {
 
+    private final List<Value> args = new ArrayList<>();
+
     public static Value parse(List<SqlToken> tokens) {
         var expression = new ValueFunctionExpressionParser();
         expression.read(tokens);
         return expression.parse();
     }
-
-    private final List<Value> args = new ArrayList<>();
 
     public Value parse() {
         switch (getFunction()) {
@@ -32,12 +34,15 @@ public class ValueFunctionExpressionParser extends FunctionExpressionParser {
         args.add(Value.from(inputToken));
     }
 
-    private Value concat(List<Value> args) {
+    @NotNull
+    private Value concat(@NotNull List<Value> args) {
         var stringValue = args.stream().map(Value::asString).collect(Collectors.joining(""));
         return new Value(stringValue, ValueType.STRING);
     }
 
-    private Value reverse(List<Value> args) {
+    @NotNull
+    @Contract("_ -> new")
+    private Value reverse(@NotNull List<Value> args) {
         if (args.size() != 1) {
             throw new IllegalArgumentException(String.format("%s(...) takes exactly one argument", Function.REVERSE));
         }

@@ -12,6 +12,9 @@ import java.util.List;
  */
 public abstract class FunctionExpressionParser {
 
+    private Function function;
+    private Step step = Step.FUNCTION_TYPE;
+
     private enum Step {
         FUNCTION_TYPE,
         OPENING_PARENTHESES,
@@ -20,9 +23,6 @@ public abstract class FunctionExpressionParser {
         CLOSING_PARENTHESES,
         COMPLETE,
     }
-
-    private Function function;
-    private Step step = Step.FUNCTION_TYPE;
 
     protected Function getFunction() {
         return function;
@@ -63,6 +63,8 @@ public abstract class FunctionExpressionParser {
             case COMPLETE:
                 throw new IllegalArgumentException(
                         "Expected no more tokens in the function expression, but got: " + token.getValue());
+            default:
+                throw new IllegalArgumentException("sql token " + token + " is not supported");
         }
     }
 

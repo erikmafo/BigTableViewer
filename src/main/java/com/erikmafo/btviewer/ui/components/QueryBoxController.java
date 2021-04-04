@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reactfx.Subscription;
 
@@ -111,7 +112,7 @@ public class QueryBoxController {
     private void onCancelQueryButtonPressed(ActionEvent actionEvent) { bigtableQueryService.cancel(); }
 
     @FXML
-    private void onKeyPressedInCodeArea(KeyEvent keyEvent) {
+    private void onKeyPressedInCodeArea(@NotNull KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             int caretPosition = codeArea.getCaretPosition();
             int currentParagraph = codeArea.getCurrentParagraph();
