@@ -7,13 +7,13 @@ import java.util.List;
 
 public class AggregationExpressionParser extends FunctionExpressionParser {
 
+    private Field field;
+
     public static AggregationExpression parse(List<SqlToken> tokens) {
         var expression = new AggregationExpressionParser();
         expression.read(tokens);
         return expression.parse();
     }
-
-    private Field field;
 
     protected AggregationExpression parse() {
         switch (getFunction()) {

@@ -4,6 +4,7 @@ import com.erikmafo.btviewer.services.instance.LoadInstancesService;
 import com.erikmafo.btviewer.util.AlertUtil;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,6 +52,7 @@ public class ProjectTreeItem extends TreeItem<TreeItemData> {
         loadedChildren = true;
     }
 
+    @NotNull
     private InstanceTreeItem createChild(TreeItemData treeItemData) {
         var instanceItem = instanceTreeItemProvider.get();
         instanceItem.setValue(treeItemData);

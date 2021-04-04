@@ -31,6 +31,6 @@ public class MainController {
         projectExplorerController
                 .selectedTableProperty()
                 .addListener((obs, prev, current) ->
-                        queryBoxController.setQuery(SqlQuery.getDefaultSql(current.getTableId())));
+                        queryBoxController.setQuery(SqlQuery.getDefaultSqlQuery(current.getTableId())));
     }
 }

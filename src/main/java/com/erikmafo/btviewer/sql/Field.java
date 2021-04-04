@@ -1,6 +1,5 @@
 package com.erikmafo.btviewer.sql;
 
-
 import java.util.Objects;
 
 public class Field {

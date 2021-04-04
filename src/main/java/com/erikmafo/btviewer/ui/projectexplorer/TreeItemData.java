@@ -7,6 +7,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -36,11 +37,11 @@ public class TreeItemData {
         this.tableId = tableId;
     }
 
-    public TreeItemData(BigtableInstance instance) {
+    public TreeItemData(@NotNull BigtableInstance instance) {
         this(instance.getProjectId(), instance.getInstanceId());
     }
 
-    public TreeItemData(BigtableTable table) {
+    public TreeItemData(@NotNull BigtableTable table) {
         this(table.getProjectId(), table.getInstanceId(), table.getTableId());
     }
 

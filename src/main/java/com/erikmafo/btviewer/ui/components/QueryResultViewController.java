@@ -89,11 +89,11 @@ public class QueryResultViewController {
         return contextMenu;
     }
 
-    public void setRows(ObservableList<QueryResultRow> rows) {
+    public void setRows(@NotNull ObservableList<QueryResultRow> rows) {
         rows.addListener(this::onBigtableRowsChange);
     }
 
-    private void onBigtableRowsChange(ListChangeListener.Change<? extends QueryResultRow> change) {
+    private void onBigtableRowsChange(@NotNull ListChangeListener.Change<? extends QueryResultRow> change) {
         tableView.getColumns().clear();
         while (change.next()) {
             change.getAddedSubList().forEach(this::addColumns);
@@ -144,7 +144,7 @@ public class QueryResultViewController {
         Clipboard.getSystemClipboard().setContent(clipboardContent);
     }
 
-    private String getCellValue(TreeTablePosition<QueryResultRow, ?> position) {
+    private String getCellValue(@NotNull TreeTablePosition<QueryResultRow, ?> position) {
         var row = (QueryResultRow)position.getTreeItem().getValue();
         if (position.getColumn() == 0) {
             return row.getRowKey();
@@ -156,6 +156,7 @@ public class QueryResultViewController {
         return row.getCellValue(family, qualifier, valueConverter.get()).toString();
     }
 
+    @NotNull
     private TreeTableColumn<QueryResultRow, String> createRowKeyColumn() {
         TreeTableColumn<QueryResultRow, String> tableColumn = new TreeTableColumn<>(ROW_KEY);
         tableColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getRowKey()));
@@ -166,7 +167,7 @@ public class QueryResultViewController {
         return tableColumn;
     }
 
-    private void addColumns(QueryResultRow row) {
+    private void addColumns(@NotNull QueryResultRow row) {
         if (row.isBigtableRow()) {
             row.getCells().forEach(cell -> addBigtableRowColumn(cell.getFamily(), cell.getQualifier()));
         } else {
@@ -201,6 +202,7 @@ public class QueryResultViewController {
         }
     }
 
+    @NotNull
     private TreeTableColumn<QueryResultRow, BigtableCell> getQualifierTableColumn(String family, String qualifier) {
         TreeTableColumn<QueryResultRow, BigtableCell> qualifierColumn = new TreeTableColumn<>(qualifier);
         qualifierColumn.setCellValueFactory(new CellValueFactory(family, qualifier));
@@ -264,7 +266,7 @@ public class QueryResultViewController {
         }
 
         @Override
-        public ObservableValue<BigtableCell> call(TreeTableColumn.CellDataFeatures<QueryResultRow, BigtableCell> param) {
+        public ObservableValue<BigtableCell> call(@NotNull TreeTableColumn.CellDataFeatures<QueryResultRow, BigtableCell> param) {
             return new ReadOnlyObjectWrapper<>(param.getValue().getValue().getLatestCell(family, qualifier));
         }
     }

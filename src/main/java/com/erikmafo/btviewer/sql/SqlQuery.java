@@ -11,16 +11,16 @@ import java.util.List;
  */
 public class SqlQuery {
 
-    public static String getDefaultSql(String tableName) {
-        return String.format("SELECT * FROM '%s' LIMIT 1000", tableName);
-    }
-
-    private QueryType queryType;
-    private String tableName;
     private final List<Field> fields = new ArrayList<>();
     private final List<AggregationExpression> aggregationExpressions = new ArrayList<>();
     private final List<WhereClause> whereClauses = new ArrayList<>();
+    private QueryType queryType;
+    private String tableName;
     private int limit = Integer.MAX_VALUE;
+
+    public static String getDefaultSqlQuery(String tableName) {
+        return String.format("SELECT * FROM '%s' LIMIT 1000", tableName);
+    }
 
     public void addField(Field field) { fields.add(field); }
 
@@ -69,7 +69,7 @@ public class SqlQuery {
     }
 
     public boolean isAggregation() {
-        return aggregationExpressions != null && !aggregationExpressions.isEmpty();
+        return !aggregationExpressions.isEmpty();
     }
 
     public List<AggregationExpression> getAggregations() {

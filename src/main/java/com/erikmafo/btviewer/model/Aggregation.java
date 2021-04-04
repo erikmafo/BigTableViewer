@@ -1,6 +1,8 @@
 package com.erikmafo.btviewer.model;
 
 import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+import com.erikmafo.btviewer.util.Check;
+import org.jetbrains.annotations.NotNull;
 
 public class Aggregation {
 
@@ -11,11 +13,14 @@ public class Aggregation {
     private double sum;
 
     public Aggregation(AggregationExpression.Type type, String fieldName) {
+        Check.notNull(type, "type");
+        Check.notNullOrEmpty(fieldName, "fieldName");
+
         this.type = type;
         this.fieldName = fieldName;
     }
 
-    public void updateFrom(Aggregation other) {
+    public void updateFrom(@NotNull Aggregation other) {
         if (other.type != type) {
             throw new AssertionError(
                     String.format("Expected aggregation types to be equal but was %s and %s", type, other.type));
@@ -31,6 +36,8 @@ public class Aggregation {
                 updateSum(other.sum);
                 incrementCount();
                 break;
+            default:
+                throw new IllegalArgumentException(String.format("Unsupported aggregation type: %s", type));
         }
     }
 

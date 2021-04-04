@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -35,6 +36,7 @@ public class CredentialsPathDialog extends DialogPane {
         }
     }
 
+    @NotNull
     public static CompletableFuture<Path> displayAndAwaitResult(Path currentPath) {
         CompletableFuture<Path> result = new CompletableFuture<>();
         Dialog<String> dialog = new Dialog<>();

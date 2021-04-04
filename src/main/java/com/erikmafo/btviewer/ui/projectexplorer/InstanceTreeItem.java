@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.ui.projectexplorer;
 import com.erikmafo.btviewer.services.table.ListTablesService;
 import com.erikmafo.btviewer.util.AlertUtil;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class InstanceTreeItem extends TreeItem<TreeItemData> {
         listTablesService.restart();
     }
 
+    @NotNull
     private TableTreeItem createTableTreeItem(TreeItemData treeItemData) {
         var tableTreeItem = new TableTreeItem();
         tableTreeItem.setValue(treeItemData);

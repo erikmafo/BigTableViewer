@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.sql.functions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 /**
@@ -39,7 +41,7 @@ public enum Function {
      * @param sql a sql expression, or part of a sql expression.
      * @return true if the sql expression starts with an invocation of this function, false otherwise.
      */
-    public boolean matchesStartOf(String sql) {
+    public boolean matchesStartOf(@NotNull String sql) {
 
         var matchStartOf = value + "(";
 
@@ -53,11 +55,7 @@ public enum Function {
 
         var endParenthesesIndex = sql.indexOf(')');
 
-        if (endParenthesesIndex == -1) {
-            return false;
-        }
-
-        return true;
+        return endParenthesesIndex != -1;
     }
 
     /**

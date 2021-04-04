@@ -5,6 +5,7 @@ import com.google.cloud.bigtable.data.v2.models.Filters;
 import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Range;
 import com.google.protobuf.ByteString;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -80,14 +81,14 @@ public class QueryConverter {
         }
     }
 
-    private List<WhereClause> filterRowKeyWhereClauses(SqlQuery sqlQuery) {
+    private List<WhereClause> filterRowKeyWhereClauses(@NotNull SqlQuery sqlQuery) {
         return sqlQuery.getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isRowKey())
                 .collect(Collectors.toList());
     }
 
-    private List<WhereClause> filterTimestampWhereClauses(SqlQuery sqlQuery) {
+    private List<WhereClause> filterTimestampWhereClauses(@NotNull SqlQuery sqlQuery) {
         return sqlQuery.getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isTimestamp())
@@ -107,7 +108,7 @@ public class QueryConverter {
         return filters.filter(f -> !f.equals(FILTERS.pass())).collect(Collectors.toList());
     }
 
-    private Filters.Filter getAggregationFilter(SqlQuery sqlQuery) {
+    private Filters.Filter getAggregationFilter(@NotNull SqlQuery sqlQuery) {
         if (sqlQuery.getAggregations().isEmpty()) {
             return FILTERS.pass();
         }
@@ -121,7 +122,7 @@ public class QueryConverter {
         return FILTERS.limit().cellsPerColumn(1);
     }
 
-    private Filters.Filter getRowKeyRegexFilter(SqlQuery sqlQuery) {
+    private Filters.Filter getRowKeyRegexFilter(@NotNull SqlQuery sqlQuery) {
         var filters = sqlQuery.getWhereClauses().stream()
                 .filter(w -> w.getField().isRowKey())
                 .filter(w -> w.getOperator().equals(Operator.LIKE))
@@ -130,7 +131,7 @@ public class QueryConverter {
         return chain(filters);
     }
 
-    private Filters.Filter getValueFilter(SqlQuery sqlQuery) {
+    private Filters.Filter getValueFilter(@NotNull SqlQuery sqlQuery) {
         var filters = sqlQuery.getWhereClauses().stream()
                 .filter(w -> !w.getField().isTimestamp())
                 .filter(w -> !w.getField().isRowKey())
@@ -139,6 +140,7 @@ public class QueryConverter {
         return chain(filters);
     }
 
+    @NotNull
     private Filters.Filter getValueFilter(WhereClause where) {
         var byteString = getValueByteString(where);
         var trueFilter = FILTERS.pass();
@@ -185,7 +187,7 @@ public class QueryConverter {
                 .otherwise(falseFilter);
     }
 
-    private ByteString getValueByteString(WhereClause where) {
+    private ByteString getValueByteString(@NotNull WhereClause where) {
         return byteStringConverter.toByteString(where.getField(), where.getValue());
     }
 
@@ -196,7 +198,7 @@ public class QueryConverter {
         return interleave(filters);
     }
 
-    private List<Filters.Filter> getFamilyFilters(SqlQuery sqlQuery) {
+    private List<Filters.Filter> getFamilyFilters(@NotNull SqlQuery sqlQuery) {
         return sqlQuery.getFields().stream()
                 .filter(f -> !f.isAsterisk())
                 .filter(f -> !f.hasQualifier())
@@ -204,7 +206,7 @@ public class QueryConverter {
                 .collect(Collectors.toList());
     }
 
-    private List<Filters.Filter> getQualifierFilters(SqlQuery sqlQuery) {
+    private List<Filters.Filter> getQualifierFilters(@NotNull SqlQuery sqlQuery) {
         return sqlQuery.getFields()
                 .stream()
                 .filter(f -> !f.isAsterisk())
@@ -213,7 +215,8 @@ public class QueryConverter {
                 .collect(Collectors.toList());
     }
 
-    private Filters.Filter getFamilyQualifierFilter(Field field) {
+    @NotNull
+    private Filters.Filter getFamilyQualifierFilter(@NotNull Field field) {
         return FILTERS.chain()
                 .filter(FILTERS.family().exactMatch(field.getFamily()))
                 .filter(FILTERS.qualifier().exactMatch(field.getQualifier()));
@@ -223,7 +226,7 @@ public class QueryConverter {
         return chain(getTimestampFilters(sqlQuery));
     }
 
-    private Filters.Filter interleave(List<Filters.Filter> filters) {
+    private Filters.Filter interleave(@NotNull List<Filters.Filter> filters) {
         if (filters.isEmpty()) {
             return FILTERS.pass();
         }
@@ -237,7 +240,7 @@ public class QueryConverter {
         return interleaveFilter;
     }
 
-    private Filters.Filter chain(List<Filters.Filter> filters) {
+    private Filters.Filter chain(@NotNull List<Filters.Filter> filters) {
         if (filters.isEmpty()) {
             return FILTERS.pass();
         }
@@ -251,6 +254,7 @@ public class QueryConverter {
         return filter;
     }
 
+    @NotNull
     private List<Filters.Filter> getTimestampFilters(SqlQuery sqlQuery) {
         var filters = new LinkedList<Filters.Filter>();
         for (var where : filterTimestampWhereClauses(sqlQuery)) {
@@ -281,7 +285,7 @@ public class QueryConverter {
         return filters;
     }
 
-    private long toTimestamp(Value value) {
+    private long toTimestamp(@NotNull Value value) {
         long millis;
         switch (value.getValueType()) {
             case STRING:

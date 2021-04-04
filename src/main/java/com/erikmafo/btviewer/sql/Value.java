@@ -1,10 +1,15 @@
 package com.erikmafo.btviewer.sql;
 
 import com.erikmafo.btviewer.sql.functions.ValueFunctionExpressionParser;
+import com.erikmafo.btviewer.util.Check;
+import org.jetbrains.annotations.NotNull;
 
 public class Value {
 
-    public static Value from(SqlToken token) {
+    private final String value;
+    private final ValueType valueType;
+
+    public static Value from(@NotNull SqlToken token) {
         Value value;
         if (token.getTokenType() == SqlTokenType.INTEGER) {
             value = new Value(token.getValue(), ValueType.NUMBER);
@@ -19,18 +24,10 @@ public class Value {
         return value;
     }
 
-    private final String value;
-    private final ValueType valueType;
-
     public Value(String value, ValueType valueType) {
 
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("'value' cannot be null or empty");
-        }
-
-        if (valueType == null) {
-            throw new NullPointerException("'valueType' cannot be null");
-        }
+        Check.notNullOrEmpty(value, "value");
+        Check.notNull(valueType, "valueType");
 
         this.value = value;
         this.valueType = valueType;

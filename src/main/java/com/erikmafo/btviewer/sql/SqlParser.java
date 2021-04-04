@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.sql;
 
 import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+import org.jetbrains.annotations.NotNull;
 
 public class SqlParser {
 
@@ -27,6 +28,12 @@ public class SqlParser {
 
     private static class QueryBuilder {
 
+        private final SqlQuery sqlQuery = new SqlQuery();
+
+        private Step step = Step.QUERY_TYPE;
+        private Field whereField;
+        private Operator whereOperator;
+
         enum Step {
             QUERY_TYPE,
             FIELD,
@@ -41,18 +48,11 @@ public class SqlParser {
             LIMIT_VALUE,
         }
 
-        private final SqlQuery sqlQuery = new SqlQuery();
-        private Step step = Step.QUERY_TYPE;
-
-        private Field whereField;
-        private Operator whereOperator;
-        private Value whereValue;
-
-        SqlQuery getSqlQuery() {
+        public SqlQuery getSqlQuery() {
             return sqlQuery;
         }
 
-        void handleNextToken(SqlToken token) {
+        public void handleNextToken(SqlToken token) {
             ensureValid(token);
 
             switch (step) {
@@ -89,23 +89,25 @@ public class SqlParser {
                 case LIMIT_VALUE:
                     limitValue(token);
                     break;
+                default:
+                    throw new AssertionError(String.format("unsupported sql token %s", token));
             }
         }
 
-        private void ensureValid(SqlToken token) {
+        private void ensureValid(@NotNull SqlToken token) {
             if (token.getTokenType().equals(SqlTokenType.INVALID)) {
                 throw new IllegalArgumentException(token.getError());
             }
         }
 
-        private void limitValue(SqlToken token) {
+        private void limitValue(@NotNull SqlToken token) {
             if (token.getTokenType() != SqlTokenType.INTEGER) {
                 throw new IllegalArgumentException(String.format("Expected an integer but was '%s'", token.getValue()));
             }
             sqlQuery.setLimit(token.getValueAsInt());
         }
 
-        private void whereAnd(SqlToken token) {
+        private void whereAnd(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.AND) {
                 step = Step.WHERE_FIELD;
             } else if (token.getTokenType() == SqlTokenType.LIMIT) {
@@ -116,15 +118,14 @@ public class SqlParser {
         }
 
         private void whereValue(SqlToken token) {
-            whereValue = Value.from(token);
+            var whereValue = Value.from(token);
             sqlQuery.addWhereClause(new WhereClause(whereField, whereOperator, whereValue));
             whereField = null;
             whereOperator = null;
-            whereValue = null;
             step = Step.WHERE_AND;
         }
 
-        private void whereOperator(SqlToken token) {
+        private void whereOperator(@NotNull SqlToken token) {
             if (token.getTokenType() != SqlTokenType.OPERATOR) {
                 throw new IllegalArgumentException(String.format("Expected an operator but was '%s'", token.getValue()));
             }
@@ -132,7 +133,7 @@ public class SqlParser {
             step = Step.WHERE_VALUE;
         }
 
-        private void whereField(SqlToken token) {
+        private void whereField(@NotNull SqlToken token) {
             if (token.getTokenType() != SqlTokenType.IDENTIFIER) {
                 throw new IllegalArgumentException(String.format("Expected a field identifier but was '%s'", token.getValue()));
             }
@@ -140,7 +141,7 @@ public class SqlParser {
             step = Step.WHERE_OPERATOR;
         }
 
-        private void where(SqlToken token) {
+        private void where(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.WHERE) {
                 step = Step.WHERE_FIELD;
             } else if (token.getTokenType() == SqlTokenType.LIMIT) {
@@ -150,7 +151,7 @@ public class SqlParser {
             }
         }
 
-        private void selectFromTable(SqlToken token) {
+        private void selectFromTable(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.IDENTIFIER) {
                 sqlQuery.setTableName(token.getValue());
             } else if (token.getTokenType() == SqlTokenType.QUOTED_STRING) {
@@ -161,14 +162,14 @@ public class SqlParser {
             step = Step.WHERE;
         }
 
-        private void selectFrom(SqlToken token) {
+        private void selectFrom(@NotNull SqlToken token) {
             if (token.getTokenType() != SqlTokenType.FROM) {
                 throw new IllegalArgumentException(String.format("Expected 'FROM' but was ", token.getValue()));
             }
             step = Step.SELECT_FROM_TABLE;
         }
 
-        private void selectComma(SqlToken token) {
+        private void selectComma(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.COMMA) {
                 step = Step.FIELD;
             } else if (token.getTokenType() == SqlTokenType.FROM) {
@@ -178,7 +179,7 @@ public class SqlParser {
             }
         }
 
-        private void selectField(SqlToken token) {
+        private void selectField(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.IDENTIFIER) {
                 sqlQuery.addField(new Field(token.getValue()));
                 step = Step.SELECT_COMMA;
@@ -195,7 +196,7 @@ public class SqlParser {
             }
         }
 
-        private void queryType(SqlToken token) {
+        private void queryType(@NotNull SqlToken token) {
             if (token.getTokenType() == SqlTokenType.SELECT) {
                 sqlQuery.setQueryType(QueryType.SELECT);
             } else {

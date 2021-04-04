@@ -7,6 +7,8 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,6 +24,8 @@ public class AddInstanceDialog extends DialogPane {
         FXMLLoaderUtil.loadFxml("/fxml/add_instance_dialog.fxml", this);
     }
 
+    @NotNull
+    @Contract(" -> new")
     private BigtableInstance getBigtableInstance() {
         return new BigtableInstance(
                 projectIdTextField.getText(),
@@ -34,35 +38,33 @@ public class AddInstanceDialog extends DialogPane {
         instanceIdTextField.requestFocus();
     }
 
+    @NotNull
     public static CompletableFuture<BigtableInstance> displayAndAwaitResult() {
         return displayAndAwaitResult(null);
     }
 
+    @NotNull
     public static CompletableFuture<BigtableInstance> displayAndAwaitResult(String projectId) {
         CompletableFuture<BigtableInstance> future = new CompletableFuture<>();
 
-        try {
-            Dialog<BigtableInstance> dialog = new Dialog<>();
-            AddInstanceDialog pane = new AddInstanceDialog();
+        Dialog<BigtableInstance> dialog = new Dialog<>();
+        AddInstanceDialog pane = new AddInstanceDialog();
 
-            if (projectId != null) {
-                pane.preFillProjectId(projectId);
+        if (projectId != null) {
+            pane.preFillProjectId(projectId);
+        }
+
+        dialog.setDialogPane(pane);
+        dialog.setResultConverter(buttonType -> {
+
+            if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
+                return pane.getBigtableInstance();
             }
 
-            dialog.setDialogPane(pane);
-            dialog.setResultConverter(buttonType -> {
-
-                if (ButtonBar.ButtonData.OK_DONE.equals(buttonType.getButtonData())) {
-                    return pane.getBigtableInstance();
-                }
-
-                return null;
-            });
-            dialog.setOnHidden(event -> future.complete(dialog.getResult()));
-            dialog.show();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            return null;
+        });
+        dialog.setOnHidden(event -> future.complete(dialog.getResult()));
+        dialog.show();
 
         return future;
     }

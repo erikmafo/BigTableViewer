@@ -1,4 +1,6 @@
 package com.erikmafo.btviewer.sql;
+import com.erikmafo.btviewer.util.Check;
+
 import java.util.List;
 
 public class SqlToken {
@@ -19,13 +21,8 @@ public class SqlToken {
 
     public SqlToken(String value, SqlTokenType tokenType, int end, List<SqlToken> subTokens, String error) {
 
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("'value' cannot be null or empty");
-        }
-
-        if (tokenType == null) {
-            throw new NullPointerException("'tokenType' cannot be null");
-        }
+        Check.notNullOrEmpty(value, "value");
+        Check.notNull(tokenType, "tokenType");
 
         this.value = value;
         this.tokenType = tokenType;

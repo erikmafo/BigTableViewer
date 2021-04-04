@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.ui.components;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -70,6 +71,8 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
                 .collect(Collectors.toList());
     }
 
+    @NotNull
+    @Contract("_ -> new")
     private static BigtableRowTreeItem createChild(QueryResultRow row) {
         return new BigtableRowTreeItem(row, true);
     }

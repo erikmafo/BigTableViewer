@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -69,7 +70,7 @@ public class MenuBarController {
         saveCredentialsPathService.restart();
     }
 
-    private void displayError(Throwable throwable) {
+    private void displayError(@NotNull Throwable throwable) {
         var alert = new Alert(
                 Alert.AlertType.ERROR,
                 "Something went wrong: " + throwable.getLocalizedMessage(),
@@ -77,7 +78,7 @@ public class MenuBarController {
         alert.showAndWait();
     }
 
-    private void displayErrorInfo(String errorText, WorkerStateEvent event) {
+    private void displayErrorInfo(String errorText, @NotNull WorkerStateEvent event) {
         var exception = event.getSource().getException();
         var alert = new Alert(
                 Alert.AlertType.ERROR, errorText + " " + exception.getLocalizedMessage(), ButtonType.CLOSE);

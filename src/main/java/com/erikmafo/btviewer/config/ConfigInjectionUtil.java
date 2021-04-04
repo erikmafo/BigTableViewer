@@ -9,7 +9,7 @@ import java.util.Properties;
 
 class ConfigInjectionUtil {
 
-    static <T> T loadConfigProperties(String configName, Class<T> classType) {
+    public static <T> T loadConfigProperties(String configName, Class<T> classType) {
         AbstractModule module = new AbstractModule() {
             @Override
             protected void configure() {
