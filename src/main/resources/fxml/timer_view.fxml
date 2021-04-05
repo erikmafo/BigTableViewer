@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<fx:root type="javafx.scene.layout.Pane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml">
+    <GridPane>
+        <children>
+            <Label fx:id="hoursLabel" GridPane.rowIndex="0" GridPane.columnIndex="0" text="01"/>
+            <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text=":"/>
+            <Label fx:id="minutesLabel" GridPane.rowIndex="0" GridPane.columnIndex="2" text="12"/>
+            <Label GridPane.rowIndex="0" GridPane.columnIndex="3" text=":"/>
+            <Label fx:id="secondsLabel" GridPane.rowIndex="0" GridPane.columnIndex="4" text="56"/>
+            <Label GridPane.rowIndex="0" GridPane.columnIndex="5" text=":"/>
+            <Label fx:id="millisLabel" GridPane.rowIndex="0" GridPane.columnIndex="6" text="999"/>
+        </children>
+    </GridPane>
+</fx:root>

@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.shared;
 
 import com.erikmafo.btviewer.model.BigtableColumn;
 import com.erikmafo.btviewer.model.BigtableTableSettings;

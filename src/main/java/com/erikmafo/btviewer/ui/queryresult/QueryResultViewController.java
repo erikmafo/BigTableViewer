@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.queryresult;
 
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableColumn;
@@ -8,6 +8,7 @@ import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.table.LoadTableSettingsService;
 import com.erikmafo.btviewer.services.table.SaveTableSettingsService;
+import com.erikmafo.btviewer.ui.shared.TableSettingsDialog;
 import com.erikmafo.btviewer.util.AlertUtil;
 import com.sun.javafx.PlatformUtil;
 import javafx.beans.binding.Bindings;

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.erikmafo.btviewer.ui.timer.TimerView?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.fxmisc.richtext.CodeArea?>
 <VBox styleClass="queryBox, has-spacing"
       stylesheets="/css/query_box.css"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.btviewer.ui.components.QueryBoxController">
+      fx:controller="com.erikmafo.btviewer.ui.querybox.QueryBoxController">
 
     <CodeArea fx:id="codeArea" onKeyPressed="#onKeyPressedInCodeArea"/>
     <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
-        <Button
-                fx:id="executeQueryButton"
+        <Button fx:id="executeQueryButton"
                 text="Execute"
                 styleClass="btn-success"
                 onAction="#onExecuteQueryButtonPressed"/>
-        <Button
-                fx:id="cancelQueryButton"
+        <Button fx:id="cancelQueryButton"
                 text="Cancel"
                 styleClass="btn-danger"
                 onAction="#onCancelQueryButtonPressed"/>
-        <ProgressBar
-                fx:id="progressBar"
-                styleClass="progress-bar-success"/>
+        <ProgressBar fx:id="progressBar" styleClass="progress-bar-success"/>
+        <Pane HBox.hgrow="ALWAYS" />
+        <TimerView fx:id="timer"/>
     </HBox>
 
 </VBox>

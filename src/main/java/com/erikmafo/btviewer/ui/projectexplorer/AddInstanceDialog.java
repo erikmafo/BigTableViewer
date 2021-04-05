@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.projectexplorer;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.util.FXMLLoaderUtil;

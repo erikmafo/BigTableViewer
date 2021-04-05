@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.queryresult;
 
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableValueConverter;

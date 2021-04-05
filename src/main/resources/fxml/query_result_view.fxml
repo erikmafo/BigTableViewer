@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.btviewer.ui.components.QueryResultViewController"
+      fx:controller="com.erikmafo.btviewer.ui.queryresult.QueryResultViewController"
       fx:id="vBox"
       stylesheets="/css/query_result_view.css"
       styleClass="has-spacing">
