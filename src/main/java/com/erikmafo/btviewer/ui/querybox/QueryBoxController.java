@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.querybox;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
@@ -6,13 +6,13 @@ import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.query.BigtableQueryService;
 import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.ui.timer.TimerView;
 import com.erikmafo.btviewer.util.AlertUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
-import static com.erikmafo.btviewer.ui.components.SyntaxHighlightingUtil.computeSyntaxHighlighting;
+import static com.erikmafo.btviewer.ui.querybox.SyntaxHighlightingUtil.computeSyntaxHighlighting;
 
 public class QueryBoxController {
 
@@ -49,6 +49,9 @@ public class QueryBoxController {
 
     @FXML
     private CodeArea codeArea;
+
+    @FXML
+    private TimerView timer;
 
     private final ObjectProperty<BigtableInstance> instance = new SimpleObjectProperty<>();
     private final ObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
@@ -69,11 +72,12 @@ public class QueryBoxController {
                 .successionEnds(Duration.ofMillis(100))
                 .subscribe(ignore -> codeArea.setStyleSpans(0, computeSyntaxHighlighting(codeArea.getText())));
         table.bind(Bindings.createObjectBinding(this::createTable, instance, query));
-        instance.addListener(this::onInstanceChanged);
+        instance.addListener((observable, prevInstance, newInstance) -> onInstanceChanged());
         executeQueryButton.disableProperty().bind(Bindings
                 .createBooleanBinding(() ->
                         StringUtil.isNullOrEmpty(codeArea.textProperty().getValue()), codeArea.textProperty()));
         cancelQueryButton.disableProperty().bind(bigtableQueryService.runningProperty().not());
+        bigtableQueryService.runningProperty().addListener((obs, wasRunning, isRunning) -> updateTimer(isRunning));
     }
 
     public ObjectProperty<BigtableTable> tableProperty() { return table; }
@@ -119,6 +123,14 @@ public class QueryBoxController {
         }
     }
 
+    private void updateTimer(boolean isRunningQuery) {
+        if (isRunningQuery) {
+            timer.startFromZero();
+        } else {
+            timer.stop();
+        }
+    }
+
     @Nullable
     private BigtableTable createTable() {
         var instance = this.instance.get();
@@ -129,7 +141,5 @@ public class QueryBoxController {
         return null;
     }
 
-    private void onInstanceChanged(ObservableValue<? extends BigtableInstance> obs, BigtableInstance prev, BigtableInstance current) {
-        queryResult.clear();
-    }
+    private void onInstanceChanged() { queryResult.clear(); }
 }

@@ -1,9 +1,10 @@
-package com.erikmafo.btviewer.ui.controllers;
+package com.erikmafo.btviewer.ui;
 
 import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.ui.components.QueryBoxController;
-import com.erikmafo.btviewer.ui.components.QueryResultViewController;
+import com.erikmafo.btviewer.ui.menubar.MenuBarController;
 import com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController;
+import com.erikmafo.btviewer.ui.querybox.QueryBoxController;
+import com.erikmafo.btviewer.ui.queryresult.QueryResultViewController;
 import javafx.fxml.FXML;
 
 /**
@@ -24,7 +25,7 @@ public class MainController {
     private QueryResultViewController queryResultViewController;
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         queryResultViewController.tableProperty().bind(queryBoxController.tableProperty());
         queryResultViewController.setRows(queryBoxController.getQueryResult());
         queryBoxController.instanceProperty().bind(projectExplorerController.selectedInstanceProperty());

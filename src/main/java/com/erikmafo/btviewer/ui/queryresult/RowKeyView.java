@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.queryresult;
 
 import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.queryresult;
 
 import com.erikmafo.btviewer.model.QueryResultRow;
 import javafx.collections.ObservableList;

@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.querybox;
 
 import com.erikmafo.btviewer.sql.SqlToken;
 import com.erikmafo.btviewer.sql.SqlTokenType;

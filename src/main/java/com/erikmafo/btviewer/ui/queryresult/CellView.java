@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.components;
+package com.erikmafo.btviewer.ui.queryresult;
 
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
@@ -37,7 +37,7 @@ public class CellView extends BorderPane {
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         valueLabel.textProperty().bind(Bindings
                 .createStringBinding(this::getDisplayValue, cell, valueConverter));
         versionLabel.textProperty().bind(Bindings
