@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.kordamp.bootstrapfx</groupId>
             <artifactId>bootstrapfx-core</artifactId>
-            <version>0.2.4</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
