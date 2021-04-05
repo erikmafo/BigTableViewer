@@ -28,20 +28,20 @@ public class ByteStringConverterImpl implements ByteStringConverter {
                 .filter(c -> c.getQualifier().equals(field.getQualifier()))
                 .map(CellDefinition::getValueType)
                 .findFirst()
-                .orElse(ValueTypes.STRING);
+                .orElse(ValueTypeConstants.STRING);
 
         ByteString byteString;
         switch (valueType.toUpperCase()) {
-            case ValueTypes.STRING:
+            case ValueTypeConstants.STRING:
                 byteString = ByteStringConverterUtil.toByteString(value.asString());
                 break;
-            case ValueTypes.DOUBLE:
+            case ValueTypeConstants.DOUBLE:
                 byteString = ByteStringConverterUtil.toByteString(value.asDouble());
                 break;
-            case ValueTypes.FLOAT:
+            case ValueTypeConstants.FLOAT:
                 byteString = ByteStringConverterUtil.toByteString(value.asFloat());
                 break;
-            case ValueTypes.INTEGER:
+            case ValueTypeConstants.INTEGER:
                 byteString = ByteStringConverterUtil.toByteString(value.asInt());
                 break;
             default: throw new IllegalArgumentException(String.format("Value type %s is not supported", valueType.toUpperCase()));

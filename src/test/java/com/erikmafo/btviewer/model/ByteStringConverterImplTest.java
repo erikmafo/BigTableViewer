@@ -4,16 +4,12 @@ import com.erikmafo.btviewer.sql.ByteStringConverter;
 import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.Value;
 import com.erikmafo.btviewer.sql.ValueType;
-import com.erikmafo.btviewer.util.ByteStringConverterUtil;
-import javafx.util.converter.NumberStringConverter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -21,10 +17,10 @@ import static org.junit.Assert.*;
 public class ByteStringConverterImplTest {
 
     private ByteStringConverter converter = new ByteStringConverterImpl(Arrays.asList(
-            new CellDefinition(ValueTypes.STRING, "stringFamily", "stringColumn"),
-            new CellDefinition(ValueTypes.DOUBLE, "doubleFamily", "doubleColumn"),
-            new CellDefinition(ValueTypes.FLOAT, "floatFamily", "floatColumn"),
-            new CellDefinition(ValueTypes.INTEGER, "intFamily", "intColumn")));
+            new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn"),
+            new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn"),
+            new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn"),
+            new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn")));
 
     @Test
     public void shouldConvertStringValue() {

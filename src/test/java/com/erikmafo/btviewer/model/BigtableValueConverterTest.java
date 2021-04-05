@@ -11,10 +11,10 @@ import static org.junit.Assert.*;
 public class BigtableValueConverterTest {
 
     private BigtableValueConverter converter = new BigtableValueConverter(Arrays.asList(
-            new CellDefinition(ValueTypes.STRING, "stringFamily", "stringColumn"),
-            new CellDefinition(ValueTypes.DOUBLE, "doubleFamily", "doubleColumn"),
-            new CellDefinition(ValueTypes.FLOAT, "floatFamily", "floatColumn"),
-            new CellDefinition(ValueTypes.INTEGER, "intFamily", "intColumn")));
+            new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn"),
+            new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn"),
+            new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn"),
+            new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn")));
 
     @Test
     public void shouldConvertBigtableCellToInt() {

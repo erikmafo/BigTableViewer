@@ -71,9 +71,9 @@ public class BigtableValueConverter {
         var cellDefinition = getCellDefinition(cell);
 
         switch (cellDefinition.getValueType()) {
-            case ValueTypes.DOUBLE:
-            case ValueTypes.INTEGER:
-            case ValueTypes.FLOAT:
+            case ValueTypeConstants.DOUBLE:
+            case ValueTypeConstants.INTEGER:
+            case ValueTypeConstants.FLOAT:
                 return true;
             default:
                 return false;
@@ -86,16 +86,16 @@ public class BigtableValueConverter {
                 .filter(c -> c.getFamily().equals(cell.getFamily())
                         && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
-                .orElse(new CellDefinition(ValueTypes.STRING, cell.getFamily(), cell.getQualifier()));
+                .orElse(new CellDefinition(ValueTypeConstants.STRING, cell.getFamily(), cell.getQualifier()));
     }
 
     private Object convertUsingValueType(BigtableCell cell, @NotNull String valueType) {
         switch (valueType.toUpperCase()) {
-            case ValueTypes.DOUBLE:
+            case ValueTypeConstants.DOUBLE:
                 return ByteBuffer.wrap(cell.getBytes()).getDouble();
-            case ValueTypes.INTEGER:
+            case ValueTypeConstants.INTEGER:
                 return ByteBuffer.wrap(cell.getBytes()).getInt();
-            case ValueTypes.FLOAT:
+            case ValueTypeConstants.FLOAT:
                 return ByteBuffer.wrap(cell.getBytes()).getFloat();
             default:
                 return cell.getValueAsString();
