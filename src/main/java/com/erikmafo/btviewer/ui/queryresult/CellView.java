@@ -37,7 +37,7 @@ public class CellView extends BorderPane {
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         valueLabel.textProperty().bind(Bindings
                 .createStringBinding(this::getDisplayValue, cell, valueConverter));
         versionLabel.textProperty().bind(Bindings

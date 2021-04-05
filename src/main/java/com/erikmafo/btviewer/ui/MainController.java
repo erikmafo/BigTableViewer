@@ -25,7 +25,7 @@ public class MainController {
     private QueryResultViewController queryResultViewController;
 
     @FXML
-    private void initialize() {
+    public void initialize() {
         queryResultViewController.tableProperty().bind(queryBoxController.tableProperty());
         queryResultViewController.setRows(queryBoxController.getQueryResult());
         queryBoxController.instanceProperty().bind(projectExplorerController.selectedInstanceProperty());
