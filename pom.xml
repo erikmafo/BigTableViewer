@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.5</version>
+            <version>0.10.6</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
