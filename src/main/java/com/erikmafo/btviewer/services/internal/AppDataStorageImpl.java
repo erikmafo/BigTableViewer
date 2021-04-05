@@ -6,7 +6,11 @@ import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.google.gson.Gson;
 import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
-import org.mapdb.*;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.DataInput2;
+import org.mapdb.DataOutput2;
+import org.mapdb.Serializer;
 
 import java.io.IOException;
 import java.nio.file.Files;

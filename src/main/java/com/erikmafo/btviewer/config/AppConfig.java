@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.config;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.jetbrains.annotations.NotNull;
 
 public class AppConfig {
 
@@ -32,7 +33,7 @@ public class AppConfig {
         this.useInMemoryDatabase = useInMemoryDatabase;
     }
 
-    private static String getConfigName(ApplicationEnvironment environment) {
+    private static String getConfigName(@NotNull ApplicationEnvironment environment) {
         return environment.isProduction() ?
                 "config.properties" :
                 String.format("config.%s.properties", environment.getName());

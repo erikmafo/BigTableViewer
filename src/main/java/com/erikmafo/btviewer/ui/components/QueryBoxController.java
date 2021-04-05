@@ -25,7 +25,6 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reactfx.Subscription;
 
 import javax.inject.Inject;
 import java.time.Duration;

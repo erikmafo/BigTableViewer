@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-
 <fx:root headerText="Table settings"
          maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"

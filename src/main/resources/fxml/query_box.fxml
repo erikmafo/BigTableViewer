@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.fxmisc.richtext.CodeArea?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.fxmisc.richtext.CodeArea?>
 <VBox styleClass="queryBox, has-spacing"
       stylesheets="/css/query_box.css"
       xmlns:fx="http://javafx.com/fxml"

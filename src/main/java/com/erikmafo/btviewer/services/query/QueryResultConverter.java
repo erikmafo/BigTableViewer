@@ -121,17 +121,24 @@ public class QueryResultConverter {
         var entry = createAggregationEntry(aggregationExpression);
         switch (aggregationExpression.getType()) {
             case AVG:
+                entry.setSum(getDouble(BigtableCell.from(cell)));
+                entry.setCount(1);
+                break;
             case SUM:
-                entry.updateSum(getDouble(BigtableCell.from(cell)));
+                entry.setSum(getDouble(BigtableCell.from(cell)));
+                break;
             case COUNT:
                 entry.setCount(1);
                 break;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("aggregation type: %s is not supported", aggregationExpression.getType()));
         }
         return entry;
     }
 
     private double getDouble(BigtableCell cell) {
-        if (valueConverter.isNumber(cell)) {
+        if (valueConverter.isNumberCellDefinition(cell)) {
             return ((Number)valueConverter.convert(cell)).doubleValue();
         } else {
             return 0;

@@ -25,7 +25,7 @@ public class Check {
      * @throws IllegalArgumentException if param is null or empty.
      */
     public static <T> void notNullOrEmpty(String param, String paramName) {
-        if (param == null || param.isEmpty()) {
+        if (StringUtil.isNullOrEmpty(param)) {
             throw new IllegalArgumentException(String.format("%s cannot be null or empty", paramName));
         }
     }

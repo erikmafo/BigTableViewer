@@ -22,7 +22,7 @@ public class Aggregation {
 
     public void updateFrom(@NotNull Aggregation other) {
         if (other.type != type) {
-            throw new AssertionError(
+            throw new IllegalArgumentException(
                     String.format("Expected aggregation types to be equal but was %s and %s", type, other.type));
         }
         switch (type) {
@@ -45,17 +45,11 @@ public class Aggregation {
         return String.format("%s(%s)", type.name(), fieldName);
     }
 
-    public void updateSum(double addToSum) {
-        sum += addToSum;
-    }
-
-    public void incrementCount() {
-        count++;
-    }
-
     public void setCount(int count) {
         this.count = count;
     }
+
+    public void setSum(double sum) { this.sum = sum; }
 
     public Number getValue() {
         switch (type) {
@@ -69,5 +63,13 @@ public class Aggregation {
     @Override
     public String toString() {
         return getValue().toString();
+    }
+
+    private void updateSum(double addToSum) {
+        sum += addToSum;
+    }
+
+    private void incrementCount() {
+        count++;
     }
 }
