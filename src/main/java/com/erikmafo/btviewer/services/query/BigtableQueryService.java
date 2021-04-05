@@ -1,6 +1,10 @@
 package com.erikmafo.btviewer.services.query;
 
-import com.erikmafo.btviewer.model.*;
+import com.erikmafo.btviewer.model.BigtableInstance;
+import com.erikmafo.btviewer.model.BigtableTable;
+import com.erikmafo.btviewer.model.BigtableValueConverter;
+import com.erikmafo.btviewer.model.ByteStringConverterImpl;
+import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
 import com.erikmafo.btviewer.sql.QueryConverter;

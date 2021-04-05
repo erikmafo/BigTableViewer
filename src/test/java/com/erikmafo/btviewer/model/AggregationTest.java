@@ -4,7 +4,7 @@ import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AggregationTest {
 
