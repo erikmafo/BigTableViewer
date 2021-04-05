@@ -67,13 +67,13 @@ public class BigtableValueConverter {
      * @param cell a bigtable cell.
      * @return true if the cell value converts to a number, false otherwise.
      */
-    public boolean isNumber(BigtableCell cell) {
+    public boolean isNumberCellDefinition(BigtableCell cell) {
         var cellDefinition = getCellDefinition(cell);
 
-        switch (cellDefinition.getValueType().toLowerCase()) {
-            case "double":
-            case "integer":
-            case "float":
+        switch (cellDefinition.getValueType()) {
+            case ValueTypes.DOUBLE:
+            case ValueTypes.INTEGER:
+            case ValueTypes.FLOAT:
                 return true;
             default:
                 return false;
@@ -86,16 +86,16 @@ public class BigtableValueConverter {
                 .filter(c -> c.getFamily().equals(cell.getFamily())
                         && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
-                .orElse(new CellDefinition("string", cell.getFamily(), cell.getQualifier()));
+                .orElse(new CellDefinition(ValueTypes.STRING, cell.getFamily(), cell.getQualifier()));
     }
 
     private Object convertUsingValueType(BigtableCell cell, @NotNull String valueType) {
-        switch (valueType.toLowerCase()) {
-            case "double":
+        switch (valueType.toUpperCase()) {
+            case ValueTypes.DOUBLE:
                 return ByteBuffer.wrap(cell.getBytes()).getDouble();
-            case "integer":
+            case ValueTypes.INTEGER:
                 return ByteBuffer.wrap(cell.getBytes()).getInt();
-            case "float":
+            case ValueTypes.FLOAT:
                 return ByteBuffer.wrap(cell.getBytes()).getFloat();
             default:
                 return cell.getValueAsString();
