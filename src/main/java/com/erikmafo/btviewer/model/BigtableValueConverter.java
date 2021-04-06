@@ -70,7 +70,7 @@ public class BigtableValueConverter {
     public boolean isNumberCellDefinition(BigtableCell cell) {
         var cellDefinition = getCellDefinition(cell);
 
-        switch (cellDefinition.getValueType()) {
+        switch (cellDefinition.getValueType().toUpperCase()) {
             case ValueTypeConstants.DOUBLE:
             case ValueTypeConstants.INTEGER:
             case ValueTypeConstants.FLOAT:
