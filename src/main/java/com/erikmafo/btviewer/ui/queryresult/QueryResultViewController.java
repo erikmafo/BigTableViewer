@@ -39,6 +39,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -61,6 +62,7 @@ public class QueryResultViewController {
     @FXML
     private TreeTableView<QueryResultRow> tableView;
 
+    @Nullable
     private final BigtableRowTreeItem root;
 
     private final SimpleObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
@@ -106,7 +108,7 @@ public class QueryResultViewController {
     }
 
     @FXML
-    public void onTableViewKeyPressed(KeyEvent keyEvent) {
+    public void onTableViewKeyPressed(@NotNull KeyEvent keyEvent) {
         if (isCopyOperation(keyEvent)) {
             copySelectedCellsToClipboard();
         }
@@ -126,6 +128,7 @@ public class QueryResultViewController {
         rows.addListener(this::onBigtableRowsChange);
     }
 
+    @NotNull
     public SimpleObjectProperty<BigtableTable> tableProperty() {
         return table;
     }
@@ -142,7 +145,7 @@ public class QueryResultViewController {
         root.getChildren().setAll(treeItems);
     }
 
-    private boolean isCopyOperation(KeyEvent keyEvent) {
+    private boolean isCopyOperation(@NotNull KeyEvent keyEvent) {
         return PlatformUtil.isMac() ?
                 keyEvent.getCode() == KeyCode.C && keyEvent.isMetaDown() :
                 keyEvent.getCode() == KeyCode.C && keyEvent.isControlDown();
@@ -237,7 +240,7 @@ public class QueryResultViewController {
                 .orElse(null);
     }
 
-    private void updateTableConfiguration(BigtableTable table, BigtableTableSettings configuration) {
+    private void updateTableConfiguration(BigtableTable table, @Nullable BigtableTableSettings configuration) {
         if (configuration == null) {
             return;
         }
@@ -284,6 +287,7 @@ public class QueryResultViewController {
             this.qualifier = qualifier;
         }
 
+        @NotNull
         @Override
         public ObservableValue<BigtableCell> call(@NotNull TreeTableColumn.CellDataFeatures<QueryResultRow, BigtableCell> param) {
             return new ReadOnlyObjectWrapper<>(param.getValue().getValue().getLatestCell(family, qualifier));
@@ -292,6 +296,7 @@ public class QueryResultViewController {
 
     private static class RowKeyTableCellFactory implements Callback<TreeTableColumn<QueryResultRow, String>, TreeTableCell<QueryResultRow, String>> {
 
+        @NotNull
         @Override
         public TreeTableCell<QueryResultRow, String> call(TreeTableColumn<QueryResultRow, String> column) {
             return new TreeTableCell<>() {
@@ -312,6 +317,7 @@ public class QueryResultViewController {
 
     private class CellFactory implements Callback<TreeTableColumn<QueryResultRow, BigtableCell>, TreeTableCell<QueryResultRow, BigtableCell>>
     {
+        @NotNull
         @Override
         public TreeTableCell<QueryResultRow, BigtableCell> call(TreeTableColumn<QueryResultRow, BigtableCell> column) {
             return new TreeTableCell<>() {

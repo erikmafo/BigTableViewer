@@ -1,5 +1,8 @@
 package com.erikmafo.btviewer.sql;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public class Field {
@@ -64,6 +67,8 @@ public class Field {
         return Objects.hash(name);
     }
 
+    @NotNull
+    @Contract(pure = true)
     private String[] getFamilyAndQualifier() {
         return name.split("\\.");
     }

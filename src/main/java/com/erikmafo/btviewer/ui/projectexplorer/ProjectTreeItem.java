@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 
 public class ProjectTreeItem extends TreeItem<TreeItemData> {
 
+    @NotNull
     private final LoadInstancesService loadInstancesService;
     private final Provider<InstanceTreeItem> instanceTreeItemProvider;
 
     private boolean loadedChildren;
 
     @Inject
-    public ProjectTreeItem(LoadInstancesService loadInstancesService,
+    public ProjectTreeItem(@NotNull LoadInstancesService loadInstancesService,
                            Provider<InstanceTreeItem> instanceTreeItemProvider) {
         this.loadInstancesService = loadInstancesService;
         this.instanceTreeItemProvider = instanceTreeItemProvider;
@@ -53,7 +54,7 @@ public class ProjectTreeItem extends TreeItem<TreeItemData> {
     }
 
     @NotNull
-    private InstanceTreeItem createChild(TreeItemData treeItemData) {
+    private InstanceTreeItem createChild(@NotNull TreeItemData treeItemData) {
         var instanceItem = instanceTreeItemProvider.get();
         instanceItem.setValue(treeItemData);
         treeItemData.setTreeItem(instanceItem);

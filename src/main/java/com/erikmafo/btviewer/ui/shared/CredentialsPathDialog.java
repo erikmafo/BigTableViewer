@@ -10,6 +10,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -29,7 +30,7 @@ public class CredentialsPathDialog extends DialogPane {
     }
 
     @NotNull
-    public static CompletableFuture<Path> displayAndAwaitResult(Path currentPath) {
+    public static CompletableFuture<Path> displayAndAwaitResult(@Nullable Path currentPath) {
         CompletableFuture<Path> result = new CompletableFuture<>();
         Dialog<String> dialog = new Dialog<>();
         var credentialsPathDialog = new CredentialsPathDialog();
@@ -68,7 +69,7 @@ public class CredentialsPathDialog extends DialogPane {
         }
     }
 
-    private static boolean validatePath(String pathAsString) {
+    private static boolean validatePath(@Nullable String pathAsString) {
         if (pathAsString == null) {
             return false;
         }

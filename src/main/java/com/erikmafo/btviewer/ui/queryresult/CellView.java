@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -53,10 +54,12 @@ public class CellView extends BorderPane {
         return displayTimestamp.get();
     }
 
+    @NotNull
     public BooleanProperty displayTimestampProperty() {
         return displayTimestamp;
     }
 
+    @NotNull
     public ObjectProperty<BigtableValueConverter> valueConverterProperty() { return valueConverter; }
 
     private String getDisplayValue() {

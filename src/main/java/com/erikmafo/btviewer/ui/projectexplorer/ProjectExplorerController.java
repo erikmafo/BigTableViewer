@@ -18,6 +18,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
@@ -31,7 +32,9 @@ public class ProjectExplorerController {
 
     private final Provider<RootTreeItem> rootTreeItemProvider;
 
+    @NotNull
     private final SimpleObjectProperty<BigtableTable> selectedTableProperty;
+    @NotNull
     private final SimpleObjectProperty<BigtableInstance> selectedInstanceProperty;
 
     private final SaveInstanceService saveInstanceService;
@@ -55,7 +58,7 @@ public class ProjectExplorerController {
 
         treeView.setCellFactory(tableInfoTreeView -> new TreeCell<>() {
             @Override
-            protected void updateItem(TreeItemData item, boolean empty) {
+            protected void updateItem(@Nullable TreeItemData item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
@@ -91,14 +94,17 @@ public class ProjectExplorerController {
         addInstanceButton.setOnAction(this::handleAddInstanceAction);
     }
 
+    @NotNull
     public ReadOnlyObjectProperty<BigtableInstance> selectedInstanceProperty() {
         return selectedInstanceProperty;
     }
 
+    @NotNull
     public ReadOnlyObjectProperty<BigtableTable> selectedTableProperty() {
         return selectedTableProperty;
     }
 
+    @Nullable
     public ContextMenu createContextMenu(@NotNull TreeItemData item){
         ContextMenu menu = null;
         if (item.isProject()) {
@@ -129,7 +135,7 @@ public class ProjectExplorerController {
         AddInstanceDialog.displayAndAwaitResult().whenComplete(this::handleAddInstanceResult);
     }
 
-    private void handleAddInstanceResult(BigtableInstance instance, Throwable throwable) {
+    private void handleAddInstanceResult(@Nullable BigtableInstance instance, Throwable throwable) {
         if (instance == null) {
             return;
         }

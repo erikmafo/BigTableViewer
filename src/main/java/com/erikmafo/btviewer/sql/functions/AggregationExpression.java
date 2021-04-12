@@ -2,6 +2,7 @@ package com.erikmafo.btviewer.sql.functions;
 
 import com.erikmafo.btviewer.sql.Field;
 import com.erikmafo.btviewer.sql.SqlToken;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an aggregation of a field in a sql query.
@@ -26,7 +27,7 @@ public class AggregationExpression {
      * @return an {@link AggregationExpression}
      * @throws IllegalArgumentException if the sql token cannot be evaluated into an AggregationExpression.
      */
-    public static AggregationExpression from(SqlToken token) {
+    public static AggregationExpression from(@NotNull SqlToken token) {
         return AggregationExpressionParser.parse(token.getSubTokens());
     }
 
