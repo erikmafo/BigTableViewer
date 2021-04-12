@@ -138,17 +138,25 @@ public class QueryResultConverter {
     }
 
     private double getDouble(BigtableCell cell) {
-        if (valueConverter.isNumberCellDefinition(cell)) {
-            return ((Number)valueConverter.convert(cell)).doubleValue();
-        } else {
-            return 0;
-        }
+        return valueConverter.isNumberCellDefinition(cell) ? ((Number)valueConverter.convert(cell)).doubleValue() : 0;
     }
 
     private boolean matches(@NotNull Field field, @NotNull RowCell cell) {
-        return field.isAsterisk() || (field.hasQualifier()
-                && cell.getFamily().equalsIgnoreCase(field.getFamily())
-                && cell.getQualifier().toStringUtf8().equalsIgnoreCase(field.getQualifier()));
+        if (field.isAsterisk()) {
+            return true;
+        }
+
+        return field.hasQualifier()
+                ? matchesFamily(field, cell) && matchesQualifier(field, cell)
+                : matchesFamily(field, cell);
+    }
+
+    private boolean matchesFamily(@NotNull Field field, @NotNull RowCell cell) {
+        return cell.getFamily().equalsIgnoreCase(field.getFamily());
+    }
+
+    private boolean matchesQualifier(@NotNull Field field, @NotNull RowCell cell) {
+        return cell.getQualifier().toStringUtf8().equalsIgnoreCase(field.getQualifier());
     }
 
     private List<BigtableCell> getBigtableCells(@NotNull Row row) {

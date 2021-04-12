@@ -12,6 +12,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
@@ -58,7 +59,7 @@ public class MenuBarController {
                 .whenComplete(this::onCredentialsPathDialogComplete);
     }
 
-    private void onCredentialsPathDialogComplete(Path path, Throwable throwable) {
+    private void onCredentialsPathDialogComplete(@Nullable Path path, @Nullable Throwable throwable) {
         if (throwable != null) {
             displayError(throwable);
         }

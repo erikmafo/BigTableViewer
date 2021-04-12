@@ -9,6 +9,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -30,7 +31,7 @@ public class AddInstanceDialog extends DialogPane {
     }
 
     @NotNull
-    public static CompletableFuture<BigtableInstance> displayAndAwaitResult(String projectId) {
+    public static CompletableFuture<BigtableInstance> displayAndAwaitResult(@Nullable String projectId) {
         CompletableFuture<BigtableInstance> future = new CompletableFuture<>();
 
         Dialog<BigtableInstance> dialog = new Dialog<>();

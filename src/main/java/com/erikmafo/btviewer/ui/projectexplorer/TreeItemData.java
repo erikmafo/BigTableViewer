@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -74,10 +75,12 @@ public class TreeItemData {
         return displayName;
     }
 
+    @NotNull
     public BigtableTable toTable() {
         return new BigtableTable(projectId, instanceId, tableId);
     }
 
+    @NotNull
     public BigtableInstance toInstance() {
         return new BigtableInstance(projectId, instanceId);
     }
@@ -91,7 +94,7 @@ public class TreeItemData {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -114,6 +117,7 @@ public class TreeItemData {
         return loading.get();
     }
 
+    @NotNull
     public BooleanProperty loadingProperty() {
         return loading;
     }
@@ -126,6 +130,7 @@ public class TreeItemData {
         return treeItem.get();
     }
 
+    @NotNull
     public ObjectProperty<TreeItem<TreeItemData>> treeItemProperty() {
         return treeItem;
     }

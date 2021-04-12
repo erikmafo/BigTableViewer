@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class TableSettingsDialog extends DialogPane {
     @NotNull
     public static CompletableFuture<BigtableTableSettings> displayAndAwaitResult(
             @NotNull List<BigtableColumn> columns,
-            BigtableTableSettings currentSettings) {
+            @Nullable BigtableTableSettings currentSettings) {
 
         var settings = currentSettings != null ? currentSettings : new BigtableTableSettings();
         CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
@@ -97,7 +98,7 @@ public class TableSettingsDialog extends DialogPane {
         addSchemaRow(new BigtableColumn("", ""));
     }
 
-    private void addSchemaRow(BigtableColumn column) {
+    private void addSchemaRow(@NotNull BigtableColumn column) {
         addSchemaRow(column, null);
     }
 
@@ -106,7 +107,7 @@ public class TableSettingsDialog extends DialogPane {
                 cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
     }
 
-    private void addSchemaRow(BigtableColumn column, String valueType) {
+    private void addSchemaRow(@NotNull BigtableColumn column, @Nullable String valueType) {
         var alreadyAdded = observableCells.stream().anyMatch(cell ->
                 cell.getFamily().equals(column.getFamily()) &&
                 cell.getQualifier().equals(column.getQualifier()));
@@ -141,6 +142,7 @@ public class TableSettingsDialog extends DialogPane {
             return valueType.get();
         }
 
+        @NotNull
         public StringProperty valueTypeProperty() {
             return valueType;
         }
@@ -153,6 +155,7 @@ public class TableSettingsDialog extends DialogPane {
             return family.get();
         }
 
+        @NotNull
         public StringProperty familyProperty() {
             return family;
         }
@@ -165,6 +168,7 @@ public class TableSettingsDialog extends DialogPane {
             return qualifier.get();
         }
 
+        @NotNull
         public StringProperty qualifierProperty() {
             return qualifier;
         }

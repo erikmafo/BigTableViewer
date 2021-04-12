@@ -11,12 +11,13 @@ import java.util.stream.Collectors;
 
 public class RootTreeItem extends TreeItem<TreeItemData> {
 
+    @NotNull
     private final LoadProjectsService loadProjectsService;
     private final Provider<ProjectTreeItem> projectTreeItemProvider;
 
     @Inject
     public RootTreeItem(
-            LoadProjectsService loadProjectsService,
+            @NotNull LoadProjectsService loadProjectsService,
             Provider<ProjectTreeItem> projectTreeItemProvider) {
         this.projectTreeItemProvider = projectTreeItemProvider;
         this.loadProjectsService = loadProjectsService;
@@ -44,7 +45,7 @@ public class RootTreeItem extends TreeItem<TreeItemData> {
         return false;
     }
 
-    private void loadChildren(LoadProjectsService loadProjectsService) {
+    private void loadChildren(@NotNull LoadProjectsService loadProjectsService) {
         this.loadProjectsService.setOnSucceeded(event -> {
             var children = loadProjectsService
                     .getValue()

@@ -80,8 +80,10 @@ public class QueryBoxController {
         bigtableQueryService.runningProperty().addListener((obs, wasRunning, isRunning) -> updateTimer(isRunning));
     }
 
+    @NotNull
     public ObjectProperty<BigtableTable> tableProperty() { return table; }
 
+    @NotNull
     public ObservableList<QueryResultRow> getQueryResult() { return queryResult; }
 
     public void setQuery(String sql) {
@@ -89,6 +91,7 @@ public class QueryBoxController {
         codeArea.replaceText(0, 0, sql);
     }
 
+    @NotNull
     public ObjectProperty<BigtableInstance> instanceProperty() {
         return instance;
     }

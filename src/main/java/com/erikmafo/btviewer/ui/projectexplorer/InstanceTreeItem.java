@@ -10,11 +10,12 @@ import java.util.stream.Collectors;
 
 public class InstanceTreeItem extends TreeItem<TreeItemData> {
 
+    @NotNull
     private final ListTablesService listTablesService;
     private boolean loadedChildren;
 
     @Inject
-    public InstanceTreeItem(ListTablesService listTablesService) {
+    public InstanceTreeItem(@NotNull ListTablesService listTablesService) {
         this.listTablesService = listTablesService;
         this.expandedProperty().addListener((observable, prev, isExpanded) -> {
             if (isExpanded && !loadedChildren && !listTablesService.isRunning()) {
