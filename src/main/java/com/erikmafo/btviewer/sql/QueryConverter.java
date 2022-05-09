@@ -58,16 +58,16 @@ public class QueryConverter {
                     rowKeyEq = whereClause;
                     break;
                 case LESS_THAN:
-                    rowRange.endClosed(whereClause.getValue().asString());
-                    break;
-                case LESS_THAN_OR_EQUAL:
                     rowRange.endOpen(whereClause.getValue().asString());
                     break;
+                case LESS_THAN_OR_EQUAL:
+                    rowRange.endClosed(whereClause.getValue().asString());
+                    break;
                 case GREATER_THAN:
-                    rowRange.startOpen(whereClause.getValue().asString());
+                    rowRange.startClosed(whereClause.getValue().asString());
                     break;
                 case GREATER_THAN_OR_EQUAL:
-                    rowRange.startClosed(whereClause.getValue().asString());
+                    rowRange.startOpen(whereClause.getValue().asString());
                     break;
                 default:
                     break;
