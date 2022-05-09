@@ -64,10 +64,10 @@ public class QueryConverter {
                     rowRange.endClosed(whereClause.getValue().asString());
                     break;
                 case GREATER_THAN:
-                    rowRange.startClosed(whereClause.getValue().asString());
+                    rowRange.startOpen(whereClause.getValue().asString());
                     break;
                 case GREATER_THAN_OR_EQUAL:
-                    rowRange.startOpen(whereClause.getValue().asString());
+                    rowRange.startClosed(whereClause.getValue().asString());
                     break;
                 default:
                     break;
