@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
+        os: ['windows-latest', 'ubuntu-latest', 'macos-10.15']
         include:
         - os: windows-latest
           display-name: 'windows'
@@ -28,7 +28,7 @@ jobs:
           javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
           installerName: 'btviewer.deb'
           jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
-        - os: macos-latest
+        - os: macos-10.15
           display-name: 'osx'
           javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
           installerName: 'btviewer.dmg'
