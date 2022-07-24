@@ -127,7 +127,7 @@ public class SqlTokenizer {
 
     @Nullable
     private SqlToken readQuote(@NotNull String remainingSql) {
-        if (sql.charAt(position) == QUOTE) {
+        if (remainingSql.charAt(0) == QUOTE) {
             return nextQuotedString(remainingSql);
         }
         return null;
