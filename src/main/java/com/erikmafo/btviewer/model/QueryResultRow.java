@@ -82,7 +82,7 @@ public class QueryResultRow {
             return cell.getValueAsString();
         }
 
-        return converter.convert(cell);
+        return converter.convertToObj(cell);
     }
 
     public List<QueryResultRow> getPreviousVersions() {

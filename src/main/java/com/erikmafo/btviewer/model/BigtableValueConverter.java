@@ -40,13 +40,13 @@ public class BigtableValueConverter {
     }
 
     /**
-     * Converts the {@link BigtableCell} to a clr type.
+     * Converts the {@link BigtableCell} to a {@link BigtableValue}.
      *
      * @param cell a bigtable cell.
      *
-     * @return a clr type.
+     * @return a {@link BigtableValue}.
      */
-    public Object convert(BigtableCell cell) {
+    public BigtableValue convert(BigtableCell cell) {
         if (cell == null) {
             return null;
         }
@@ -61,8 +61,19 @@ public class BigtableValueConverter {
     }
 
     /**
+     * Converts the {@link BigtableCell} to a clr type.
+     *
+     * @param cell a bigtable cell.
+     *
+     * @return a clr type.
+     */
+    public Object convertToObj(BigtableCell cell) {
+        return getValueOrNull(convert(cell));
+    }
+
+    /**
      * Determines if the value of the {@link BigtableCell} is converted to a number
-     * type when calling {@link #convert(BigtableCell)}.
+     * type when calling {@link #convertToObj(BigtableCell)}.
      *
      * @param cell a bigtable cell.
      * @return true if the cell value converts to a number, false otherwise.
@@ -74,32 +85,53 @@ public class BigtableValueConverter {
             case ValueTypeConstants.DOUBLE:
             case ValueTypeConstants.INTEGER:
             case ValueTypeConstants.FLOAT:
+            case ValueTypeConstants.LONG:
+            case ValueTypeConstants.SHORT:
                 return true;
             default:
                 return false;
         }
     }
 
+    private Object getValueOrNull(BigtableValue value) {
+        return value == null ? null : value.getValue();
+    }
+
     @NotNull
     private CellDefinition getCellDefinition(@NotNull BigtableCell cell) {
-        return cellDefinitions.stream()
+        return cellDefinitions
+                .stream()
                 .filter(c -> c.getFamily().equals(cell.getFamily())
                         && c.getQualifier().equals(cell.getQualifier()))
                 .findFirst()
                 .orElse(new CellDefinition(ValueTypeConstants.STRING, cell.getFamily(), cell.getQualifier()));
     }
 
-    private Object convertUsingValueType(BigtableCell cell, @NotNull String valueType) {
-        switch (valueType.toUpperCase()) {
+    @NotNull
+    private BigtableValue convertUsingValueType(BigtableCell cell, @NotNull String valueType) {
+        var valueTypeUpper = valueType.toUpperCase();
+        switch (valueTypeUpper) {
             case ValueTypeConstants.DOUBLE:
-                return ByteBuffer.wrap(cell.getBytes()).getDouble();
+                return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getDouble(), valueTypeUpper);
             case ValueTypeConstants.INTEGER:
-                return ByteBuffer.wrap(cell.getBytes()).getInt();
+                return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getInt(), valueTypeUpper);
             case ValueTypeConstants.FLOAT:
-                return ByteBuffer.wrap(cell.getBytes()).getFloat();
+                return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getFloat(), valueTypeUpper);
+            case ValueTypeConstants.LONG:
+                return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getLong(), valueTypeUpper);
+            case ValueTypeConstants.SHORT:
+                return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getShort(), valueTypeUpper);
+            case ValueTypeConstants.JSON:
+                return toBigtableValue(cell.getValueAsString(), valueTypeUpper);
             default:
-                return cell.getValueAsString();
+                return toBigtableValue(cell.getValueAsString(), ValueTypeConstants.STRING);
         }
+    }
+
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    private BigtableValue toBigtableValue(Object object, String valueType) {
+        return new BigtableValue(object, valueType);
     }
 
     @Override

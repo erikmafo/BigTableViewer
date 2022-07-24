@@ -13,6 +13,20 @@ import static com.erikmafo.btviewer.util.ByteStringConverterUtil.toByteString;
 
 public class TestDataUtil {
 
+    private static final String JSON_TEST_DATA = "{\n"
+            + "    firstName:\"fred\",\n"
+            + "    hobbies:[\n"
+            + "        {\n"
+            + "            name:\"guitar\",\n"
+            + "            tags:[\"music\",\"instrument\"]\n"
+            + "        },\n"
+            + "        {\n"
+            + "            name:\"math\",\n"
+            + "            tags:[\"science\"]\n"
+            + "        },\n"
+            + "    ]\n"
+            + "}";
+
     private static final String PROJECT_0 = "project-0";
     private static final String INSTANCE_0 = "instance-0";
     private static final String TABLE_0 = "table-0";
@@ -52,8 +66,9 @@ public class TestDataUtil {
                         .setCell("f1", "q1", "string-" + i)
                         .setCell("f1", toByteString("q2"), toByteString(i))
                         .setCell("f1", toByteString("q3"), toByteString(i + 0.5))
-                        .setCell("f2", toByteString("q4"), toByteString("string-" + i))
-                        .setCell("f3", toByteString("q5"), toByteString("string-" + i));
+                        .setCell("f1", toByteString("q4"), toByteString(JSON_TEST_DATA))
+                        .setCell("f2", toByteString("q1"), toByteString("string-" + i))
+                        .setCell("f3", toByteString("q1"), toByteString("string-" + i));
                 dataClient.mutateRow(mutation);
             }
         }

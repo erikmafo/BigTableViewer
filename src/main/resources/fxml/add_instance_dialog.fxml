@@ -9,7 +9,8 @@
          xmlns:fx="http://javafx.com/fxml"
          headerText="Add Bigtable Instance"
          prefHeight="250.0"
-         prefWidth="450.0">
+         prefWidth="450.0"
+         stylesheets="/css/main.css">
 
     <content>
         <GridPane vgap="20" hgap="10">

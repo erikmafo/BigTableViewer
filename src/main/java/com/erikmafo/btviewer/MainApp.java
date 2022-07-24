@@ -45,8 +45,8 @@ public class MainApp extends Application {
         loader.setControllerFactory(injector::getInstance);
         Parent root = loader.load();
         primaryStage.setTitle("Bigtable Viewer");
-        primaryStage.setScene(new Scene(root, 800, 700));
-        primaryStage.getScene().getStylesheets().add("org/kordamp/bootstrapfx/bootstrapfx.css");
+        primaryStage.setScene(new Scene(root, 1000, 700));
+        primaryStage.getScene().getStylesheets().addAll("org/kordamp/bootstrapfx/bootstrapfx.css");
         primaryStage.show();
     }
 

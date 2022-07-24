@@ -14,6 +14,8 @@ public class BigtableValueConverterTest {
 
     private BigtableValueConverter converter = new BigtableValueConverter(Arrays.asList(
             new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn"),
+            new CellDefinition(ValueTypeConstants.SHORT, "shortFamily", "shortColumn"),
+            new CellDefinition(ValueTypeConstants.LONG, "longFamily", "longColumn"),
             new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn"),
             new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn"),
             new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn")));
@@ -27,7 +29,7 @@ public class BigtableValueConverterTest {
 
         //then
         assertTrue(converter.isNumberCellDefinition(cell));
-        assertEquals(42, converter.convert(cell));
+        assertEquals(42, converter.convertToObj(cell));
     }
 
     @Test
@@ -38,6 +40,6 @@ public class BigtableValueConverterTest {
 
         //then
         assertFalse(converter.isNumberCellDefinition(cell));
-        assertEquals("42", converter.convert(cell));
+        assertEquals("42", converter.convertToObj(cell));
     }
 }

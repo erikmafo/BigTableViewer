@@ -5,7 +5,8 @@
 <?import javafx.scene.control.MenuItem?>
 <MenuBar xmlns:fx="http://javafx.com/fxml"
          fx:id="menuBar"
-         fx:controller="com.erikmafo.btviewer.ui.menubar.MenuBarController">
+         fx:controller="com.erikmafo.btviewer.ui.menubar.MenuBarController"
+         stylesheets="/css/main.css">
     <menus>
         <Menu text="File">
             <items>

@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.queryresult;
+package com.erikmafo.btviewer.ui.queryresult.rowkey;
 
 import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import javafx.fxml.FXML;

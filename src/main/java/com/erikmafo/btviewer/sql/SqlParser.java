@@ -117,7 +117,7 @@ public class SqlParser {
             }
         }
 
-        private void whereValue(SqlToken token) {
+        private void whereValue(@NotNull SqlToken token) {
             var whereValue = Value.from(token);
             sqlQuery.addWhereClause(new WhereClause(whereField, whereOperator, whereValue));
             whereField = null;

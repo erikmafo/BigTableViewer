@@ -8,36 +8,27 @@ import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.table.LoadTableSettingsService;
 import com.erikmafo.btviewer.services.table.SaveTableSettingsService;
-import com.erikmafo.btviewer.ui.shared.TableSettingsDialog;
+import com.erikmafo.btviewer.ui.queryresult.cell.CellTimestampDisplayMode;
+import com.erikmafo.btviewer.ui.queryresult.cell.CellView;
+import com.erikmafo.btviewer.ui.queryresult.rowkey.RowKeyView;
+import com.erikmafo.btviewer.ui.dialogs.TableSettingsDialog;
 import com.erikmafo.btviewer.util.AlertUtil;
 import com.sun.javafx.PlatformUtil;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TablePositionBase;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTablePosition;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +42,7 @@ public class QueryResultViewController {
     private static final String ROW_KEY = "key";
 
     @FXML
-    private CheckBox timestampsCheckBox;
+    private ChoiceBox<CellTimestampDisplayMode> timestampDisplayModeChoiceBox;
 
     @FXML
     private VBox vBox;
@@ -63,12 +54,14 @@ public class QueryResultViewController {
     private TreeTableView<QueryResultRow> tableView;
 
     @Nullable
-    private final BigtableRowTreeItem root;
+    private final QueryResultRowTreeItem root;
 
     private final SimpleObjectProperty<BigtableTable> table = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<BigtableTableSettings> tableSettings = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<BigtableValueConverter> valueConverter = new SimpleObjectProperty<>();
     private final BooleanProperty displayTimestamps = new SimpleBooleanProperty(false);
+
+    private final ObjectProperty<CellTimestampDisplayMode> timestampDisplayMode = new SimpleObjectProperty<>();
 
     private final SaveTableSettingsService saveTableSettingsService;
     private final LoadTableSettingsService loadTableSettingsService;
@@ -77,7 +70,7 @@ public class QueryResultViewController {
     public QueryResultViewController(
             SaveTableSettingsService saveTableSettingsService,
             LoadTableSettingsService loadTableSettingsService) {
-        this.root = new BigtableRowTreeItem(null);
+        this.root = new QueryResultRowTreeItem(null);
         this.saveTableSettingsService = saveTableSettingsService;
         this.loadTableSettingsService = loadTableSettingsService;
         valueConverter.bind(Bindings.createObjectBinding(this::createValueConverter, tableSettings));
@@ -97,7 +90,23 @@ public class QueryResultViewController {
             loadTableSettingsService.setTable(current);
             loadTableSettingsService.restart();
         });
-        displayTimestamps.bind(timestampsCheckBox.selectedProperty());
+        displayTimestamps.bind(Bindings.createBooleanBinding(
+                () -> timestampDisplayModeChoiceBox.getValue() != CellTimestampDisplayMode.NONE,
+                timestampDisplayModeChoiceBox.valueProperty()));
+        timestampDisplayModeChoiceBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(CellTimestampDisplayMode object) {
+                return object.getDisplayValue();
+            }
+
+            @Override
+            public CellTimestampDisplayMode fromString(String string) {
+                return CellTimestampDisplayMode.valueOf(string.toUpperCase());
+            }
+        });
+        timestampDisplayModeChoiceBox.getItems().addAll(CellTimestampDisplayMode.values());
+        timestampDisplayModeChoiceBox.setValue(CellTimestampDisplayMode.NONE);
+        timestampDisplayMode.bind(timestampDisplayModeChoiceBox.valueProperty());
     }
 
     @FXML
@@ -140,7 +149,7 @@ public class QueryResultViewController {
         }
         var treeItems = change.getList()
                 .stream()
-                .map(BigtableRowTreeItem::new)
+                .map(QueryResultRowTreeItem::new)
                 .collect(Collectors.toList());
         root.getChildren().setAll(treeItems);
     }
@@ -331,6 +340,7 @@ public class QueryResultViewController {
                         cellView.setBigtableCell(item);
                         cellView.valueConverterProperty().bind(valueConverter);
                         cellView.displayTimestampProperty().bind(displayTimestamps);
+                        cellView.timestampDisplayModeProperty().bind(timestampDisplayMode);
                         setGraphic(cellView);
                     }
                 }

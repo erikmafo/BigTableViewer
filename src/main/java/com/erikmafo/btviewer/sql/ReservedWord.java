@@ -1,5 +1,7 @@
 package com.erikmafo.btviewer.sql;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum ReservedWord {
 
     SELECT("SELECT", SqlTokenType.SELECT, true),
@@ -33,7 +35,7 @@ public enum ReservedWord {
         this.requireWhitespaceAfter = requireWhitespaceAfter;
     }
 
-    boolean matchesStartOf(String sql) {
+    boolean matchesStartOf(@NotNull String sql) {
 
         if (sql.length() < length()) {
             return false;

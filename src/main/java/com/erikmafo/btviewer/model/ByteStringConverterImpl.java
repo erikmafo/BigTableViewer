@@ -23,7 +23,8 @@ public class ByteStringConverterImpl implements ByteStringConverter {
 
     @Override
     public ByteString toByteString(Field field, Value value) {
-        var valueType = cellDefinitions.stream()
+        var valueType = cellDefinitions
+                .stream()
                 .filter(c -> c.getFamily().equals(field.getFamily()))
                 .filter(c -> c.getQualifier().equals(field.getQualifier()))
                 .map(CellDefinition::getValueType)
@@ -33,6 +34,7 @@ public class ByteStringConverterImpl implements ByteStringConverter {
         ByteString byteString;
         switch (valueType.toUpperCase()) {
             case ValueTypeConstants.STRING:
+            case ValueTypeConstants.JSON:
                 byteString = ByteStringConverterUtil.toByteString(value.asString());
                 break;
             case ValueTypeConstants.DOUBLE:
@@ -43,6 +45,12 @@ public class ByteStringConverterImpl implements ByteStringConverter {
                 break;
             case ValueTypeConstants.INTEGER:
                 byteString = ByteStringConverterUtil.toByteString(value.asInt());
+                break;
+            case ValueTypeConstants.SHORT:
+                byteString = ByteStringConverterUtil.toByteString(value.asShort());
+                break;
+            case ValueTypeConstants.LONG:
+                byteString = ByteStringConverterUtil.toByteString(value.asLong());
                 break;
             default: throw new IllegalArgumentException(String.format("Value type %s is not supported", valueType.toUpperCase()));
         }
