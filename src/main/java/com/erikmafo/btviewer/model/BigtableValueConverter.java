@@ -14,6 +14,8 @@ import java.util.Objects;
  */
 public class BigtableValueConverter {
 
+    private final List<CellDefinition> cellDefinitions;
+
     @NotNull
     @Contract("_ -> new")
     public static BigtableValueConverter from(BigtableTableSettings config) {
@@ -23,8 +25,6 @@ public class BigtableValueConverter {
 
         return new BigtableValueConverter(config.getCellDefinitions());
     }
-
-    private final List<CellDefinition> cellDefinitions;
 
     /**
      * Creates a {@code BigtableValueConverter} from the specified {@link CellDefinition}'s.
