@@ -81,10 +81,10 @@ public class CellView extends BorderPane {
 
     @Nullable
     private Node getContent() {
-        return CellContentFactory.getContent(GetBigtableValue(cell.getValue(), valueConverter.getValue()));
+        return CellContentFactory.getContent(getBigtableValue(cell.getValue(), valueConverter.getValue()));
     }
 
-    private BigtableValue GetBigtableValue(BigtableCell cell, BigtableValueConverter converter) {
+    private BigtableValue getBigtableValue(BigtableCell cell, BigtableValueConverter converter) {
         if (cell == null) {
             return null;
         }

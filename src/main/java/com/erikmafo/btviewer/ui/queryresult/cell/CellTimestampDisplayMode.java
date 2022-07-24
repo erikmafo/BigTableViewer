@@ -9,11 +9,11 @@ public enum CellTimestampDisplayMode {
     MILLIS("Millis"),
     MICROS("Micros");
 
+    private final String displayValue;
+
     CellTimestampDisplayMode(String displayValue) {
         this.displayValue = displayValue;
     }
-
-    private final String displayValue;
 
     @NotNull
     public String getDisplayValue() {

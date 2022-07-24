@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class BigtableValueTest {
 
     @Test
-    public void asString_withNumber_returnsQuotedNumberValue() {
+    public void asStringWithNumber_returnsQuotedNumberValue() {
         // given
         var num = 42.3;
 

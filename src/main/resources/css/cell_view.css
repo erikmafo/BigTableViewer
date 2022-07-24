@@ -4,7 +4,7 @@
   -fx-padding: 2px;
   -fx-border-insets: 0px;
   -fx-background-insets: 0px;
-  -fx-background-color: transparent
+  -fx-background-color: transparent;
 }
 
 .bigtable-cell-value .tree-view {

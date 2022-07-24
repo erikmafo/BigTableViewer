@@ -9,12 +9,12 @@ public class CheckTest {
         Check.notAllNull("msg", null, null);
     }
 
-    @Test
+    @Test(expected = Test.None.class)
     public void notAllNull_withOneParamNotNull_doesNotThrow() {
         Check.notAllNull("msg", null, "not null");
     }
 
-    @Test
+    @Test(expected = Test.None.class)
     public void notAllNull_withNoParams_doesNotThrow() {
         Check.notAllNull("msg");
     }
@@ -24,7 +24,7 @@ public class CheckTest {
         Check.notNull(null, "paramName");
     }
 
-    @Test
+    @Test(expected = Test.None.class)
     public void notNull_withNotNull_doesNotThrow() {
         Check.notNull("", "paramName");
     }
