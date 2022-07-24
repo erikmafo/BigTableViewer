@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.shared;
+package com.erikmafo.btviewer.ui.dialogs;
 
 import com.erikmafo.btviewer.util.FXMLLoaderUtil;
 import javafx.event.ActionEvent;

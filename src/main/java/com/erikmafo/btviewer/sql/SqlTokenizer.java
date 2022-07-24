@@ -3,6 +3,7 @@ package com.erikmafo.btviewer.sql;
 import com.erikmafo.btviewer.sql.functions.Function;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,68 +38,6 @@ public class SqlTokenizer {
     }
 
     /**
-     * Returns the next {@link SqlToken} in the sql query string.
-     *
-     * @return a SqlToken, or null if there are no more tokens.
-     */
-    public SqlToken next() {
-        if (position >= sql.length()) {
-            return null;
-        }
-
-        if (Character.isWhitespace(sql.charAt(position))) {
-            position += 1;
-            return next();
-        }
-
-        var remainingSql = sql.substring(position);
-
-        if (sql.charAt(position) == QUOTE) {
-            return nextQuotedString(remainingSql);
-        }
-
-        if (sql.charAt(position) == OPENING_PARENTHESES) {
-            position += 1;
-            return new SqlToken("" + OPENING_PARENTHESES, SqlTokenType.OPENING_PARENTHESES, position);
-        }
-
-        if (sql.charAt(position) == CLOSING_PARENTHESES) {
-            position += 1;
-            return new SqlToken("" + CLOSING_PARENTHESES, SqlTokenType.CLOSING_PARENTHESES, position);
-        }
-
-        for (var word : ReservedWord.values()) {
-            if (word.matchesStartOf(remainingSql)) {
-                return nextReservedWord(word);
-            }
-        }
-
-        for (var func : Function.values()) {
-            if (func.matchesStartOf(remainingSql)) {
-                return nextFuncExpression(func, remainingSql);
-            }
-        }
-
-        var matcher = IDENTIFIER_PATTERN.matcher(remainingSql);
-        if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.IDENTIFIER);
-        }
-
-        matcher = BOOL_PATTERN.matcher(remainingSql);
-        if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.BOOL);
-        }
-
-        matcher = INTEGER_PATTERN.matcher(remainingSql);
-        if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.INTEGER);
-        }
-
-        position = sql.length();
-        return new SqlToken(remainingSql, SqlTokenType.INVALID, position, null, String.format("Unable to parse: '%s'", remainingSql));
-    }
-
-    /**
      * Returns a list of all the tokens in the query string.
      *
      * @return a list of {@link SqlToken}'s.
@@ -114,8 +53,135 @@ public class SqlTokenizer {
         return tokens;
     }
 
+    /**
+     * Returns the next {@link SqlToken} in the sql query string.
+     *
+     * @return a {@link SqlToken}, or null if there are no more tokens.
+     */
+    public SqlToken next() {
+        return getNextToken(
+                this::ignoreWhitespace,
+                this::readQuote,
+                this::readOpeningParentheses,
+                this::readClosingParentheses,
+                this::readReservedWord,
+                this::readFunction,
+                this::readIdentifier,
+                this::readBool,
+                this::readInteger);
+    }
+
+    @SafeVarargs
+    @Nullable
+    private SqlToken getNextToken(@NotNull java.util.function.Function<String, SqlToken>... tokenReaders) {
+
+        if (position >= sql.length()) {
+            return null;
+        }
+
+        var remainingSql = sql.substring(position);
+
+        for (var reader : tokenReaders) {
+            var token = reader.apply(remainingSql);
+            if (token != null) {
+                return token;
+            }
+        }
+
+        position = sql.length();
+        return getInvalidToken(remainingSql);
+    }
+
+    @Nullable
+    private SqlToken ignoreWhitespace(@NotNull String remainingSql) {
+        if (Character.isWhitespace(remainingSql.charAt(0))) {
+            position += 1;
+            return next();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readOpeningParentheses(@NotNull String remainingSql) {
+        if (remainingSql.charAt(0) == OPENING_PARENTHESES) {
+            position += 1;
+            return new SqlToken("" + OPENING_PARENTHESES, SqlTokenType.OPENING_PARENTHESES, position);
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readClosingParentheses(@NotNull String remainingSql) {
+        if (remainingSql.charAt(0) == CLOSING_PARENTHESES) {
+            position += 1;
+            return new SqlToken("" + CLOSING_PARENTHESES, SqlTokenType.CLOSING_PARENTHESES, position);
+        }
+        return null;
+    }
+
     @NotNull
-    private SqlToken nextQuotedString(String remainingSql) {
+    private SqlToken getInvalidToken(@NotNull String remainingSql) {
+        return new SqlToken(remainingSql, SqlTokenType.INVALID, position, null, String.format("Unable to parse: '%s'", remainingSql));
+    }
+
+    @Nullable
+    private SqlToken readQuote(@NotNull String remainingSql) {
+        if (remainingSql.charAt(0) == QUOTE) {
+            return nextQuotedString(remainingSql);
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readInteger(@NotNull String remainingSql) {
+        var matcher = INTEGER_PATTERN.matcher(remainingSql);
+        if (matcher.find()) {
+            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.INTEGER);
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readBool(@NotNull String remainingSql) {
+        var matcher = BOOL_PATTERN.matcher(remainingSql);
+        if (matcher.find()) {
+            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.BOOL);
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readIdentifier(@NotNull String remainingSql) {
+        var matcher = IDENTIFIER_PATTERN.matcher(remainingSql);
+        if (matcher.find()) {
+            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.IDENTIFIER);
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readFunction(@NotNull String remainingSql) {
+        for (var func : Function.values()) {
+            if (func.matchesStartOf(remainingSql)) {
+                return nextFuncExpression(func, remainingSql);
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private SqlToken readReservedWord(@NotNull String remainingSql) {
+        for (var word : ReservedWord.values()) {
+            if (word.matchesStartOf(remainingSql)) {
+                return nextReservedWord(word);
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    private SqlToken nextQuotedString(@NotNull String remainingSql) {
         var indexOfNextQuote = sql.indexOf(QUOTE, position + 1);
         if (indexOfNextQuote < 0) {
             position = sql.length();
@@ -143,7 +209,7 @@ public class SqlTokenizer {
     }
 
     @NotNull
-    private SqlToken nextFuncExpression(Function functionName, String remainingSql) {
+    private SqlToken nextFuncExpression(@NotNull Function functionName, @NotNull String remainingSql) {
         var funcExpression = extractExpression(functionName, remainingSql);
         var subTokens = new ArrayList<SqlToken>();
         subTokens.add(new SqlToken(functionName.value(), SqlTokenType.FUNCTION_NAME, position + functionName.length()));
@@ -156,7 +222,7 @@ public class SqlTokenizer {
     }
 
     @NotNull
-    private String extractExpression(@NotNull Function function, String sql) {
+    private String extractExpression(@NotNull Function function, @NotNull String sql) {
         if (!function.matchesStartOf(sql)) {
             throw new IllegalArgumentException(sql + "does not start with a function expression of type " + this);
         }

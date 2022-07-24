@@ -1,10 +1,29 @@
+@import "main.css";
+
 .bigtable-cell-value {
   -fx-padding: 2px;
   -fx-border-insets: 0px;
   -fx-background-insets: 0px;
+  -fx-background-color: transparent;
+}
+
+.bigtable-cell-value .tree-view {
+  -fx-background-color: transparent;
+}
+
+.bigtable-cell-value .tree-view .tree-cell {
+  -fx-background-color: transparent;
+}
+
+.bigtable-cell-value .tree-view .tree-cell:selected {
+  -fx-background-color: grey;
 }
 
 .bigtable-cell-timestamp {
   -fx-font-size: 9;
   -fx-font-family: 'Verdana';
+}
+
+.tree-disclosure-node {
+  -fx-padding: 5 15 0 0;
 }

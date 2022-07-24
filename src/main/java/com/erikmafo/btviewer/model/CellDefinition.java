@@ -62,4 +62,13 @@ public class CellDefinition {
     public int hashCode() {
         return Objects.hash(valueType, family, qualifier);
     }
+
+    @Override
+    public String toString() {
+        return "CellDefinition{" +
+                "valueType='" + valueType + '\'' +
+                ", family='" + family + '\'' +
+                ", qualifier='" + qualifier + '\'' +
+                '}';
+    }
 }

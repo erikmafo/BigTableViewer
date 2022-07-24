@@ -138,7 +138,7 @@ public class QueryResultConverter {
     }
 
     private double getDouble(BigtableCell cell) {
-        return valueConverter.isNumberCellDefinition(cell) ? ((Number)valueConverter.convert(cell)).doubleValue() : 0;
+        return valueConverter.isNumberCellDefinition(cell) ? ((Number)valueConverter.convertToObj(cell)).doubleValue() : 0;
     }
 
     private boolean matches(@NotNull Field field, @NotNull RowCell cell) {

@@ -5,3 +5,8 @@
 .has-spacing {
   -fx-spacing: 10px;
 }
+
+* {
+  -fx-font-family: 'Verdana';
+}
+

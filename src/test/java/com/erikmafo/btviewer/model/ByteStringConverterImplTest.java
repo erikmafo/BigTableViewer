@@ -19,6 +19,8 @@ public class ByteStringConverterImplTest {
     private ByteStringConverter converter = new ByteStringConverterImpl(Arrays.asList(
             new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn"),
             new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn"),
+            new CellDefinition(ValueTypeConstants.SHORT, "shortFamily", "shortColumn"),
+            new CellDefinition(ValueTypeConstants.LONG, "longFamily", "longColumn"),
             new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn"),
             new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn")));
 
@@ -40,6 +42,8 @@ public class ByteStringConverterImplTest {
             "intFamily.intColumn, 42, 4",
             "floatFamily.floatColumn, 42, 4",
             "doubleFamily.doubleColumn, 42, 8",
+            "longFamily.longColumn, 42, 8",
+            "shortFamily.longColumn, 42, 2",
     })
     public void shouldConvertNumberToCorrectNoOfBytes(String fieldName, String val, int expectedSize) {
         //given

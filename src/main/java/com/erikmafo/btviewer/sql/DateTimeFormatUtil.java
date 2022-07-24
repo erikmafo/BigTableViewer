@@ -20,7 +20,12 @@ public class DateTimeFormatUtil {
     private static final String DATE_HOUR_MINUTE_SECOND = "uuuu-MM-dd HH:mm:ss";
     private static final String DATE_HOUR_MINUTE_SECOND_MILLIS = "uuuu-MM-dd HH:mm:ss:SS";
 
-    public static long toMicros(String dateTime) {
+    /**
+     * Converts a date time string to the number of microseconds since 1970-01-01T00:00:00Z.
+     * @param dateTime - a date time string.
+     * @return number of microseconds since 1970-01-01T00:00:00Z.
+     */
+    public static long toMicros(@NotNull String dateTime) {
         return TimeUnit.MILLISECONDS.toMicros(toEpochMilli(dateTime));
     }
 
@@ -44,7 +49,7 @@ public class DateTimeFormatUtil {
         return toMillis(dateTime, format, isDate);
     }
 
-    private static long toMillis(String dateTime, String format, boolean isDate) {
+    private static long toMillis(@NotNull String dateTime, String format, boolean isDate) {
         var trimmedDateTime = dateTime.trim();
         var offset = ZoneOffset.ofHours(0);
         var formatter = DateTimeFormatter.ofPattern(format);
@@ -54,7 +59,7 @@ public class DateTimeFormatUtil {
         return dt.toInstant(offset).toEpochMilli();
     }
 
-    private static String getErrorMessage(String dateTime) {
+    private static String getErrorMessage(@NotNull String dateTime) {
         return String.format("Could not parse %s as date. Supported formats are: \n%s",
                 dateTime, String.join("\n", supportedFormats()));
     }

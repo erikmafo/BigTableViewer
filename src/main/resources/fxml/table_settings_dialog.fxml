@@ -11,13 +11,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<fx:root headerText="Table settings"
+<fx:root type="javafx.scene.control.DialogPane"
+         headerText="Table settings"
          maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"
          minHeight="500.0"
          prefHeight="500.0"
-         type="javafx.scene.control.DialogPane"
-         xmlns:fx="http://javafx.com/fxml">
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="/css/main.css">
 
     <content>
         <VBox BorderPane.alignment="CENTER">
@@ -40,9 +41,9 @@
                     </rowConstraints>
 
                     <children>
-                        <Label prefHeight="16.0" prefWidth="61.0" text="Family" />
-                        <Label prefHeight="16.0" prefWidth="52.0" text="Qualifier" GridPane.columnIndex="1" />
-                        <Label prefHeight="19.0" prefWidth="115.0" text="Type" GridPane.columnIndex="2" />
+                        <Label text="Family" GridPane.columnIndex="0"/>
+                        <Label text="Qualifier" GridPane.columnIndex="1" />
+                        <Label text="Type" GridPane.columnIndex="2" />
                     </children>
 
                     <padding>

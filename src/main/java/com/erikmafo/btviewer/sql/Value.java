@@ -45,9 +45,9 @@ public class Value {
         return Float.parseFloat(value);
     }
 
-    public int asInt() {
-        return Integer.parseInt(value);
-    }
+    public int asInt() { return Integer.parseInt(value); }
+
+    public short asShort() { return Short.parseShort(value); }
 
     public boolean asBool() {
         return Boolean.parseBoolean(value);
@@ -60,4 +60,6 @@ public class Value {
     public ValueType getValueType() {
         return valueType;
     }
+
+    public boolean isNumber() { return valueType == ValueType.NUMBER; }
 }

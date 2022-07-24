@@ -1,6 +1,7 @@
-package com.erikmafo.btviewer.ui.shared;
+package com.erikmafo.btviewer.ui.dialogs;
 
 import com.erikmafo.btviewer.model.BigtableColumn;
+import com.erikmafo.btviewer.model.SortUtil;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.model.CellDefinition;
 import com.erikmafo.btviewer.util.FXMLLoaderUtil;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  */
 public class TableSettingsDialog extends DialogPane {
 
+    public static final int CHOICE_BOX_PREF_WIDTH = 85;
     private final List<ObservableCell> observableCells = new ArrayList<>();
 
     @FXML
@@ -49,11 +51,8 @@ public class TableSettingsDialog extends DialogPane {
         CompletableFuture<BigtableTableSettings> future = new CompletableFuture<>();
         Dialog<BigtableTableSettings> dialog = new Dialog<>();
         TableSettingsDialog settingsDialog = new TableSettingsDialog();
-        settings.getCellDefinitions().forEach(settingsDialog::addSchemaRow);
-        columns.forEach(settingsDialog::addSchemaRow);
-        if (settingsDialog.observableCells.isEmpty()) {
-            settingsDialog.addSchemaRow();
-        }
+        addSchemaRowsFromSettings(settingsDialog, settings);
+        addSchemaRowsFromColumns(settingsDialog, columns);
 
         dialog.setDialogPane(settingsDialog);
         dialog.getResult();
@@ -72,6 +71,33 @@ public class TableSettingsDialog extends DialogPane {
         dialog.show();
 
         return future;
+    }
+
+    private static void addSchemaRowsFromSettings(@NotNull TableSettingsDialog settingsDialog, @NotNull BigtableTableSettings settings) {
+        var cellDefSorted = settings
+                .getCellDefinitions()
+                .stream()
+                .sorted(SortUtil::byFamilyThenQualifier)
+                .collect(Collectors.toList());
+
+        for (var cellDefinition : cellDefSorted) {
+            settingsDialog.addSchemaRow(cellDefinition);
+        }
+    }
+
+    private static void addSchemaRowsFromColumns(@NotNull TableSettingsDialog settingsDialog, @NotNull List<BigtableColumn> columns) {
+        var columnsSorted = columns
+                .stream()
+                .sorted(SortUtil::byFamilyThenQualifier)
+                .collect(Collectors.toList());
+
+        for (var column : columnsSorted) {
+            settingsDialog.addSchemaRow(column);
+        }
+
+        if (settingsDialog.observableCells.isEmpty()) {
+            settingsDialog.addSchemaRow();
+        }
     }
 
     @FXML
@@ -118,7 +144,8 @@ public class TableSettingsDialog extends DialogPane {
 
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setValue(valueType != null ? valueType : "String");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer"));
+        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json"));
+        choiceBox.setPrefWidth(CHOICE_BOX_PREF_WIDTH);
         TextField familyTextField = new TextField(column.getFamily());
         TextField qualifierTextField = new TextField(column.getQualifier());
 

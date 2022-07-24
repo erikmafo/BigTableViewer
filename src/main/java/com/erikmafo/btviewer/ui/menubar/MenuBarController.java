@@ -2,7 +2,7 @@ package com.erikmafo.btviewer.ui.menubar;
 
 import com.erikmafo.btviewer.services.credential.LoadCredentialsPathService;
 import com.erikmafo.btviewer.services.credential.SaveCredentialsPathService;
-import com.erikmafo.btviewer.ui.shared.CredentialsPathDialog;
+import com.erikmafo.btviewer.ui.dialogs.CredentialsPathDialog;
 import com.sun.javafx.PlatformUtil;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;

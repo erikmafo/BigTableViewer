@@ -48,4 +48,12 @@ public class BigtableColumn {
     public int hashCode() {
         return Objects.hash(family, qualifier);
     }
+
+    @Override
+    public String toString() {
+        return "BigtableColumn{" +
+                "family='" + family + '\'' +
+                ", qualifier='" + qualifier + '\'' +
+                '}';
+    }
 }

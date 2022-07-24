@@ -1,9 +1,9 @@
 package com.erikmafo.btviewer.sql;
 
+import com.erikmafo.btviewer.sql.convert.RowKeyWhereClauseConverter;
 import com.erikmafo.btviewer.sql.functions.AggregationExpression;
 import com.google.cloud.bigtable.data.v2.models.Filters;
 import com.google.cloud.bigtable.data.v2.models.Query;
-import com.google.cloud.bigtable.data.v2.models.Range;
 import com.google.protobuf.ByteString;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,46 +50,23 @@ public class QueryConverter {
     }
 
     private void setRowRange(Query bigtableQuery, SqlQuery sqlQuery) {
-        WhereClause rowKeyEq = null;
-        var rowRange = Range.ByteStringRange.unbounded();
-        for (var whereClause : filterRowKeyWhereClauses(sqlQuery)) {
-            switch (whereClause.getOperator()) {
-                case EQUAL:
-                    rowKeyEq = whereClause;
-                    break;
-                case LESS_THAN:
-                    rowRange.endOpen(whereClause.getValue().asString());
-                    break;
-                case LESS_THAN_OR_EQUAL:
-                    rowRange.endClosed(whereClause.getValue().asString());
-                    break;
-                case GREATER_THAN:
-                    rowRange.startOpen(whereClause.getValue().asString());
-                    break;
-                case GREATER_THAN_OR_EQUAL:
-                    rowRange.startClosed(whereClause.getValue().asString());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (rowKeyEq != null) {
-            bigtableQuery.rowKey(rowKeyEq.getValue().asString());
-        } else {
-            bigtableQuery.range(rowRange);
-        }
+        new RowKeyWhereClauseConverter()
+                .addMany(getRowKeyWhereClauses(sqlQuery))
+                .convertToRowRange()
+                .applyToQuery(bigtableQuery);
     }
 
-    private List<WhereClause> filterRowKeyWhereClauses(@NotNull SqlQuery sqlQuery) {
-        return sqlQuery.getWhereClauses()
+    private List<WhereClause> getRowKeyWhereClauses(@NotNull SqlQuery sqlQuery) {
+        return sqlQuery
+                .getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isRowKey())
                 .collect(Collectors.toList());
     }
 
-    private List<WhereClause> filterTimestampWhereClauses(@NotNull SqlQuery sqlQuery) {
-        return sqlQuery.getWhereClauses()
+    private List<WhereClause> getTimestampWhereClauses(@NotNull SqlQuery sqlQuery) {
+        return sqlQuery
+                .getWhereClauses()
                 .stream()
                 .filter(where -> where.getField().isTimestamp())
                 .collect(Collectors.toList());
@@ -128,6 +105,7 @@ public class QueryConverter {
                 .filter(w -> w.getOperator().equals(Operator.LIKE))
                 .map(w -> FILTERS.key().regex(w.getValue().asString()))
                 .collect(Collectors.toList());
+
         return chain(filters);
     }
 
@@ -137,6 +115,7 @@ public class QueryConverter {
                 .filter(w -> !w.getField().isRowKey())
                 .map(this::getValueFilter)
                 .collect(Collectors.toList());
+
         return chain(filters);
     }
 
@@ -151,6 +130,8 @@ public class QueryConverter {
             case NOT_EQUAL:
                 trueFilter = FILTERS.block();
                 falseFilter = FILTERS.pass();
+                valueFilter = FILTERS.value().exactMatch(byteString);
+                break;
             case EQUAL:
                 valueFilter = FILTERS.value().exactMatch(byteString);
                 break;
@@ -191,13 +172,6 @@ public class QueryConverter {
         return byteStringConverter.toByteString(where.getField(), where.getValue());
     }
 
-    private Filters.Filter getFamilyQualifierFilter(SqlQuery sqlQuery) {
-        var filters = new LinkedList<Filters.Filter>();
-        filters.addAll(getFamilyFilters(sqlQuery));
-        filters.addAll(getQualifierFilters(sqlQuery));
-        return interleave(filters);
-    }
-
     private List<Filters.Filter> getFamilyFilters(@NotNull SqlQuery sqlQuery) {
         return sqlQuery.getFields().stream()
                 .filter(f -> !f.isAsterisk())
@@ -206,13 +180,11 @@ public class QueryConverter {
                 .collect(Collectors.toList());
     }
 
-    private List<Filters.Filter> getQualifierFilters(@NotNull SqlQuery sqlQuery) {
-        return sqlQuery.getFields()
-                .stream()
-                .filter(f -> !f.isAsterisk())
-                .filter(Field::hasQualifier)
-                .map(this::getFamilyQualifierFilter)
-                .collect(Collectors.toList());
+    private Filters.Filter getFamilyQualifierFilter(SqlQuery sqlQuery) {
+        var filters = new LinkedList<Filters.Filter>();
+        filters.addAll(getFamilyFilters(sqlQuery));
+        filters.addAll(getQualifierFilters(sqlQuery));
+        return interleave(filters);
     }
 
     @NotNull
@@ -220,6 +192,14 @@ public class QueryConverter {
         return FILTERS.chain()
                 .filter(FILTERS.family().exactMatch(field.getFamily()))
                 .filter(FILTERS.qualifier().exactMatch(field.getQualifier()));
+    }
+
+    private List<Filters.Filter> getQualifierFilters(@NotNull SqlQuery sqlQuery) {
+        return sqlQuery.getFields().stream()
+                .filter(f -> !f.isAsterisk())
+                .filter(Field::hasQualifier)
+                .map(this::getFamilyQualifierFilter)
+                .collect(Collectors.toList());
     }
 
     private Filters.Filter getTimestampFilter(SqlQuery sqlQuery) {
@@ -257,32 +237,39 @@ public class QueryConverter {
     @NotNull
     private List<Filters.Filter> getTimestampFilters(SqlQuery sqlQuery) {
         var filters = new LinkedList<Filters.Filter>();
-        for (var where : filterTimestampWhereClauses(sqlQuery)) {
-            var timestamp = toTimestamp(where.getValue());
-            switch (where.getOperator()) {
-                case EQUAL:
-                    filters.add(FILTERS.timestamp().exact(timestamp));
-                    break;
-                case LESS_THAN:
-                    filters.add(FILTERS.timestamp().range().endClosed(timestamp));
-                    break;
-                case LESS_THAN_OR_EQUAL:
-                    filters.add(FILTERS.timestamp().range().endOpen(timestamp));
-                    break;
-                case GREATER_THAN:
-                    filters.add(FILTERS.timestamp().range().startClosed(timestamp));
-                    break;
-                case GREATER_THAN_OR_EQUAL:
-                    filters.add(FILTERS.timestamp().range().startOpen(timestamp));
-                    break;
-                case LIKE:
-                default:
-                    throw new IllegalArgumentException(String.format(
-                            "Operator %s is not supported for timestamps",
-                            where.getOperator()));
-            }
+        for (var where : getTimestampWhereClauses(sqlQuery)) {
+            filters.add(createTimestampFilter(where));
         }
         return filters;
+    }
+
+    private Filters.Filter createTimestampFilter(@NotNull WhereClause where) {
+        var timestamp = toTimestamp(where.getValue());
+        Filters.Filter filter;
+        switch (where.getOperator()) {
+            case EQUAL:
+                filter = FILTERS.timestamp().exact(timestamp);
+                break;
+            case LESS_THAN:
+                filter = FILTERS.timestamp().range().endClosed(timestamp);
+                break;
+            case LESS_THAN_OR_EQUAL:
+                filter = FILTERS.timestamp().range().endOpen(timestamp);
+                break;
+            case GREATER_THAN:
+                filter = FILTERS.timestamp().range().startClosed(timestamp);
+                break;
+            case GREATER_THAN_OR_EQUAL:
+                filter = FILTERS.timestamp().range().startOpen(timestamp);
+                break;
+            case LIKE:
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "Operator %s is not supported for timestamps",
+                        where.getOperator()));
+        }
+
+        return filter;
     }
 
     private long toTimestamp(@NotNull Value value) {

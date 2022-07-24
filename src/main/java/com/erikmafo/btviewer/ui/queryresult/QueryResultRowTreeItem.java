@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
+public class QueryResultRowTreeItem extends TreeItem<QueryResultRow> {
 
     private boolean isLeaf;
 
@@ -19,12 +19,12 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
     // used to cache the result of get children
     private boolean isFirstTimeChildren = true;
 
-    public BigtableRowTreeItem(QueryResultRow row) {
+    public QueryResultRowTreeItem(QueryResultRow row) {
         super(row);
         this.isLeaf = false;
     }
 
-    public BigtableRowTreeItem(QueryResultRow row, boolean isLeaf) {
+    public QueryResultRowTreeItem(QueryResultRow row, boolean isLeaf) {
         super(row);
         this.isLeaf = isLeaf;
         this.isFirstTimeLeaf = false;
@@ -55,8 +55,8 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
 
     @NotNull
     @Contract("_ -> new")
-    private static BigtableRowTreeItem createChild(QueryResultRow row) {
-        return new BigtableRowTreeItem(row, true);
+    private static QueryResultRowTreeItem createChild(QueryResultRow row) {
+        return new QueryResultRowTreeItem(row, true);
     }
 
     private boolean isRoot() {
@@ -64,7 +64,7 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
     }
 
     @NotNull
-    private List<BigtableRowTreeItem> buildChildrenList() {
+    private List<QueryResultRowTreeItem> buildChildrenList() {
 
         if (isLeaf) {
             return Collections.emptyList();
@@ -73,7 +73,7 @@ public class BigtableRowTreeItem extends TreeItem<QueryResultRow> {
         return getValue()
                 .getPreviousVersions()
                 .stream()
-                .map(BigtableRowTreeItem::createChild)
+                .map(QueryResultRowTreeItem::createChild)
                 .collect(Collectors.toList());
     }
 }

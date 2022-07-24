@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.erikmafo.btviewer.ui.queryresult.QueryResultViewController"
       fx:id="vBox"
       stylesheets="/css/query_result_view.css"
       styleClass="has-spacing">
-    <HBox maxWidth="Infinity">
+    <HBox maxWidth="Infinity" styleClass="has-spacing">
         <Button fx:id="tableSettingsButton"
                 onAction="#handleTableSettingsButtonPressed"
                 mnemonicParsing="false"
                 text="Table Settings"
                 styleClass="btn"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <CheckBox fx:id="timestampsCheckBox"
-                  text="Display timestamps"/>
+
+        <HBox styleClass="has-spacing">
+            <Label>Timestamp display: </Label>
+            <ChoiceBox fx:id="timestampDisplayModeChoiceBox"/>
+        </HBox>
     </HBox>
     <TreeTableView fx:id="tableView"
                    onKeyPressed="#onTableViewKeyPressed"
