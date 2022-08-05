@@ -111,7 +111,7 @@
                                 <argument>--main-class</argument>
                                 <argument>${mainClass}</argument>
                                 <argument>--name</argument>
-                                <argument>${project.name}</argument>
+                                <argument>${project.artifactId}</argument>
                                 <argument>--license-file</argument>
                                 <argument>LICENSE</argument>
                                 <argument>--app-version</argument>
