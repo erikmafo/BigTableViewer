@@ -21,15 +21,15 @@ jobs:
         - os: windows-latest
           display-name: 'windows'
           java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dheadless.geometry=1280x800"
-          installer-name: 'btviewer.msi'
+          installer-name: 'little-table-viewer.msi'
         - os: ubuntu-latest
           display-name: 'linux'
           java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
-          installer-name: 'btviewer.deb'
+          installer-name: 'little-table-viewer.deb'
         - os: macos-latest
           display-name: 'osx'
           java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
-          installer-name: 'btviewer.dmg'
+          installer-name: 'little-table-viewer.dmg'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -75,7 +75,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: btviewer.${{ matrix.extension }}
+          name: little-table-viewer.${{ matrix.extension }}
           path: ./
       - name: Display downloaded files
         run: ls -R
@@ -85,7 +85,7 @@ jobs:
           ASSET_NAME=$(basename $ASSET_PATH)
           echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
           echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_ENV
-      - name: Upload btviewer.${{ matrix.extension }}
+      - name: Upload little-table-viewer.${{ matrix.extension }}
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
