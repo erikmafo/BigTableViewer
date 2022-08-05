@@ -6,7 +6,6 @@ import com.erikmafo.ltviewer.ui.projectexplorer.AddInstanceDialog;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
 
 import static org.testfx.api.FxAssert.verifyThat;

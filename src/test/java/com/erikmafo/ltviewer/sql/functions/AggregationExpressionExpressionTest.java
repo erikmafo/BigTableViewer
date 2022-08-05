@@ -3,7 +3,6 @@ package com.erikmafo.ltviewer.sql.functions;
 import com.erikmafo.ltviewer.sql.SqlTokenizer;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

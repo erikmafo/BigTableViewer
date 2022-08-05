@@ -2,7 +2,6 @@ package com.erikmafo.ltviewer.sql.functions;
 
 import com.erikmafo.ltviewer.sql.SqlTokenizer;
 import com.erikmafo.ltviewer.sql.ValueType;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
