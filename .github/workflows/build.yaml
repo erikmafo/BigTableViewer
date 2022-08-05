@@ -42,8 +42,6 @@ jobs:
           JAVA_TOOL_OPTIONS: ${{ matrix.java-opts }}
           MAVEN_OPTS: ""
         run: mvn install -B -e -q
-      - name: Show current dir
-        run: ls target/release
       - name: Save artifact
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v2
