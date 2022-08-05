@@ -2,7 +2,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController"
+      fx:controller="com.erikmafo.ltviewer.ui.projectexplorer.ProjectExplorerController"
       stylesheets="/css/main.css"
       styleClass="has-spacing">
         <Button fx:id="addInstanceButton" styleClass="btn">Add Instance</Button>
