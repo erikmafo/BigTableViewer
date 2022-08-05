@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>bigtableviewer</artifactId>
-    <version>0.2.15</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>bigtableviewer</name>
 
@@ -37,9 +37,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <release>11</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -88,37 +88,8 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>3.1.0</version>
                 <executions>
-                    <execution>
-                        <id>runtimeImage</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${java.home}/bin/jlink</executable>
-                            <arguments>
-                                <argument>--module-path=${java.home}/jmods/</argument>
-                                <argument>--add-modules=java.base</argument>
-                                <argument>--add-modules=java.prefs</argument>
-                                <argument>--add-modules=java.desktop</argument>
-                                <argument>--add-modules=java.net.http</argument>
-                                <argument>--add-modules=java.xml</argument>
-                                <argument>--add-modules=java.prefs</argument>
-                                <argument>--add-modules=java.logging</argument>
-                                <argument>--add-modules=java.sql</argument>
-                                <argument>--add-modules=javafx.base</argument>
-                                <argument>--add-modules=javafx.controls</argument>
-                                <argument>--add-modules=javafx.fxml</argument>
-                                <argument>--add-modules=javafx.graphics</argument>
-                                <argument>--add-modules=javafx.web</argument>
-                                <argument>--add-modules=javafx.media</argument>
-                                <argument>--add-modules=java.management</argument>
-                                <argument>--output=${project.build.directory}/image</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>installer</id>
                         <phase>install</phase>
@@ -126,27 +97,26 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${java.home}/bin/jpackager</executable>
+                            <executable>${java.home}/bin/jpackage</executable>
                             <arguments>
-                                <argument>create-installer</argument>
-                                <argument>--runtime-image</argument>
-                                <argument>${project.build.directory}/image</argument>
-                                <argument>--output</argument>
+                                <argument>--type</argument>
+                                <!--suppress MavenModelInspection -->
+                                <argument>${jpackage.type}</argument>
+                                <argument>--dest</argument>
                                 <argument>${project.build.directory}/release</argument>
                                 <argument>--input</argument>
                                 <argument>${project.build.directory}/app</argument>
                                 <argument>--main-jar</argument>
                                 <argument>bigtableviewer-${project.version}.jar</argument>
-                                <argument>--class</argument>
+                                <argument>--main-class</argument>
                                 <argument>${mainClass}</argument>
                                 <argument>--name</argument>
                                 <argument>${project.name}</argument>
                                 <argument>--license-file</argument>
                                 <argument>LICENSE</argument>
-                                <argument>--identifier</argument>
-                                <argument>${project.groupId}.${project.artifactId}</argument>
-                                <argument>--version</argument>
+                                <argument>--app-version</argument>
                                 <argument>${project.version}</argument>
+                                <argument>--verbose</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -172,7 +142,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.6</version>
+                <version>0.8.8</version>
                 <executions>
                     <execution>
                         <goals>
@@ -206,7 +176,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.6</version>
+            <version>0.10.9</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
@@ -221,13 +191,13 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>11.0.2</version>
+            <version>17.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11.0.2</version>
+            <version>17.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -280,7 +250,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.2.3</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -288,4 +258,40 @@
             <version>11.1.1</version>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.type>msi</jpackage.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.type>deb</jpackage.type>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.type>dmg</jpackage.type>
+            </properties>
+        </profile>
+    </profiles>
 </project>
