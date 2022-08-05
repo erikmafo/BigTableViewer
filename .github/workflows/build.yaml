@@ -16,39 +16,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['windows-latest', 'ubuntu-latest', 'macos-10.15']
+        os: ['windows-latest', 'ubuntu-latest', 'macos-latest']
         include:
         - os: windows-latest
           display-name: 'windows'
-          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dheadless.geometry=1280x800"
-          installerName: 'btviewer.msi'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-windows.zip'
+          java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dheadless.geometry=1280x800"
+          installer-name: 'btviewer.msi'
         - os: ubuntu-latest
           display-name: 'linux'
-          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
-          installerName: 'btviewer.deb'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-linux.zip'
-        - os: macos-10.15
+          java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
+          installer-name: 'btviewer.deb'
+        - os: macos-latest
           display-name: 'osx'
-          javaOpts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
-          installerName: 'btviewer.dmg'
-          jpackagerDownloadUrl: 'http://download2.gluonhq.com/jpackager/11/jdk.packager-osx.zip'
+          java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
+          installer-name: 'btviewer.dmg'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Java JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 11
-          java-package: jdk+fx
-      - name: Download jpackager
-        run: curl -o jpackager.zip ${{ matrix.jpackagerDownloadUrl }}
-      - name: Unzip jpackager
-        run: unzip jpackager.zip -d $JAVA_HOME/bin
-        shell: bash
+          java-version: 17
       - name: Install with maven
         env:
-          JAVA_TOOL_OPTIONS: ${{ matrix.javaOpts }}
+          JAVA_TOOL_OPTIONS: ${{ matrix.java-opts }}
+          MAVEN_OPTS: ""
         run: mvn install -B -e -q
       - name: Show current dir
         run: ls target/release
@@ -56,7 +48,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.installerName }}
+          name: ${{ matrix.installer-name }}
           path: target/release/*
   release:
     if: contains(github.ref, 'tags/v')
