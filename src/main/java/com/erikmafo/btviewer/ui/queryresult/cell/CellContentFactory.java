@@ -18,7 +18,7 @@ public class CellContentFactory {
 
         var stringValue = bigtableValue.asString();
 
-        return bigtableValue.getType().equalsIgnoreCase(ValueTypeConstants.JSON)
+        return isComplexObject(bigtableValue.getType())
                 ? JsonTreeViewFactory.createTreeView(stringValue)
                 : toLabel(stringValue);
     }
@@ -28,5 +28,15 @@ public class CellContentFactory {
         var label = new Label();
         label.setText(s);
         return label;
+    }
+
+    private static boolean isComplexObject(@NotNull String valueType) {
+        switch (valueType) {
+            case ValueTypeConstants.PROTO:
+            case ValueTypeConstants.JSON:
+                return true;
+            default:
+                return false;
+        }
     }
 }

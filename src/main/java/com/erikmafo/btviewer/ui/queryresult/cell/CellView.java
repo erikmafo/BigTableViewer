@@ -53,11 +53,6 @@ public class CellView extends BorderPane {
         versionLabel.visibleProperty().bind(displayTimestamp);
     }
 
-    private void setContent(Node content) {
-        valuePane.getChildren().clear();
-        valuePane.getChildren().setAll(content);
-    }
-
     public void setBigtableCell(BigtableCell bigtableCell) {
         this.cell.set(bigtableCell);
     }
@@ -78,6 +73,13 @@ public class CellView extends BorderPane {
 
     @NotNull
     public ObjectProperty<BigtableValueConverter> valueConverterProperty() { return valueConverter; }
+
+    private void setContent(Node content) {
+        valuePane.getChildren().clear();
+        if (content != null) {
+            valuePane.getChildren().setAll(content);
+        }
+    }
 
     @Nullable
     private Node getContent() {

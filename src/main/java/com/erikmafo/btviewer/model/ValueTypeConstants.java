@@ -15,4 +15,6 @@ public class ValueTypeConstants {
     public static final String LONG = "LONG";
 
     public static final String JSON = "JSON";
+
+    public static final String PROTO = "PROTO";
 }

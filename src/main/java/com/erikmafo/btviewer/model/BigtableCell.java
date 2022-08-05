@@ -79,6 +79,10 @@ public class BigtableCell {
         return bytes.toByteArray();
     }
 
+    public ByteString getByteString() {
+        return bytes;
+    }
+
     /**
      * Gets the cell timestamp as a long.
      *
