@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.erikmafo</groupId>
-    <artifactId>bigtableviewer</artifactId>
+    <artifactId>littletableviewer</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>bigtableviewer</name>
+    <name>Little Table Viewer</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>com.erikmafo.btviewer.MainApp</mainClass>
+        <mainClass>com.erikmafo.little.table.viewer.MainApp</mainClass>
     </properties>
 
     <organization>
@@ -107,7 +107,7 @@
                                 <argument>--input</argument>
                                 <argument>${project.build.directory}/app</argument>
                                 <argument>--main-jar</argument>
-                                <argument>bigtableviewer-${project.version}.jar</argument>
+                                <argument>${project.artifactId}-${project.version}.jar</argument>
                                 <argument>--main-class</argument>
                                 <argument>${mainClass}</argument>
                                 <argument>--name</argument>
@@ -136,7 +136,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.erikmafo.btviewer.MainApp</mainClass>
+                    <mainClass>com.erikmafo.little.table.viewer.MainApp</mainClass>
                 </configuration>
             </plugin>
             <plugin>
