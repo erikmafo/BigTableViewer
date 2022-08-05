@@ -8,7 +8,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.erikmafo.little.table.viewer.ui.queryresult.QueryResultViewController"
+      fx:controller="com.erikmafo.ltviewer.ui.queryresult.QueryResultViewController"
       fx:id="vBox"
       stylesheets="/css/query_result_view.css"
       styleClass="has-spacing">

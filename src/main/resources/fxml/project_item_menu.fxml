@@ -4,7 +4,7 @@
 <?import javafx.scene.control.MenuItem?>
 <ContextMenu xmlns="http://javafx.com/javafx"
              xmlns:fx="http://javafx.com/fxml"
-             fx:controller="com.erikmafo.little.table.viewer.ui.projectexplorer.ProjectItemMenuController">
+             fx:controller="com.erikmafo.ltviewer.ui.projectexplorer.ProjectItemMenuController">
     <items>
         <MenuItem fx:id="addInstance" text="Add instance" onAction="#handleAddInstance"/>
         <MenuItem fx:id="removeProject" text="RemoveProject" onAction="#handleRemoveProject"/>

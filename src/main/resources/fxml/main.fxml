@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.erikmafo.little.table.viewer.ui.MainController"
+            fx:controller="com.erikmafo.ltviewer.ui.MainController"
             stylesheets="/css/main.css"
             styleClass="pane-view">
     <top>
