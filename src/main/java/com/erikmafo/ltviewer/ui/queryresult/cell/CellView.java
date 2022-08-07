@@ -23,14 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 public class CellView extends BorderPane {
-
-    /**
-     * Use a fixed cell size in order to be able to dynamically update {@link TreeView#prefHeightProperty()} according
-     * to {@link TreeView#expandedItemCountProperty()}.
-     */
-    private static final double FIXED_CELL_SIZE = 24;
-    private static final double MIN_PREF_HEIGHT = 2;
-
     private final ObjectProperty<BigtableCell> cell = new SimpleObjectProperty<>();
 
     private final BooleanProperty displayTimestamp = new SimpleBooleanProperty();
