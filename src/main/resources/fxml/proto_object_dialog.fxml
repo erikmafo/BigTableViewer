@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.ComboBox?>
+
+<DialogPane fx:controller="com.erikmafo.ltviewer.ui.dialogs.ProtoObjectDialogController"
+            xmlns:fx="http://javafx.com/fxml"
+            headerText="Configure proto message type"
+            prefHeight="150.0"
+            prefWidth="650.0"
+            stylesheets="/css/main.css">
+
+    <content>
+        <GridPane vgap="2" hgap="10">
+
+            <Label
+                    text="DescriptorSet:"
+                    GridPane.rowIndex="0"
+                    GridPane.columnIndex="0"/>
+            <TextField
+                    fx:id="descriptorSetFile"
+                    GridPane.columnIndex="1"
+                    GridPane.rowIndex="0"
+                    GridPane.hgrow="ALWAYS" />
+            <Button
+                    onAction="#handleEditDescriptorSetFile"
+                    text="..." styleClass="btn"
+                    GridPane.rowIndex="0"
+                    GridPane.columnIndex="2"/>
+
+            <Label
+                    text="ProtoFile:"
+                    GridPane.rowIndex="1"
+                    GridPane.columnIndex="0"/>
+            <ComboBox
+                    fx:id="protoFile"
+                    promptText="Select proto file"
+                    onAction="#handleProtoFileChoice"
+                    GridPane.rowIndex="1"
+                    GridPane.columnIndex="1"/>
+
+            <Label
+                    text="MessageType:"
+                    GridPane.rowIndex="2"
+                    GridPane.columnIndex="0"/>
+            <ComboBox
+                    fx:id="messageType"
+                    promptText="Select message type"
+                    GridPane.rowIndex="2"
+                    GridPane.columnIndex="1"/>
+
+        </GridPane>
+    </content>
+
+    <buttonTypes>
+        <ButtonType text="OK" buttonData="OK_DONE"/>
+        <ButtonType buttonData="CANCEL_CLOSE" text="Cancel" />
+    </buttonTypes>
+</DialogPane>

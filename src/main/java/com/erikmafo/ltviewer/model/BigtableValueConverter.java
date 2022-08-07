@@ -1,8 +1,10 @@
 package com.erikmafo.ltviewer.model;
 
+import com.erikmafo.ltviewer.util.ProtoUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -54,9 +56,11 @@ public class BigtableValueConverter {
         CellDefinition cellDefinition = getCellDefinition(cell);
 
         try {
-            return convertUsingValueType(cell, cellDefinition.getValueType());
+            return convertUsingValueType(cell, cellDefinition);
         } catch (BufferUnderflowException ex) {
             throw new IllegalArgumentException(String.format(cell.getValueAsString() + " is not a %s", cellDefinition.getValueType()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -108,8 +112,8 @@ public class BigtableValueConverter {
     }
 
     @NotNull
-    private BigtableValue convertUsingValueType(BigtableCell cell, @NotNull String valueType) {
-        var valueTypeUpper = valueType.toUpperCase();
+    private BigtableValue convertUsingValueType(BigtableCell cell, @NotNull CellDefinition cellDefinition) throws IOException {
+        var valueTypeUpper = cellDefinition.getValueType().toUpperCase();
         switch (valueTypeUpper) {
             case ValueTypeConstants.DOUBLE:
                 return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getDouble(), valueTypeUpper);
@@ -123,6 +127,8 @@ public class BigtableValueConverter {
                 return toBigtableValue(ByteBuffer.wrap(cell.getBytes()).getShort(), valueTypeUpper);
             case ValueTypeConstants.JSON:
                 return toBigtableValue(cell.getValueAsString(), valueTypeUpper);
+            case ValueTypeConstants.PROTO:
+                return toBigtableValue(ProtoUtil.toJson(cell.getByteString(), cellDefinition.getProtoObjectDefinition()), valueTypeUpper);
             default:
                 return toBigtableValue(cell.getValueAsString(), ValueTypeConstants.STRING);
         }

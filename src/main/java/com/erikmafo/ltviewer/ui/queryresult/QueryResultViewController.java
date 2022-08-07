@@ -337,7 +337,7 @@ public class QueryResultViewController {
                         setGraphic(null);
                     } else {
                         CellView cellView = getGraphic() != null ? (CellView) getGraphic() : new CellView();
-                        cellView.setBigtableCell(item);
+                        cellView.cellProperty().set(item);
                         cellView.valueConverterProperty().bind(valueConverter);
                         cellView.displayTimestampProperty().bind(displayTimestamps);
                         cellView.timestampDisplayModeProperty().bind(timestampDisplayMode);

@@ -79,10 +79,36 @@ public class BigtableCell {
         return bytes.toByteArray();
     }
 
+    public ByteString getByteString() {
+        return bytes;
+    }
+
     /**
      * Gets the cell timestamp as a long.
      *
      * @return a long value representing the cell timestamp.
      */
     public long getTimestamp() { return timestamp; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BigtableCell that = (BigtableCell) o;
+
+        if (timestamp != that.timestamp) return false;
+        if (!family.equals(that.family)) return false;
+        if (!qualifier.equals(that.qualifier)) return false;
+        return bytes.equals(that.bytes);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = family.hashCode();
+        result = 31 * result + qualifier.hashCode();
+        result = 31 * result + bytes.hashCode();
+        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
+        return result;
+    }
 }

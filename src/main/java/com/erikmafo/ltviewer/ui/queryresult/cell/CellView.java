@@ -6,10 +6,12 @@ import com.erikmafo.ltviewer.model.BigtableValueConverter;
 import com.erikmafo.ltviewer.model.ValueTypeConstants;
 import com.erikmafo.ltviewer.util.FXMLLoaderUtil;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 public class CellView extends BorderPane {
-
     private final ObjectProperty<BigtableCell> cell = new SimpleObjectProperty<>();
 
     private final BooleanProperty displayTimestamp = new SimpleBooleanProperty();
@@ -29,6 +30,8 @@ public class CellView extends BorderPane {
     private final ObjectProperty<CellTimestampDisplayMode> timestampDisplayMode = new SimpleObjectProperty<>();
 
     private final ObjectProperty<BigtableValueConverter> valueConverter = new SimpleObjectProperty<>();
+
+    private ObjectBinding<Node> contentBinding;
 
     @FXML
     private VBox valuePane;
@@ -43,8 +46,8 @@ public class CellView extends BorderPane {
     @FXML
     public void initialize() {
 
-        Bindings.createObjectBinding(this::getContent, cell, valueConverter)
-                .addListener((observable, oldValue, newValue) -> setContent(newValue));
+        contentBinding = Bindings.createObjectBinding(this::getContent, cell, valueConverter);
+        contentBinding.addListener((observable, oldValue, newValue) -> updateContent(newValue));
 
         versionLabel
                 .textProperty()
@@ -53,13 +56,8 @@ public class CellView extends BorderPane {
         versionLabel.visibleProperty().bind(displayTimestamp);
     }
 
-    private void setContent(Node content) {
-        valuePane.getChildren().clear();
-        valuePane.getChildren().setAll(content);
-    }
-
-    public void setBigtableCell(BigtableCell bigtableCell) {
-        this.cell.set(bigtableCell);
+    public ObjectProperty<BigtableCell> cellProperty() {
+        return cell;
     }
 
     public boolean getDisplayTimestamp() {
@@ -78,6 +76,13 @@ public class CellView extends BorderPane {
 
     @NotNull
     public ObjectProperty<BigtableValueConverter> valueConverterProperty() { return valueConverter; }
+
+    private void updateContent(Node content) {
+        valuePane.getChildren().clear();
+        if (content != null) {
+            valuePane.getChildren().setAll(content);
+        }
+    }
 
     @Nullable
     private Node getContent() {

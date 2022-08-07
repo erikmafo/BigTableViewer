@@ -19,9 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class CredentialsPathDialog extends DialogPane {
 
-    private static final String FILE_IS_NOT_READABLE = "File is not readable";
-    private static final String FILE_NOT_FOUND = "File not found";
-
     @FXML
     private TextField credentialsPathTextField;
 
@@ -48,7 +45,7 @@ public class CredentialsPathDialog extends DialogPane {
         });
         dialog.setOnHidden(ignore -> {
             var pathAsString = dialog.getResult();
-            if (validatePath(pathAsString)) {
+            if (FilePathValidatorUtil.validatePath(pathAsString)) {
                 result.complete(Path.of(pathAsString));
             }
         });
@@ -67,36 +64,5 @@ public class CredentialsPathDialog extends DialogPane {
         {
             credentialsPathTextField.setText(file.getPath());
         }
-    }
-
-    private static boolean validatePath(@Nullable String pathAsString) {
-        if (pathAsString == null) {
-            return false;
-        }
-
-        try {
-            var path = Path.of(pathAsString);
-            if (Files.exists(path)) {
-                if (Files.isReadable(path)) {
-                    return true;
-                } else {
-                    showInvalidPathAlert(FILE_IS_NOT_READABLE);
-                }
-            } else {
-                showInvalidPathAlert(FILE_NOT_FOUND);
-            }
-        } catch (InvalidPathException e) {
-            showInvalidPathAlert(e.getMessage());
-        }
-
-        return false;
-    }
-
-    private static void showInvalidPathAlert(String fileIsNotReadable) {
-        var alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Invalid path");
-        alert.setHeaderText("Please specify a valid path");
-        alert.setContentText(fileIsNotReadable);
-        alert.showAndWait();
     }
 }

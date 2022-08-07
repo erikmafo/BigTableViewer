@@ -10,6 +10,7 @@ public class CellDefinition {
     private String valueType;
     private String family;
     private String qualifier;
+    private ProtoObjectDefinition protoObjectDefinition;
 
     /**
      * Creates a new instance of {@code CellDefinition}.
@@ -19,9 +20,22 @@ public class CellDefinition {
      * @param qualifier the name of the column qualifier that the cell belong to.
      */
     public CellDefinition(String valueType, String family, String qualifier) {
+        this(valueType, family, qualifier, null);
+    }
+
+    /**
+     * Creates a new instance of {@code CellDefinition}.
+     *
+     * @param valueType             the value type of the cell.
+     * @param family                the name of the column family that the cell belongs to.
+     * @param qualifier             the name of the column qualifier that the cell belong to.
+     * @param protoObjectDefinition specifies how the proto object should be interpreted if value type is {@link ValueTypeConstants#PROTO}
+     */
+    public CellDefinition(String valueType, String family, String qualifier, ProtoObjectDefinition protoObjectDefinition) {
         this.valueType = valueType;
         this.family = family;
         this.qualifier = qualifier;
+        this.protoObjectDefinition = protoObjectDefinition;
     }
 
     public String getValueType() {
@@ -70,5 +84,9 @@ public class CellDefinition {
                 ", family='" + family + '\'' +
                 ", qualifier='" + qualifier + '\'' +
                 '}';
+    }
+
+    public ProtoObjectDefinition getProtoObjectDefinition() {
+        return protoObjectDefinition;
     }
 }

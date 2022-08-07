@@ -3,6 +3,7 @@ import javafx.fxml.FXMLLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 public class FXMLLoaderUtil {
 
@@ -14,10 +15,17 @@ public class FXMLLoaderUtil {
             loader.load();
         } catch (IOException e) {
             throw new IllegalArgumentException(
-                    "The provided fxml file: " +
-                            fxmlFile + " " +
-                            "could not be loaded into controller" +
-                            controller.getClass().getName(), e);
+                    MessageFormat.format("The provided fxml file: {0} could not be loaded into controller{1}", fxmlFile, controller.getClass().getName()), e);
+        }
+    }
+
+    public static <T> T loadFxml(String fxmlFile, @NotNull Class<T> controllerType) {
+        var loader = new FXMLLoader(controllerType.getClassLoader().getResource(fxmlFile));
+        try {
+            return loader.load();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(
+                    MessageFormat.format("The provided fxml file: {0} could not be loaded", fxmlFile), e);
         }
     }
 }

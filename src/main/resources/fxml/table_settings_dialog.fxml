@@ -17,8 +17,7 @@
          maxWidth="1.7976931348623157E308"
          minHeight="500.0"
          prefHeight="500.0"
-         xmlns:fx="http://javafx.com/fxml"
-         stylesheets="/css/main.css">
+         xmlns:fx="http://javafx.com/fxml">
 
     <content>
         <VBox BorderPane.alignment="CENTER">
@@ -42,8 +41,8 @@
 
                     <children>
                         <Label text="Family" GridPane.columnIndex="0"/>
-                        <Label text="Qualifier" GridPane.columnIndex="1" />
-                        <Label text="Type" GridPane.columnIndex="2" />
+                        <Label text="Qualifier" GridPane.columnIndex="1"/>
+                        <Label text="Type" GridPane.columnIndex="2"/>
                     </children>
 
                     <padding>
