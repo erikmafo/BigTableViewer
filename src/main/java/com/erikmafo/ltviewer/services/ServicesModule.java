@@ -8,7 +8,7 @@ import com.erikmafo.ltviewer.services.internal.BigtableEmulatorSettingsProvider;
 import com.erikmafo.ltviewer.services.internal.BigtableSettingsProvider;
 import com.erikmafo.ltviewer.services.internal.BigtableSettingsProviderImpl;
 import com.erikmafo.ltviewer.services.internal.DynamicCredentialsProvider;
-import com.erikmafo.ltviewer.services.internal.TestDataUtil;
+import com.erikmafo.ltviewer.services.internal.testdata.TestDataUtil;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.inject.AbstractModule;
 

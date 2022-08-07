@@ -10,7 +10,6 @@ public class CellDefinition {
     private String valueType;
     private String family;
     private String qualifier;
-
     private ProtoObjectDefinition protoObjectDefinition;
 
     /**

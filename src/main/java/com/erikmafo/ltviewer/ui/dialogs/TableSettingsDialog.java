@@ -1,20 +1,28 @@
 package com.erikmafo.ltviewer.ui.dialogs;
 
 import com.erikmafo.ltviewer.model.BigtableColumn;
+import com.erikmafo.ltviewer.model.ProtoObjectDefinition;
 import com.erikmafo.ltviewer.model.SortUtil;
 import com.erikmafo.ltviewer.model.BigtableTableSettings;
 import com.erikmafo.ltviewer.model.CellDefinition;
 import com.erikmafo.ltviewer.util.FXMLLoaderUtil;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,7 +125,7 @@ public class TableSettingsDialog extends DialogPane {
     @NotNull
     @Contract("_ -> new")
     private CellDefinition toCellDefinition(@NotNull ObservableCell cell) {
-        return new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier());
+        return new CellDefinition(cell.getValueType(), cell.getFamily(), cell.getQualifier(), cell.getProtoObjectDefinition());
     }
 
     private void addSchemaRow() {
@@ -125,15 +133,17 @@ public class TableSettingsDialog extends DialogPane {
     }
 
     private void addSchemaRow(@NotNull BigtableColumn column) {
-        addSchemaRow(column, null);
+        addSchemaRow(column, null, null);
     }
 
     private void addSchemaRow(@NotNull CellDefinition cellDefinition) {
-        addSchemaRow(new BigtableColumn(
-                cellDefinition.getFamily(), cellDefinition.getQualifier()), cellDefinition.getValueType());
+        addSchemaRow(
+                new BigtableColumn(cellDefinition.getFamily(), cellDefinition.getQualifier()),
+                cellDefinition.getValueType(),
+                cellDefinition.getProtoObjectDefinition());
     }
 
-    private void addSchemaRow(@NotNull BigtableColumn column, @Nullable String valueType) {
+    private void addSchemaRow(@NotNull BigtableColumn column, @Nullable String valueType, ProtoObjectDefinition protoObjectDefinition) {
         var alreadyAdded = observableCells.stream().anyMatch(cell ->
                 cell.getFamily().equals(column.getFamily()) &&
                 cell.getQualifier().equals(column.getQualifier()));
@@ -142,20 +152,36 @@ public class TableSettingsDialog extends DialogPane {
             return;
         }
 
+        ObservableCell observableCell = new ObservableCell();
+
+        HBox hbox = new HBox();
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setValue(valueType != null ? valueType : "String");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json"));
+        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json", "Proto"));
         choiceBox.setPrefWidth(CHOICE_BOX_PREF_WIDTH);
+        GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+        Button configureProtoObjectButton = new Button("", fontAwesome.create(FontAwesome.Glyph.COG));
+        configureProtoObjectButton.disableProperty().bind(choiceBox.valueProperty().isNotEqualTo("Proto"));
+        configureProtoObjectButton.setOnAction(event -> {
+            DialogLoaderUtil
+                    .displayDialogAndAwaitResult(
+                            observableCell.getProtoObjectDefinition() != null
+                                    ? observableCell.getProtoObjectDefinition()
+                                    : protoObjectDefinition,
+                            ProtoObjectDialogController.FXML)
+                    .whenComplete((protoObjectDef, throwable) -> observableCell.setProtoObjectDefinition(protoObjectDef));
+        });
+        hbox.getChildren().addAll(choiceBox, configureProtoObjectButton);
+
         TextField familyTextField = new TextField(column.getFamily());
         TextField qualifierTextField = new TextField(column.getQualifier());
 
-        ObservableCell observableCell = new ObservableCell();
         observableCell.familyProperty().bind(familyTextField.textProperty());
         observableCell.qualifierProperty().bind(qualifierTextField.textProperty());
         observableCell.valueTypeProperty().bind(choiceBox.valueProperty());
 
         observableCells.add(observableCell);
-        schemaGridPane.addRow(currentSchemaRow, familyTextField, qualifierTextField, choiceBox);
+        schemaGridPane.addRow(currentSchemaRow, familyTextField, qualifierTextField, hbox);
         currentSchemaRow++;
     }
 
@@ -164,6 +190,9 @@ public class TableSettingsDialog extends DialogPane {
         private final StringProperty valueType = new SimpleStringProperty();
         private final StringProperty family = new SimpleStringProperty();
         private final StringProperty qualifier = new SimpleStringProperty();
+
+        private final ObjectProperty<ProtoObjectDefinition> protoObjectDefinition = new SimpleObjectProperty<>();
+
 
         public String getValueType() {
             return valueType.get();
@@ -202,6 +231,18 @@ public class TableSettingsDialog extends DialogPane {
 
         public void setQualifier(String qualifier) {
             this.qualifier.set(qualifier);
+        }
+
+        public ProtoObjectDefinition getProtoObjectDefinition() {
+            return protoObjectDefinition.get();
+        }
+
+        public ObjectProperty<ProtoObjectDefinition> protoObjectDefinitionProperty() {
+            return protoObjectDefinition;
+        }
+
+        public void setProtoObjectDefinition(ProtoObjectDefinition protoObjectDefinition) {
+            this.protoObjectDefinition.set(protoObjectDefinition);
         }
     }
 }
