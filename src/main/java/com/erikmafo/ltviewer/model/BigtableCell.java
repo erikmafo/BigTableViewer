@@ -1,9 +1,12 @@
 package com.erikmafo.ltviewer.model;
 
+import com.erikmafo.ltviewer.util.HexUtil;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.protobuf.ByteString;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HexFormat;
 
 /**
  * A simple representation of a bigtable row cell.
@@ -69,6 +72,8 @@ public class BigtableCell {
      * @return an UTF-8 string
      */
     public String getValueAsString() { return bytes.toStringUtf8(); }
+
+    public String getValueAsHexString() { return HexUtil.toHex(bytes.toByteArray()); }
 
     /**
      * Gets the value of the cell as a byte array.

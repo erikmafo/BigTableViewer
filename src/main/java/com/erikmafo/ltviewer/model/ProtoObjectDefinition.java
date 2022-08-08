@@ -4,9 +4,9 @@ import com.erikmafo.ltviewer.util.Check;
 import org.jetbrains.annotations.NotNull;
 
 public class ProtoObjectDefinition {
-    private final String descriptorSetFile;
-    private final String protoFile;
-    private final String messageType;
+    private String descriptorSetFile;
+    private String protoFile;
+    private String messageType;
 
     public ProtoObjectDefinition(String descriptorSetFile, String protoFile, String messageType) {
         Check.notNullOrEmpty(descriptorSetFile, "descriptorSetFile");

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HexFormat;
 
 public class ByteStringConverterUtil {
 
@@ -13,6 +14,12 @@ public class ByteStringConverterUtil {
     @Contract("_ -> new")
     public static ByteString toByteString(String stringUtf8) {
         return ByteString.copyFromUtf8(stringUtf8);
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static ByteString toByteStringFromHex(String hex) {
+        return ByteString.copyFrom(HexUtil.toBytes(hex));
     }
 
     @NotNull

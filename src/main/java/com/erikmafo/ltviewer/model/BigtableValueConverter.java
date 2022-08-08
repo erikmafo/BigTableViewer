@@ -129,6 +129,8 @@ public class BigtableValueConverter {
                 return toBigtableValue(cell.getValueAsString(), valueTypeUpper);
             case ValueTypeConstants.PROTO:
                 return toBigtableValue(ProtoUtil.toJson(cell.getByteString(), cellDefinition.getProtoObjectDefinition()), valueTypeUpper);
+            case ValueTypeConstants.BYTE_STRING:
+                return toBigtableValue(cell.getValueAsHexString(), valueTypeUpper);
             default:
                 return toBigtableValue(cell.getValueAsString(), ValueTypeConstants.STRING);
         }

@@ -157,7 +157,7 @@ public class TableSettingsDialog extends DialogPane {
         HBox hbox = new HBox();
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.setValue(valueType != null ? valueType : "String");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json", "Proto"));
+        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json", "Proto", "ByteString"));
         choiceBox.setPrefWidth(CHOICE_BOX_PREF_WIDTH);
         GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
         Button configureProtoObjectButton = new Button("", fontAwesome.create(FontAwesome.Glyph.COG));
