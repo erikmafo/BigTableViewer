@@ -53,7 +53,7 @@ public class ByteStringConverterImpl implements ByteStringConverter {
                 byteString = ByteStringConverterUtil.toByteString(value.asLong());
                 break;
             case ValueTypeConstants.BYTE_STRING:
-                byteString = ByteStringConverterUtil.toByteStringFromHex(value.asString());
+                byteString = ByteStringConverterUtil.toByteStringFromBase64(value.asString());
                 break;
             default: throw new IllegalArgumentException(String.format("Value type %s is not supported", valueType.toUpperCase()));
         }

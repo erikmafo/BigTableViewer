@@ -4,4 +4,5 @@ message Person {
   string name = 1;
   string id = 2;
   int32 age = 3;
+  bytes bytes = 4;
 }

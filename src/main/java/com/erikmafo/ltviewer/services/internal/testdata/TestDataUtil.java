@@ -1,9 +1,8 @@
 package com.erikmafo.ltviewer.services.internal.testdata;
 
 import com.erikmafo.ltviewer.model.BigtableInstance;
-import com.erikmafo.ltviewer.model.ProtoObjectDefinition;
 import com.erikmafo.ltviewer.services.internal.BigtableEmulatorSettingsProvider;
-import com.erikmafo.ltviewer.util.ProtoUtil;
+import com.erikmafo.ltviewer.util.ByteStringConverterUtil;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
@@ -11,7 +10,6 @@ import com.google.cloud.bigtable.data.v2.models.RowMutation;
 import com.google.protobuf.ByteString;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Console;
 import java.io.IOException;
 
 import static com.erikmafo.ltviewer.util.ByteStringConverterUtil.toByteString;
@@ -35,6 +33,7 @@ public class TestDataUtil {
     private static final String PROJECT_0 = "project-0";
     private static final String INSTANCE_0 = "instance-0";
     private static final String TABLE_0 = "table-0";
+    public static final ByteString BYTE_STRING_TEST_VALUE = ByteStringConverterUtil.toByteString(842098349384L);
 
     public static void injectWithTestData(BigtableEmulatorSettingsProvider settingsProvider) {
         try {
@@ -74,7 +73,7 @@ public class TestDataUtil {
                         .setCell("f1", toByteString("q3"), toByteString(i + 0.5))
                         .setCell("f1", toByteString("q4"), toByteString(JSON_TEST_DATA))
                         .setCell("f2", toByteString("q1"), toByteString("string-" + i))
-                        .setCell("f3", toByteString("q1"), toByteString("string-" + i))
+                        .setCell("f3", toByteString("q1"), BYTE_STRING_TEST_VALUE)
                         .setCell("f4", toByteString("q1"), getPerson(i).toByteString());
                 dataClient.mutateRow(mutation);
             }
@@ -87,6 +86,7 @@ public class TestDataUtil {
                 .setName("Person-" + i)
                 .setId("" + i)
                 .setAge(i % 100)
+                .setBytes(BYTE_STRING_TEST_VALUE)
                 .build();
     }
 }
