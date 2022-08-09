@@ -2,7 +2,6 @@ package com.erikmafo.ltviewer.services.internal.testdata;
 
 import com.erikmafo.ltviewer.model.BigtableInstance;
 import com.erikmafo.ltviewer.services.internal.BigtableEmulatorSettingsProvider;
-import com.erikmafo.ltviewer.util.ByteStringConverterUtil;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
