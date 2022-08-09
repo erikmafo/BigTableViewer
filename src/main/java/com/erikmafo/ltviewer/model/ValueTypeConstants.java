@@ -17,4 +17,6 @@ public class ValueTypeConstants {
     public static final String JSON = "JSON";
 
     public static final String PROTO = "PROTO";
+
+    public static final String BYTE_STRING = "BYTESTRING";
 }

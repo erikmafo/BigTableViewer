@@ -46,6 +46,12 @@ public final class PersonOuterClass {
      * @return The age.
      */
     int getAge();
+
+    /**
+     * <code>bytes bytes = 4;</code>
+     * @return The bytes.
+     */
+    com.google.protobuf.ByteString getBytes();
   }
   /**
    * Protobuf type {@code Person}
@@ -62,6 +68,7 @@ public final class PersonOuterClass {
     private Person() {
       name_ = "";
       id_ = "";
+      bytes_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -109,6 +116,11 @@ public final class PersonOuterClass {
             case 24: {
 
               age_ = input.readInt32();
+              break;
+            }
+            case 34: {
+
+              bytes_ = input.readBytes();
               break;
             }
             default: {
@@ -232,6 +244,17 @@ public final class PersonOuterClass {
       return age_;
     }
 
+    public static final int BYTES_FIELD_NUMBER = 4;
+    private com.google.protobuf.ByteString bytes_;
+    /**
+     * <code>bytes bytes = 4;</code>
+     * @return The bytes.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getBytes() {
+      return bytes_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -255,6 +278,9 @@ public final class PersonOuterClass {
       if (age_ != 0) {
         output.writeInt32(3, age_);
       }
+      if (!bytes_.isEmpty()) {
+        output.writeBytes(4, bytes_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -273,6 +299,10 @@ public final class PersonOuterClass {
       if (age_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, age_);
+      }
+      if (!bytes_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, bytes_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -295,6 +325,8 @@ public final class PersonOuterClass {
           .equals(other.getId())) return false;
       if (getAge()
           != other.getAge()) return false;
+      if (!getBytes()
+          .equals(other.getBytes())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -312,6 +344,8 @@ public final class PersonOuterClass {
       hash = (53 * hash) + getId().hashCode();
       hash = (37 * hash) + AGE_FIELD_NUMBER;
       hash = (53 * hash) + getAge();
+      hash = (37 * hash) + BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getBytes().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -451,6 +485,8 @@ public final class PersonOuterClass {
 
         age_ = 0;
 
+        bytes_ = com.google.protobuf.ByteString.EMPTY;
+
         return this;
       }
 
@@ -480,6 +516,7 @@ public final class PersonOuterClass {
         result.name_ = name_;
         result.id_ = id_;
         result.age_ = age_;
+        result.bytes_ = bytes_;
         onBuilt();
         return result;
       }
@@ -538,6 +575,9 @@ public final class PersonOuterClass {
         }
         if (other.getAge() != 0) {
           setAge(other.getAge());
+        }
+        if (other.getBytes() != com.google.protobuf.ByteString.EMPTY) {
+          setBytes(other.getBytes());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -750,6 +790,40 @@ public final class PersonOuterClass {
         onChanged();
         return this;
       }
+
+      private com.google.protobuf.ByteString bytes_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes bytes = 4;</code>
+       * @return The bytes.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getBytes() {
+        return bytes_;
+      }
+      /**
+       * <code>bytes bytes = 4;</code>
+       * @param value The bytes to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        bytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes bytes = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBytes() {
+        
+        bytes_ = getDefaultInstance().getBytes();
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -817,8 +891,9 @@ public final class PersonOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014person.proto\"/\n\006Person\022\014\n\004name\030\001 \001(\t\022\n" +
-      "\n\002id\030\002 \001(\t\022\013\n\003age\030\003 \001(\005b\006proto3"
+      "\n\014person.proto\">\n\006Person\022\014\n\004name\030\001 \001(\t\022\n" +
+      "\n\002id\030\002 \001(\t\022\013\n\003age\030\003 \001(\005\022\r\n\005bytes\030\004 \001(\014b\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -829,7 +904,7 @@ public final class PersonOuterClass {
     internal_static_Person_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Person_descriptor,
-        new java.lang.String[] { "Name", "Id", "Age", });
+        new java.lang.String[] { "Name", "Id", "Age", "Bytes", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

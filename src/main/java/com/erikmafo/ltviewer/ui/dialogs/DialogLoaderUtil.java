@@ -14,22 +14,20 @@ public class DialogLoaderUtil {
 
     @NotNull
     public static <T> CompletableFuture<T> displayDialogAndAwaitResult(T initialValue, String fxmlFile) {
-        CompletableFuture<T> result = new CompletableFuture<>();
+        CompletableFuture<T> completableFuture = new CompletableFuture<>();
+        var fxmlLoader =  getLoader(fxmlFile);
+        DialogPane dialogPane = getDialogPane(fxmlLoader);
+        DialogController<T> controller = getDialogController(initialValue, fxmlLoader);
+        var dialog = createDialog(completableFuture, dialogPane, controller);
+        dialog.show();
+
+        return completableFuture;
+    }
+
+    @NotNull
+    private static <T> Dialog<T> createDialog(CompletableFuture<T> completableFuture, DialogPane dialogPane, DialogController<T> controller) {
         Dialog<T> dialog = new Dialog<>();
-        var protoObjectDialogLoader =  getLoader(fxmlFile);
-        DialogPane protoObjectDialog = null;
-        try {
-            protoObjectDialog = protoObjectDialogLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        DialogController<T> controller = protoObjectDialogLoader.getController();
-
-        if (initialValue != null) {
-            controller.setResult(initialValue);
-        }
-
-        dialog.setDialogPane(protoObjectDialog);
+        dialog.setDialogPane(dialogPane);
         dialog.setResultConverter(param -> {
             if (ButtonBar.ButtonData.OK_DONE.equals(param.getButtonData())) {
                 return controller.getResult();
@@ -37,14 +35,31 @@ public class DialogLoaderUtil {
             return null;
         });
         dialog.setOnHidden(ignore -> {
-            var resultValue = dialog.getResult();
-            if (controller.validateResult(resultValue)) {
-                result.complete(resultValue);
+            var resultValue = controller.getResult();
+            if (resultValue == null || controller.validateResult(resultValue)) {
+                completableFuture.complete(resultValue);
             }
         });
-        dialog.show();
+        return dialog;
+    }
 
-        return result;
+    private static <T> DialogController<T> getDialogController(T initialValue, @NotNull FXMLLoader fxmlLoader) {
+        DialogController<T> controller = fxmlLoader.getController();
+
+        if (initialValue != null) {
+            controller.setResult(initialValue);
+        }
+        return controller;
+    }
+
+    private static DialogPane getDialogPane(@NotNull FXMLLoader fxmlLoader) {
+        DialogPane dialogPane = null;
+        try {
+            dialogPane = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return dialogPane;
     }
 
     @NotNull

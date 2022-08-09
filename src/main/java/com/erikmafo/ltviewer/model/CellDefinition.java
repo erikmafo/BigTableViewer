@@ -62,6 +62,14 @@ public class CellDefinition {
         this.qualifier = qualifier;
     }
 
+    public ProtoObjectDefinition getProtoObjectDefinition() {
+        return protoObjectDefinition;
+    }
+
+    public void setProtoObjectDefinition(ProtoObjectDefinition protoObjectDefinition) {
+        this.protoObjectDefinition = protoObjectDefinition;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,9 +92,5 @@ public class CellDefinition {
                 ", family='" + family + '\'' +
                 ", qualifier='" + qualifier + '\'' +
                 '}';
-    }
-
-    public ProtoObjectDefinition getProtoObjectDefinition() {
-        return protoObjectDefinition;
     }
 }

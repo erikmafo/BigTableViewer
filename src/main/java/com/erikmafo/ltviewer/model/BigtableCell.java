@@ -5,6 +5,8 @@ import com.google.protobuf.ByteString;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Base64;
+
 /**
  * A simple representation of a bigtable row cell.
  */
@@ -69,6 +71,8 @@ public class BigtableCell {
      * @return an UTF-8 string
      */
     public String getValueAsString() { return bytes.toStringUtf8(); }
+
+    public String getValueAsStringBase64() { return Base64.getEncoder().encodeToString(bytes.toByteArray()); }
 
     /**
      * Gets the value of the cell as a byte array.
