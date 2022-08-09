@@ -36,7 +36,7 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 18
       - name: Install with maven
         env:
           JAVA_TOOL_OPTIONS: ${{ matrix.java-opts }}
