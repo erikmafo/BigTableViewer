@@ -72,7 +72,7 @@ public class BigtableCell {
      */
     public String getValueAsString() { return bytes.toStringUtf8(); }
 
-    public String getValueAsHexString() { return Base64.getEncoder().encodeToString(bytes.toByteArray()); }
+    public String getValueAsStringBase64() { return Base64.getEncoder().encodeToString(bytes.toByteArray()); }
 
     /**
      * Gets the value of the cell as a byte array.

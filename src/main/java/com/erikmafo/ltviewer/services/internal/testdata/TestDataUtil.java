@@ -33,7 +33,7 @@ public class TestDataUtil {
     private static final String PROJECT_0 = "project-0";
     private static final String INSTANCE_0 = "instance-0";
     private static final String TABLE_0 = "table-0";
-    public static final ByteString BYTE_STRING_TEST_VALUE = ByteStringConverterUtil.toByteString(842098349384L);
+    public static final ByteString BYTE_STRING_TEST_VALUE = toByteString(842098349384L);
 
     public static void injectWithTestData(BigtableEmulatorSettingsProvider settingsProvider) {
         try {
