@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>littletableviewer</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
     <name>Little Table Viewer</name>
 
@@ -39,7 +39,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <release>18</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -86,10 +86,51 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+                        --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <execution>
+                        <id>runtimeImage</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/jlink</executable>
+                            <arguments>
+                                <argument>--module-path=${java.home}/jmods/</argument>
+                                <argument>--add-modules=java.base</argument>
+                                <argument>--add-modules=java.prefs</argument>
+                                <argument>--add-modules=java.desktop</argument>
+                                <argument>--add-modules=java.net.http</argument>
+                                <argument>--add-modules=java.xml</argument>
+                                <argument>--add-modules=java.prefs</argument>
+                                <argument>--add-modules=java.logging</argument>
+                                <argument>--add-modules=java.sql</argument>
+                                <argument>--add-modules=javafx.base</argument>
+                                <argument>--add-modules=javafx.controls</argument>
+                                <argument>--add-modules=javafx.fxml</argument>
+                                <argument>--add-modules=javafx.graphics</argument>
+                                <argument>--add-modules=javafx.web</argument>d
+                                <argument>--add-modules=javafx.media</argument>
+                                <argument>--add-modules=java.management</argument>
+                                <argument>--output=${project.build.directory}/image</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>installer</id>
                         <phase>install</phase>
@@ -116,6 +157,8 @@
                                 <argument>LICENSE</argument>
                                 <argument>--app-version</argument>
                                 <argument>${project.version}</argument>
+                                <argument>--runtime-image</argument>
+                                <argument>${project.build.directory}/image</argument>
                                 <argument>--verbose</argument>
                             </arguments>
                         </configuration>
@@ -196,13 +239,13 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>18.0.2</version>
+            <version>17.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>18.0.2</version>
+            <version>17.0.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

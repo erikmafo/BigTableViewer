@@ -30,9 +30,10 @@ jobs:
 
     steps:
     - name: Setup Java JDK
-      uses: actions/setup-java@v1.4.3
+      uses: actions/setup-java@v2
       with:
-        java-version: 18
+        distribution: 'liberica'
+        java-version: 17
 
     - name: Checkout repository
       uses: actions/checkout@v2
