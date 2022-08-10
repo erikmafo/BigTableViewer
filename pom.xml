@@ -234,7 +234,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-bigtable-emulator</artifactId>
-            <version>0.146.0</version>
+            <version>0.147.2</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
