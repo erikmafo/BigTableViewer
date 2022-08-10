@@ -13,7 +13,7 @@ import com.erikmafo.ltviewer.ui.queryresult.cell.CellView;
 import com.erikmafo.ltviewer.ui.queryresult.rowkey.RowKeyView;
 import com.erikmafo.ltviewer.ui.dialogs.TableSettingsDialog;
 import com.erikmafo.ltviewer.util.AlertUtil;
-import com.sun.javafx.PlatformUtil;
+import com.erikmafo.ltviewer.util.OperatingSystemUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -155,7 +155,7 @@ public class QueryResultViewController {
     }
 
     private boolean isCopyOperation(@NotNull KeyEvent keyEvent) {
-        return PlatformUtil.isMac() ?
+        return OperatingSystemUtil.isMac() ?
                 keyEvent.getCode() == KeyCode.C && keyEvent.isMetaDown() :
                 keyEvent.getCode() == KeyCode.C && keyEvent.isControlDown();
     }

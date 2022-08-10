@@ -3,7 +3,7 @@ package com.erikmafo.ltviewer.ui.menubar;
 import com.erikmafo.ltviewer.services.credential.LoadCredentialsPathService;
 import com.erikmafo.ltviewer.services.credential.SaveCredentialsPathService;
 import com.erikmafo.ltviewer.ui.dialogs.CredentialsPathDialog;
-import com.sun.javafx.PlatformUtil;
+import com.erikmafo.ltviewer.util.OperatingSystemUtil;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,7 +38,7 @@ public class MenuBarController {
 
     @FXML
     public void initialize() {
-        if (PlatformUtil.isMac()) {
+        if (OperatingSystemUtil.isMac()) {
             menuBar.useSystemMenuBarProperty().set(true);
         }
     }

@@ -1,26 +1,31 @@
 package com.erikmafo.ltviewer.services.internal;
 
-import com.sun.javafx.PlatformUtil;
+import com.erikmafo.ltviewer.util.OperatingSystemUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-class AppDataUtil {
+public class AppDataUtil {
 
     private static final String BIGTABLE_VIEWER = "BigtableViewer";
+    private static final String LIBRARY_APPLICATION_SUPPORT = "/Library/Application Support";
+    private static final String USER_HOME = System.getProperty("user.home");
+    public static final String APPDATA = System.getenv("APPDATA");
 
+    @NotNull
     public static Path getStorageFolder() {
         Path appDataFolder;
 
-        if (PlatformUtil.isWindows()) {
-            appDataFolder = Path.of(System.getenv("APPDATA"), BIGTABLE_VIEWER);
+        if (OperatingSystemUtil.isWindows()) {
+            appDataFolder = Path.of(APPDATA, BIGTABLE_VIEWER);
         }
-        else if (PlatformUtil.isMac()) {
-            appDataFolder = Path.of(
-                    System.getProperty("user.home") + "/Library/Application Support", BIGTABLE_VIEWER);
+        else if (OperatingSystemUtil.isMac()) {
+            appDataFolder = Path.of(USER_HOME + LIBRARY_APPLICATION_SUPPORT, BIGTABLE_VIEWER);
         }
         else {
-            appDataFolder = Path.of(System.getProperty("user.home"), "." + BIGTABLE_VIEWER);
+            appDataFolder = Path.of(USER_HOME, "." + BIGTABLE_VIEWER);
         }
+
         return appDataFolder;
     }
 }
