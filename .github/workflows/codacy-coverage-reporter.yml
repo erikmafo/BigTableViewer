@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'liberica'
-          java-version: 17
+          java-version: 18
       - name: Verify with maven
         env:
           JAVA_TOOL_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k"
