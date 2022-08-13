@@ -5,7 +5,7 @@
 
     <groupId>com.erikmafo</groupId>
     <artifactId>littletableviewer</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
     <name>Little Table Viewer</name>
 
@@ -70,7 +70,6 @@
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-
                         <configuration>
                             <outputDirectory>${project.build.directory}/app</outputDirectory>
                             <resources>
@@ -104,35 +103,6 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>runtimeImage</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${java.home}/bin/jlink</executable>
-                            <arguments>
-                                <argument>--module-path=${java.home}/jmods/</argument>
-                                <argument>--add-modules=java.base</argument>
-                                <argument>--add-modules=java.prefs</argument>
-                                <argument>--add-modules=java.desktop</argument>
-                                <argument>--add-modules=java.net.http</argument>
-                                <argument>--add-modules=java.xml</argument>
-                                <argument>--add-modules=java.prefs</argument>
-                                <argument>--add-modules=java.logging</argument>
-                                <argument>--add-modules=java.sql</argument>
-                                <argument>--add-modules=javafx.base</argument>
-                                <argument>--add-modules=javafx.controls</argument>
-                                <argument>--add-modules=javafx.fxml</argument>
-                                <argument>--add-modules=javafx.graphics</argument>
-                                <argument>--add-modules=javafx.web</argument>d
-                                <argument>--add-modules=javafx.media</argument>
-                                <argument>--add-modules=java.management</argument>
-                                <argument>--output=${project.build.directory}/image</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>installer</id>
                         <phase>install</phase>
                         <goals>
@@ -158,8 +128,6 @@
                                 <argument>LICENSE</argument>
                                 <argument>--app-version</argument>
                                 <argument>${project.version}</argument>
-                                <argument>--runtime-image</argument>
-                                <argument>${project.build.directory}/image</argument>
                                 <argument>--verbose</argument>
                             </arguments>
                         </configuration>
