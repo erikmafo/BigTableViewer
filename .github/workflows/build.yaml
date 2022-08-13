@@ -29,7 +29,7 @@ jobs:
         - os: macos-latest
           display-name: 'osx'
           java-opts: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.verbose=true"
-          installer-name: 'littletableviewer.dmg'
+          installer-name: 'littletableviewer.pkg'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        extension: [msi, deb, dmg]
+        extension: [msi, deb, pkg]
     steps:
       - uses: actions/download-artifact@v2
         with:
