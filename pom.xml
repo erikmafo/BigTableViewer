@@ -307,7 +307,7 @@
                 </os>
             </activation>
             <properties>
-                <jpackage.type>dmg</jpackage.type>
+                <jpackage.type>pkg</jpackage.type>
             </properties>
         </profile>
     </profiles>
