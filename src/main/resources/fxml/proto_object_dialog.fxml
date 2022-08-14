@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.ComboBox?>
 
-<DialogPane fx:controller="com.erikmafo.ltviewer.ui.dialogs.ProtoObjectDialogController"
+<DialogPane fx:controller="com.erikmafo.btviewer.ui.dialogs.ProtoObjectDialogController"
             xmlns:fx="http://javafx.com/fxml"
             headerText="Configure proto message type"
             prefHeight="150.0"

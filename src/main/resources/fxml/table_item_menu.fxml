@@ -4,7 +4,7 @@
 <?import javafx.scene.control.MenuItem?>
 <ContextMenu xmlns="http://javafx.com/javafx"
              xmlns:fx="http://javafx.com/fxml"
-             fx:controller="com.erikmafo.ltviewer.ui.projectexplorer.TableItemMenuController">
+             fx:controller="com.erikmafo.btviewer.ui.projectexplorer.TableItemMenuController">
     <items>
         <MenuItem fx:id="tableSettings" text="Table Settings"/>
         <MenuItem fx:id="selectFirst" text="Select first 1000 rows"/>
