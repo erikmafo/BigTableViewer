@@ -1,15 +1,15 @@
-# Little table viewer
+# Big Table Viewer
 
-[![Build Actions Status](https://github.com/erikmafo/LittleTableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/LittleTableViewer/actions)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/9364e25dcac647f2b0019e61235a5f00)](https://www.codacy.com/gh/erikmafo/LittleTableViewer/dashboard?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/LittleTableiewer&utm_campaign=Badge_Coverage)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e70e5faa1bc418093f4454f945336ed)](https://app.codacy.com/gh/erikmafo/LittleTableViewer?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/LittleTableViewer&utm_campaign=Badge_Grade_Settings)
-[![CodeQL Analysis Actions Status](https://github.com/erikmafo/LittleTableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/LittleTableViewer/actions)
+[![Build Actions Status](https://github.com/erikmafo/BigTableViewer/workflows/Build/badge.svg)](https://github.com/erikmafo/BigTableViewer/actions)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/9364e25dcac647f2b0019e61235a5f00)](https://www.codacy.com/gh/erikmafo/BigTableViewer/dashboard?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigTableiewer&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6e70e5faa1bc418093f4454f945336ed)](https://app.codacy.com/gh/erikmafo/BigTableViewer?utm_source=github.com&utm_medium=referral&utm_content=erikmafo/BigTableViewer&utm_campaign=Badge_Grade_Settings)
+[![CodeQL Analysis Actions Status](https://github.com/erikmafo/BigTableViewer/workflows/CodeQL/badge.svg)](https://github.com/erikmafo/BigTableViewer/actions)
 
-Little table viewer is an application that lets you query the contents of Google Bigtable tables with SQL. 
+Big Table Viewer is an application that lets you query the contents of Google Bigtable tables with SQL. 
 
 ## Installation
 
-Download and run the [installer](https://github.com/erikmafo/LittleTableViewer/releases/latest) 
+Download and run the [installer](https://github.com/erikmafo/BigTableViewer/releases/latest) 
 for your operating system.
 
 ## Basic Usage
@@ -24,7 +24,7 @@ should appear in the query box. Click 'Execute' to execute the query.
 
 ## Table schema
 
-Little table viewer works best with tables where the data in each column corresponds to a standard data type. By clicking 
+Big table viewer works best with tables where the data in each column corresponds to a standard data type. By clicking 
 on 'Table settings' you can configure how the application should interpret the columns in your table.
 
 ## Query examples
