@@ -133,7 +133,7 @@ public class TableSettingsDialogController implements DialogController<BigtableT
 
         ChoiceBox<String> choiceBox = getValueTypeChoiceBox(cellDefinition.getValueType());
         choiceBox.setOnAction(ae -> {
-            if (choiceBox.getValue().toUpperCase().equals(ValueTypeConstants.PROTO)) {
+            if (choiceBox.getValue().equalsIgnoreCase(ValueTypeConstants.PROTO)) {
                 openProtoObjectDialog(cellDefinition.getProtoObjectDefinition(), observableCell);
             }
         });

@@ -1,12 +1,12 @@
 package com.erikmafo.btviewer.ui.shared;
 
-public interface DialogController<TResultValue> {
+public interface DialogController<T> {
 
-    void setInitialValue(TResultValue value);
+    void setInitialValue(T value);
 
-    TResultValue getResult();
+    T getResult();
 
-    default boolean validateResult(TResultValue value) {
+    default boolean validateResult(T value) {
         return true;
     }
 }
