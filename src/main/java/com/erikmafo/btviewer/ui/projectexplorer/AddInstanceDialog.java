@@ -1,7 +1,7 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
 
 import com.erikmafo.btviewer.model.BigtableInstance;
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
+import com.erikmafo.btviewer.ui.util.FXMLLoaderUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;

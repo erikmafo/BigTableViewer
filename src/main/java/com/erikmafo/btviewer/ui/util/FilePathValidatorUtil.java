@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui.dialogs;
+package com.erikmafo.btviewer.ui.util;
 
 import javafx.scene.control.Alert;
 import org.jetbrains.annotations.Nullable;

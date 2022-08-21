@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.services.internal;
 
-import com.erikmafo.btviewer.util.OperatingSystemUtil;
+import com.erikmafo.btviewer.ui.util.OperatingSystemUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;

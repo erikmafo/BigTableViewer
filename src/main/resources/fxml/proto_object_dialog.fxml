@@ -9,52 +9,56 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.ComboBox?>
 
-<DialogPane fx:controller="com.erikmafo.btviewer.ui.dialogs.ProtoObjectDialogController"
+<?import javafx.scene.control.Tooltip?>
+<DialogPane fx:controller="com.erikmafo.btviewer.ui.dialogs.protoobject.ProtoObjectDialogController"
             xmlns:fx="http://javafx.com/fxml"
             headerText="Configure proto message type"
-            prefHeight="150.0"
-            prefWidth="650.0"
+            prefHeight="200.0"
             stylesheets="/css/main.css">
 
     <content>
-        <GridPane vgap="2" hgap="10">
-
+        <GridPane vgap="6" hgap="6">
             <Label
-                    text="DescriptorSet:"
+                    text="Descriptor set:"
                     GridPane.rowIndex="0"
                     GridPane.columnIndex="0"/>
             <TextField
                     fx:id="descriptorSetFile"
+                    prefWidth="200"
+                    maxWidth="200"
                     GridPane.columnIndex="1"
                     GridPane.rowIndex="0"
-                    GridPane.hgrow="ALWAYS" />
+                    GridPane.hgrow="ALWAYS">
+                <tooltip>
+                    <Tooltip text="${descriptorSetFile.text}"/>
+                </tooltip>
+            </TextField>
             <Button
                     onAction="#handleEditDescriptorSetFile"
                     text="..." styleClass="btn"
                     GridPane.rowIndex="0"
                     GridPane.columnIndex="2"/>
-
             <Label
-                    text="ProtoFile:"
+                    text="Proto file:"
                     GridPane.rowIndex="1"
                     GridPane.columnIndex="0"/>
             <ComboBox
                     fx:id="protoFile"
                     promptText="Select proto file"
                     onAction="#handleProtoFileChoice"
+                    prefWidth="200"
                     GridPane.rowIndex="1"
                     GridPane.columnIndex="1"/>
-
             <Label
-                    text="MessageType:"
+                    text="Message type:"
                     GridPane.rowIndex="2"
                     GridPane.columnIndex="0"/>
             <ComboBox
                     fx:id="messageType"
                     promptText="Select message type"
+                    prefWidth="200"
                     GridPane.rowIndex="2"
                     GridPane.columnIndex="1"/>
-
         </GridPane>
     </content>
 

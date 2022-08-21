@@ -8,12 +8,13 @@ import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.table.LoadTableSettingsService;
 import com.erikmafo.btviewer.services.table.SaveTableSettingsService;
+import com.erikmafo.btviewer.ui.util.DialogLoaderUtil;
+import com.erikmafo.btviewer.ui.dialogs.tablesettings.TableSettingsDialogController;
 import com.erikmafo.btviewer.ui.queryresult.cell.CellTimestampDisplayMode;
 import com.erikmafo.btviewer.ui.queryresult.cell.CellView;
 import com.erikmafo.btviewer.ui.queryresult.rowkey.RowKeyView;
-import com.erikmafo.btviewer.ui.dialogs.TableSettingsDialog;
-import com.erikmafo.btviewer.util.AlertUtil;
-import com.erikmafo.btviewer.util.OperatingSystemUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.OperatingSystemUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class QueryResultViewController {
@@ -111,8 +113,11 @@ public class QueryResultViewController {
 
     @FXML
     public void handleTableSettingsButtonPressed(ActionEvent actionEvent) {
-        TableSettingsDialog
-                .displayAndAwaitResult(getColumns(), tableSettings.getValue())
+        DialogLoaderUtil
+                .displayDialogAndAwaitResult(
+                        tableSettings.getValue(),
+                        TableSettingsDialogController.FXML,
+                        (Consumer<TableSettingsDialogController>) controller -> controller.addColumns(getColumns()))
                 .whenComplete((configuration, throwable) -> updateTableConfiguration(table.get(), configuration));
     }
 
@@ -147,7 +152,8 @@ public class QueryResultViewController {
         while (change.next()) {
             change.getAddedSubList().forEach(this::addColumns);
         }
-        var treeItems = change.getList()
+        var treeItems = change
+                .getList()
                 .stream()
                 .map(QueryResultRowTreeItem::new)
                 .collect(Collectors.toList());
@@ -242,7 +248,8 @@ public class QueryResultViewController {
     }
 
     private TreeTableColumn<QueryResultRow, ?> getColumn(String name) {
-        return tableView.getColumns()
+        return tableView
+                .getColumns()
                 .stream()
                 .filter(c -> c.getText().equals(name))
                 .findFirst()
@@ -264,7 +271,8 @@ public class QueryResultViewController {
     }
 
     private List<BigtableColumn> getColumns() {
-        return tableView.getColumns()
+        return tableView
+                .getColumns()
                 .stream()
                 .filter(c -> !c.getText().equals(ROW_KEY))
                 .flatMap(c -> c

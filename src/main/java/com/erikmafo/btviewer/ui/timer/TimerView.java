@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.ui.timer;
 
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
+import com.erikmafo.btviewer.ui.util.FXMLLoaderUtil;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

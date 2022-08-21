@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.util;
+package com.erikmafo.btviewer.ui.util;
 
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Alert;

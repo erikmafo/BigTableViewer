@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.util;
+package com.erikmafo.btviewer.ui.util;
 import javafx.fxml.FXMLLoader;
 import org.jetbrains.annotations.NotNull;
 

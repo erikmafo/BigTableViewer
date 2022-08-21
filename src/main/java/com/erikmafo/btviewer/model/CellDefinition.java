@@ -1,6 +1,8 @@
 package com.erikmafo.btviewer.model;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Specifies how the value of a cell should be interpreted by assigning a value type.
@@ -10,18 +12,8 @@ public class CellDefinition {
     private String valueType;
     private String family;
     private String qualifier;
-    private ProtoObjectDefinition protoObjectDefinition;
 
-    /**
-     * Creates a new instance of {@code CellDefinition}.
-     *
-     * @param valueType the value type of the cell.
-     * @param family the name of the column family that the cell belongs to.
-     * @param qualifier the name of the column qualifier that the cell belong to.
-     */
-    public CellDefinition(String valueType, String family, String qualifier) {
-        this(valueType, family, qualifier, null);
-    }
+    private ProtoObjectDefinition protoObjectDefinition;
 
     /**
      * Creates a new instance of {@code CellDefinition}.
@@ -70,6 +62,22 @@ public class CellDefinition {
         this.protoObjectDefinition = protoObjectDefinition;
     }
 
+    public boolean matchesExact(@NotNull BigtableColumn column) {
+        return column.getFamily().equals(family) && column.getQualifier().equals(qualifier);
+    }
+
+    public boolean matches(@NotNull BigtableColumn column) {
+        return matches(column.getFamily(), column.getQualifier());
+    }
+
+    public boolean matches(String family, String qualifier) {
+        if (!Objects.equals(family, this.family)) {
+            return false;
+        }
+
+        return getQualifierPattern().matcher(qualifier).matches();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,5 +100,31 @@ public class CellDefinition {
                 ", family='" + family + '\'' +
                 ", qualifier='" + qualifier + '\'' +
                 '}';
+    }
+
+    public boolean isValid() {
+        return isValidQualifierPatter() && isValidValueType();
+    }
+
+    private boolean isValidValueType() {
+        if (ValueTypeConstants.PROTO.equals(valueType.toUpperCase())) {
+            return protoObjectDefinition != null;
+        }
+
+        return true;
+    }
+
+    private boolean isValidQualifierPatter() {
+        try {
+            getQualifierPattern();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    @NotNull
+    private Pattern getQualifierPattern() {
+        return Pattern.compile(qualifier);
     }
 }

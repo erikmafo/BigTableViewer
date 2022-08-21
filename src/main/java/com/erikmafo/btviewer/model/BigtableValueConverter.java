@@ -103,14 +103,10 @@ public class BigtableValueConverter {
 
     @NotNull
     private CellDefinition getCellDefinition(@NotNull BigtableCell cell) {
-        return cellDefinitions
-                .stream()
-                .filter(c -> c.getFamily().equals(cell.getFamily())
-                        && c.getQualifier().equals(cell.getQualifier()))
-                .findFirst()
-                .orElse(new CellDefinition(ValueTypeConstants.STRING, cell.getFamily(), cell.getQualifier()));
+        return CellDefinitionMatcherUtil
+                .findBestMatch(cellDefinitions, new BigtableColumn(cell.getFamily(), cell.getQualifier()))
+                .orElse(new CellDefinition(ValueTypeConstants.STRING, cell.getFamily(), cell.getQualifier(), null));
     }
-
     @NotNull
     private BigtableValue convertUsingValueType(BigtableCell cell, @NotNull CellDefinition cellDefinition) throws IOException {
         var valueTypeUpper = cellDefinition.getValueType().toUpperCase();

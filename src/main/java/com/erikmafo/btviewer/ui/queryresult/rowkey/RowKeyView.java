@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.ui.queryresult.rowkey;
 
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
+import com.erikmafo.btviewer.ui.util.FXMLLoaderUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;

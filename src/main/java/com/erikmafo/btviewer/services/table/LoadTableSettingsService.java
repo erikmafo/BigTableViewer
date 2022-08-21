@@ -3,7 +3,7 @@ package com.erikmafo.btviewer.services.table;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableTableSettings;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
-import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
