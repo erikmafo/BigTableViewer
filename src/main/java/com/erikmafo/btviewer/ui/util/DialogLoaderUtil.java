@@ -1,5 +1,7 @@
-package com.erikmafo.btviewer.ui.dialogs;
+package com.erikmafo.btviewer.ui.util;
 
+import com.erikmafo.btviewer.ui.dialogs.protoobject.ProtoObjectDialogController;
+import com.erikmafo.btviewer.ui.shared.DialogController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;
@@ -9,15 +11,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class DialogLoaderUtil {
 
     @NotNull
     public static <T> CompletableFuture<T> displayDialogAndAwaitResult(T initialValue, String fxmlFile) {
-        CompletableFuture<T> completableFuture = new CompletableFuture<>();
+        return displayDialogAndAwaitResult(initialValue, fxmlFile, tDialogController -> {});
+    }
+
+    @NotNull
+    public static <TResult, TController extends DialogController<TResult>> CompletableFuture<TResult> displayDialogAndAwaitResult(
+            TResult initialValue,
+            String fxmlFile,
+            @NotNull Consumer<TController> initializeController) {
+
+        var completableFuture = new CompletableFuture<TResult>();
         var fxmlLoader =  getLoader(fxmlFile);
-        DialogPane dialogPane = getDialogPane(fxmlLoader);
-        DialogController<T> controller = getDialogController(initialValue, fxmlLoader);
+        var dialogPane = getDialogPane(fxmlLoader);
+        var controller = (TController) getDialogController(initialValue, fxmlLoader);
+        initializeController.accept(controller);
+
         var dialog = createDialog(completableFuture, dialogPane, controller);
         dialog.show();
 
@@ -47,7 +61,7 @@ public class DialogLoaderUtil {
         DialogController<T> controller = fxmlLoader.getController();
 
         if (initialValue != null) {
-            controller.setResult(initialValue);
+            controller.setInitialValue(initialValue);
         }
         return controller;
     }

@@ -1,7 +1,7 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
 
 import com.erikmafo.btviewer.services.instance.LoadInstancesService;
-import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;

@@ -13,12 +13,12 @@ import static org.junit.Assert.assertTrue;
 public class BigtableValueConverterTest {
 
     private BigtableValueConverter converter = new BigtableValueConverter(Arrays.asList(
-            new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn"),
-            new CellDefinition(ValueTypeConstants.SHORT, "shortFamily", "shortColumn"),
-            new CellDefinition(ValueTypeConstants.LONG, "longFamily", "longColumn"),
-            new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn"),
-            new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn"),
-            new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn")));
+            new CellDefinition(ValueTypeConstants.STRING, "stringFamily", "stringColumn", null),
+            new CellDefinition(ValueTypeConstants.SHORT, "shortFamily", "shortColumn", null),
+            new CellDefinition(ValueTypeConstants.LONG, "longFamily", "longColumn", null),
+            new CellDefinition(ValueTypeConstants.DOUBLE, "doubleFamily", "doubleColumn", null),
+            new CellDefinition(ValueTypeConstants.FLOAT, "floatFamily", "floatColumn", null),
+            new CellDefinition(ValueTypeConstants.INTEGER, "intFamily", "intColumn", null)));
 
     @Test
     public void shouldConvertBigtableCellToInt() {

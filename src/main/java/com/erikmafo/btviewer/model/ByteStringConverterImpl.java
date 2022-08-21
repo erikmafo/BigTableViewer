@@ -22,13 +22,10 @@ public class ByteStringConverterImpl implements ByteStringConverter {
     }
 
     @Override
-    public ByteString toByteString(Field field, Value value) {
-        var valueType = cellDefinitions
-                .stream()
-                .filter(c -> c.getFamily().equals(field.getFamily()))
-                .filter(c -> c.getQualifier().equals(field.getQualifier()))
+    public ByteString toByteString(@NotNull Field field, Value value) {
+        var valueType = CellDefinitionMatcherUtil
+                .findBestMatch(cellDefinitions, new BigtableColumn(field.getFamily(), field.getQualifier()))
                 .map(CellDefinition::getValueType)
-                .findFirst()
                 .orElse(ValueTypeConstants.STRING);
 
         ByteString byteString;

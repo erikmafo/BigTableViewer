@@ -2,8 +2,9 @@ package com.erikmafo.btviewer.ui.menubar;
 
 import com.erikmafo.btviewer.services.credential.LoadCredentialsPathService;
 import com.erikmafo.btviewer.services.credential.SaveCredentialsPathService;
-import com.erikmafo.btviewer.ui.dialogs.CredentialsPathDialog;
-import com.erikmafo.btviewer.util.OperatingSystemUtil;
+import com.erikmafo.btviewer.ui.dialogs.credentials.CredentialsPathDialogController;
+import com.erikmafo.btviewer.ui.util.DialogLoaderUtil;
+import com.erikmafo.btviewer.ui.util.OperatingSystemUtil;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,7 +56,8 @@ public class MenuBarController {
     }
 
     private void displaySpecifyCredentialsDialog(Path currentPath) {
-        CredentialsPathDialog.displayAndAwaitResult(currentPath)
+        DialogLoaderUtil
+                .displayDialogAndAwaitResult(currentPath, CredentialsPathDialogController.FXML)
                 .whenComplete(this::onCredentialsPathDialogComplete);
     }
 

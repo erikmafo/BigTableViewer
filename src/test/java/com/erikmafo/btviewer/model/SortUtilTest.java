@@ -37,10 +37,10 @@ public class SortUtilTest {
     public void byFamilyThenQualifier_withCellDefinitions_ordersByFamilyFirstThenQualifier() {
         // given
         var columns = Arrays.asList(
-                new CellDefinition(ValueTypeConstants.STRING, "f2", "q1"),
-                new CellDefinition(ValueTypeConstants.STRING, "f2", "q2"),
-                new CellDefinition(ValueTypeConstants.STRING, "f1", "q2"),
-                new CellDefinition(ValueTypeConstants.STRING, "f1", "q1")
+                new CellDefinition(ValueTypeConstants.STRING, "f2", "q1", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f2", "q2", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f1", "q2", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f1", "q1", null)
         );
 
         // when
@@ -49,10 +49,10 @@ public class SortUtilTest {
 
         // then
         var expected = Arrays.asList(
-                new CellDefinition(ValueTypeConstants.STRING, "f1", "q1"),
-                new CellDefinition(ValueTypeConstants.STRING, "f1", "q2"),
-                new CellDefinition(ValueTypeConstants.STRING, "f2", "q1"),
-                new CellDefinition(ValueTypeConstants.STRING, "f2", "q2"));
+                new CellDefinition(ValueTypeConstants.STRING, "f1", "q1", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f1", "q2", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f2", "q1", null),
+                new CellDefinition(ValueTypeConstants.STRING, "f2", "q2", null));
 
         assertEquals(expected, columnsSorted);
     }

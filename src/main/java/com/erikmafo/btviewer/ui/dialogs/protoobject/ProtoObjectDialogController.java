@@ -1,8 +1,10 @@
-package com.erikmafo.btviewer.ui.dialogs;
+package com.erikmafo.btviewer.ui.dialogs.protoobject;
 
 import com.erikmafo.btviewer.model.ProtoObjectDefinition;
-import com.erikmafo.btviewer.ui.ActionEventUtil;
-import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.ActionEventUtil;
+import com.erikmafo.btviewer.ui.shared.DialogController;
+import com.erikmafo.btviewer.ui.util.FilePathValidatorUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
 import com.erikmafo.btviewer.util.ProtoUtil;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -56,7 +58,7 @@ public class ProtoObjectDialogController implements DialogController<ProtoObject
     }
 
     @Override
-    public void setResult(@NotNull ProtoObjectDefinition protoObjectDefinition) {
+    public void setInitialValue(@NotNull ProtoObjectDefinition protoObjectDefinition) {
         descriptorSetFile.setText(protoObjectDefinition.getDescriptorSetFile());
 
         populateProtoFileChoiceItems(protoObjectDefinition.getDescriptorSetFile());

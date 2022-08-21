@@ -4,7 +4,7 @@ import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableValue;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.ValueTypeConstants;
-import com.erikmafo.btviewer.util.FXMLLoaderUtil;
+import com.erikmafo.btviewer.ui.util.FXMLLoaderUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;

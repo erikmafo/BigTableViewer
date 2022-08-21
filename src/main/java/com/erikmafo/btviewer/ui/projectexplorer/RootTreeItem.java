@@ -1,7 +1,7 @@
 package com.erikmafo.btviewer.ui.projectexplorer;
 
 import com.erikmafo.btviewer.services.project.LoadProjectsService;
-import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
 import com.google.inject.Provider;
 import javafx.scene.control.TreeItem;
 import org.jetbrains.annotations.NotNull;

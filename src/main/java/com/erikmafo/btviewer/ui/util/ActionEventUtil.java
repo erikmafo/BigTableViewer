@@ -1,4 +1,4 @@
-package com.erikmafo.btviewer.ui;
+package com.erikmafo.btviewer.ui.util;
 
 import javafx.event.ActionEvent;
 import javafx.scene.Node;

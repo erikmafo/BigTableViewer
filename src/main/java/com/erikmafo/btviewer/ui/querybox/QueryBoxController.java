@@ -7,7 +7,7 @@ import com.erikmafo.btviewer.services.query.BigtableQueryService;
 import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.ui.timer.TimerView;
-import com.erikmafo.btviewer.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.AlertUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
