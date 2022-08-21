@@ -19,6 +19,7 @@ public class DateTimeFormatUtil {
     private static final String DATE_HOUR_MINUTE = "uuuu-MM-dd HH:mm";
     private static final String DATE_HOUR_MINUTE_SECOND = "uuuu-MM-dd HH:mm:ss";
     private static final String DATE_HOUR_MINUTE_SECOND_MILLIS = "uuuu-MM-dd HH:mm:ss:SS";
+    private static final LocalTime MIDNIGHT_LOCAL_TIME = LocalTime.of(0, 0, 0);
 
     /**
      * Converts a date time string to the number of microseconds since 1970-01-01T00:00:00Z.
@@ -30,10 +31,13 @@ public class DateTimeFormatUtil {
     }
 
     private static long toEpochMilli(@NotNull String dateTime) {
+        return toMillis(dateTime, getDateFormat(dateTime));
+    }
+
+    @NotNull
+    private static String getDateFormat(@NotNull String dateTime) {
         String format;
-        var isDate = false;
         if (dateTime.length() == DATE.length()) {
-            isDate = true;
             format = DATE;
         } else if (dateTime.length() == DATE_HOUR.length()) {
             format = DATE_HOUR;
@@ -46,16 +50,16 @@ public class DateTimeFormatUtil {
         } else {
             throw new IllegalArgumentException(getErrorMessage(dateTime));
         }
-        return toMillis(dateTime, format, isDate);
+        return format;
     }
 
-    private static long toMillis(@NotNull String dateTime, String format, boolean isDate) {
+    private static long toMillis(@NotNull String dateTime, String format) {
         var trimmedDateTime = dateTime.trim();
         var offset = ZoneOffset.ofHours(0);
         var formatter = DateTimeFormatter.ofPattern(format);
-        var dt = isDate ?
-                LocalDateTime.of(LocalDate.parse(trimmedDateTime, formatter), LocalTime.of(0, 0, 0)) :
-                LocalDateTime.parse(trimmedDateTime, formatter);
+        var dt = isDate(format)
+                ? LocalDateTime.of(LocalDate.parse(trimmedDateTime, formatter), MIDNIGHT_LOCAL_TIME)
+                : LocalDateTime.parse(trimmedDateTime, formatter);
         return dt.toInstant(offset).toEpochMilli();
     }
 
@@ -74,5 +78,9 @@ public class DateTimeFormatUtil {
                 DATE_HOUR_MINUTE_SECOND,
                 DATE_HOUR_MINUTE_SECOND_MILLIS
         );
+    }
+
+    private static boolean isDate(String format) {
+        return DATE.equals(format);
     }
 }
