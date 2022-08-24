@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.model;
 
 import com.erikmafo.btviewer.util.ProtoUtil;
+import com.erikmafo.btviewer.util.UUIDConverterUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,6 +128,8 @@ public class BigtableValueConverter {
                 return toBigtableValue(ProtoUtil.toJson(cell.getByteString(), cellDefinition.getProtoObjectDefinition()), valueTypeUpper);
             case ValueTypeConstants.BYTE_STRING:
                 return toBigtableValue(cell.getValueAsStringBase64(), valueTypeUpper);
+            case ValueTypeConstants.UUID:
+                return toBigtableValue(UUIDConverterUtil.convertBytesToUUID(cell.getBytes()), valueTypeUpper);
             default:
                 return toBigtableValue(cell.getValueAsString(), ValueTypeConstants.STRING);
         }

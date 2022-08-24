@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class ByteStringConverterImpl implements ByteStringConverter {
     private final List<CellDefinition> cellDefinitions;
@@ -52,7 +53,12 @@ public class ByteStringConverterImpl implements ByteStringConverter {
             case ValueTypeConstants.BYTE_STRING:
                 byteString = ByteStringConverterUtil.toByteStringFromBase64(value.asString());
                 break;
-            default: throw new IllegalArgumentException(String.format("Value type %s is not supported", valueType.toUpperCase()));
+            case ValueTypeConstants.UUID:
+                byteString = ByteStringConverterUtil.toByteString(UUID.fromString(value.asString()));
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("Value type %s is not supported", valueType.toUpperCase()));
         }
 
         return byteString;
