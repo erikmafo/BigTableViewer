@@ -2,7 +2,6 @@ package com.erikmafo.btviewer.util;
 
 import org.junit.Test;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
