@@ -10,6 +10,7 @@ import com.google.protobuf.ByteString;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static com.erikmafo.btviewer.util.ByteStringConverterUtil.toByteString;
 
@@ -67,13 +68,14 @@ public class TestDataUtil {
                 var rowKey = "row-000000000000000" + String.format("%04d", i);
                 var mutation = RowMutation
                         .create(tableName, rowKey)
-                        .setCell("f1", "q1", "string-" + i)
-                        .setCell("f1", toByteString("q2"), toByteString(i))
-                        .setCell("f1", toByteString("q3"), toByteString(i + 0.5))
-                        .setCell("f1", toByteString("q4"), toByteString(JSON_TEST_DATA))
-                        .setCell("f2", toByteString("q1"), toByteString("string-" + i))
-                        .setCell("f3", toByteString("q1"), BYTE_STRING_TEST_VALUE)
-                        .setCell("f4", toByteString("q1"), getPerson(i).toByteString());
+                        .setCell("f1", "string-col", "string-" + i)
+                        .setCell("f1", toByteString("int-col"), toByteString(i))
+                        .setCell("f1", toByteString("double-col"), toByteString(i + 0.5))
+                        .setCell("f1", toByteString("json-col"), toByteString(JSON_TEST_DATA))
+                        .setCell("f2", toByteString("string-col"), toByteString("string-" + i))
+                        .setCell("f3", toByteString("bytes-col"), BYTE_STRING_TEST_VALUE)
+                        .setCell("f3", toByteString("uuid-col"),toByteString(UUID.randomUUID()))
+                        .setCell("f4", toByteString("proto-col"), getPerson(i).toByteString());
                 dataClient.mutateRow(mutation);
             }
         }

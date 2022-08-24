@@ -196,7 +196,8 @@ public class TableSettingsDialogController implements DialogController<BigtableT
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
 
         choiceBox.setValue(valueType != null ? valueType : "ByteString");
-        choiceBox.getItems().setAll(Arrays.asList("String", "Double", "Float", "Integer", "Long", "Short", "Json", "Proto", "ByteString"));
+        choiceBox.getItems().setAll(Arrays.asList(
+                "String", "Double", "Float", "Integer", "Long", "Short", "Json", "Proto", "ByteString", "UUID"));
         choiceBox.setPrefWidth(CHOICE_BOX_PREF_WIDTH);
         return choiceBox;
     }

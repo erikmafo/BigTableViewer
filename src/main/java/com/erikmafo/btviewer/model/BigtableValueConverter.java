@@ -1,6 +1,7 @@
 package com.erikmafo.btviewer.model;
 
 import com.erikmafo.btviewer.util.ProtoUtil;
+import com.erikmafo.btviewer.util.UUIDConverterUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A class that facilitates conversion of byte string values from bigtable to clr types.
@@ -127,6 +129,8 @@ public class BigtableValueConverter {
                 return toBigtableValue(ProtoUtil.toJson(cell.getByteString(), cellDefinition.getProtoObjectDefinition()), valueTypeUpper);
             case ValueTypeConstants.BYTE_STRING:
                 return toBigtableValue(cell.getValueAsStringBase64(), valueTypeUpper);
+            case ValueTypeConstants.UUID:
+                return toBigtableValue(UUIDConverterUtil.convertBytesToUUID(cell.getBytes()), valueTypeUpper);
             default:
                 return toBigtableValue(cell.getValueAsString(), ValueTypeConstants.STRING);
         }

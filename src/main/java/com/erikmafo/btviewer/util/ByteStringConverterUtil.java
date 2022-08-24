@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Base64;
+import java.util.UUID;
 
 public class ByteStringConverterUtil {
 
@@ -56,5 +57,11 @@ public class ByteStringConverterUtil {
                 .putDouble(value)
                 .order(ByteOrder.BIG_ENDIAN);
         return ByteString.copyFrom(buffer.array());
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static ByteString toByteString(UUID value) {
+        return ByteString.copyFrom(UUIDConverterUtil.convertUUIDToBytes(value));
     }
 }

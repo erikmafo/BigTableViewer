@@ -19,4 +19,6 @@ public class ValueTypeConstants {
     public static final String PROTO = "PROTO";
 
     public static final String BYTE_STRING = "BYTESTRING";
+
+    public static final String UUID = "UUID";
 }
