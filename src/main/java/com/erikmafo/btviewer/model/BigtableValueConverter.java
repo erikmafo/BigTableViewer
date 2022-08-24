@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * A class that facilitates conversion of byte string values from bigtable to clr types.
