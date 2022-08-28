@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.erikmafo.btviewer.ui.queryresult.QueryResultViewController"
       fx:id="vBox"
@@ -17,12 +16,13 @@
                 onAction="#handleTableSettingsButtonPressed"
                 mnemonicParsing="false"
                 text="Table Settings"
-                styleClass="btn"/>
+                styleClass="btn btn-sm btn-default"/>
         <Region HBox.hgrow="ALWAYS"/>
 
         <HBox styleClass="has-spacing">
-            <Label>Timestamp display: </Label>
-            <ChoiceBox fx:id="timestampDisplayModeChoiceBox"/>
+            <ChoiceBox
+                    fx:id="timestampDisplayModeChoiceBox"
+                    styleClass="btn btn-sm btn-default"/>
         </HBox>
     </HBox>
     <TreeTableView fx:id="tableView"

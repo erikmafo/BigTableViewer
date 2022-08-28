@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.SplitPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.erikmafo.btviewer.ui.MainController"
-            stylesheets="/css/main.css"
-            styleClass="pane-view">
+            stylesheets="/css/main.css">
     <top>
         <VBox>
-            <BorderPane.margin>
-                <Insets bottom="10"/>
-            </BorderPane.margin>
             <fx:include fx:id="menuBar" source="bigtable_menu_bar.fxml"/>
         </VBox>
     </top>
-    <left>
-        <fx:include fx:id="projectExplorer" source="project_explorer.fxml"/>
-    </left>
     <center>
-        <fx:include fx:id="queryResultView" source="query_result_view.fxml"/>
+        <SplitPane orientation="HORIZONTAL">
+            <fx:include fx:id="projectExplorer" styleClass="projects" source="project_explorer.fxml"/>
+            <SplitPane orientation="VERTICAL" styleClass="main-content">
+                <fx:include fx:id="queryResultView" source="query_result_view.fxml"/>
+                <fx:include fx:id="queryBox" source="query_box.fxml"/>
+            </SplitPane>
+        </SplitPane>
     </center>
-    <bottom>
-        <fx:include fx:id="queryBox" source="query_box.fxml"/>
-    </bottom>
 </BorderPane>
