@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static com.erikmafo.btviewer.ui.util.ContextMenuUtil.createContextMenu;
+import static com.erikmafo.btviewer.ui.util.ContextMenuUtil.createCopyMenuItem;
+
 public class QueryResultViewController {
 
     private static final String ROW_KEY = "key";
@@ -130,12 +133,7 @@ public class QueryResultViewController {
 
     @NotNull
     private ContextMenu createTableViewContextMenu() {
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.setAutoHide(true);
-        MenuItem copy = new MenuItem("Copy");
-        copy.setOnAction(actionEvent -> copySelectedCellsToClipboard());
-        contextMenu.getItems().add(copy);
-        return contextMenu;
+        return createContextMenu(createCopyMenuItem(e -> copySelectedCellsToClipboard()));
     }
 
     public void setRows(@NotNull ObservableList<QueryResultRow> rows) {
