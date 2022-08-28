@@ -5,12 +5,12 @@ import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.services.instance.SaveInstanceService;
 import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.google.inject.Provider;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
@@ -18,12 +18,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
 public class ProjectExplorerController {
+
+    @FXML
+    private Button addInstanceButton;
 
     @FXML
     private TreeView<TreeItemData> treeView;
@@ -89,6 +93,7 @@ public class ProjectExplorerController {
                     }
         });
         treeView.setVisible(true);
+        addInstanceButton.setOnAction(this::handleAddInstanceAction);
     }
 
     @NotNull
@@ -105,38 +110,34 @@ public class ProjectExplorerController {
     public ContextMenu createContextMenu(@NotNull TreeItemData item){
         ContextMenu menu = null;
         if (item.isProject()) {
-            menu = new ContextMenu(getAddInstanceMenuItem(item), getRemoveProjectMenuItem(item));
+            var addInstance = new MenuItem("Add instance");
+            addInstance.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.PLUS));
+            addInstance.setOnAction(actionEvent ->
+                    AddInstanceDialog
+                            .displayAndAwaitResult(item.getProjectId())
+                            .whenComplete(this::handleAddInstanceResult));
+            var removeProject = new MenuItem("Remove");
+            removeProject.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REMOVE));
+            removeProject.setOnAction(actionEvent -> {
+                removeProjectService.setProjectId(item.getProjectId());
+                removeProjectService.setOnSucceeded(event -> ((RootTreeItem)treeView.getRoot()).removeProject((item.getProjectId())));
+                removeProjectService.setOnFailed(event -> AlertUtil.displayError("Unable to remove project", event));
+                removeProjectService.restart();
+            });
+
+            menu = new ContextMenu(addInstance, removeProject);
         } else if (item.isInstance()) {
             var refreshTables = new MenuItem("Refresh tables");
+            refreshTables.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REFRESH));
             refreshTables.setOnAction(e -> ((InstanceTreeItem)item.getTreeItem()).loadChildren());
             menu = new ContextMenu(refreshTables);
-        } else if (item.isRoot()) {
-            menu = new ContextMenu(getAddInstanceMenuItem(item));
         }
 
         return menu;
     }
 
-    @NotNull
-    private MenuItem getRemoveProjectMenuItem(@NotNull TreeItemData item) {
-        var removeProject = new MenuItem("Remove");
-        removeProject.setOnAction(actionEvent -> {
-            removeProjectService.setProjectId(item.getProjectId());
-            removeProjectService.setOnSucceeded(event -> ((RootTreeItem)treeView.getRoot()).removeProject((item.getProjectId())));
-            removeProjectService.setOnFailed(event -> AlertUtil.displayError("Unable to remove project", event));
-            removeProjectService.restart();
-        });
-        return removeProject;
-    }
-
-    @NotNull
-    private MenuItem getAddInstanceMenuItem(@NotNull TreeItemData item) {
-        var addInstance = new MenuItem("Add instance");
-        addInstance.setOnAction(actionEvent ->
-                AddInstanceDialog
-                        .displayAndAwaitResult(item.getProjectId())
-                        .whenComplete(this::handleAddInstanceResult));
-        return addInstance;
+    private void handleAddInstanceAction(ActionEvent ignore) {
+        AddInstanceDialog.displayAndAwaitResult().whenComplete(this::handleAddInstanceResult);
     }
 
     private void handleAddInstanceResult(@Nullable BigtableInstance instance, Throwable throwable) {
