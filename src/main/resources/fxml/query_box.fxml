@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.fxmisc.richtext.CodeArea?>
-<VBox styleClass="queryBox, has-spacing"
+<VBox styleClass="queryBox"
       stylesheets="/css/query_box.css"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.erikmafo.btviewer.ui.querybox.QueryBoxController">
 
-    <CodeArea fx:id="codeArea" onKeyPressed="#onKeyPressedInCodeArea"/>
-    <HBox alignment="BASELINE_LEFT" styleClass="has-spacing">
+    <CodeArea fx:id="codeArea" onKeyPressed="#onKeyPressedInCodeArea" VBox.vgrow="ALWAYS"/>
+    <HBox alignment="BASELINE_LEFT" styleClass="has-spacing, controls" VBox.vgrow="NEVER">
         <Button fx:id="executeQueryButton"
                 text="Execute"
                 styleClass="btn-success"
@@ -23,7 +23,7 @@
                 styleClass="btn-danger"
                 onAction="#onCancelQueryButtonPressed"/>
         <ProgressBar fx:id="progressBar" styleClass="progress-bar-success"/>
-        <Pane HBox.hgrow="ALWAYS" />
+        <Pane HBox.hgrow="ALWAYS"/>
         <TimerView fx:id="timer"/>
     </HBox>
 

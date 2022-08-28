@@ -8,6 +8,7 @@ import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.ui.timer.TimerView;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -18,9 +19,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +73,7 @@ public class QueryBoxController {
     public void initialize() {
         progressBar.visibleProperty().bind(bigtableQueryService.runningProperty());
         progressBar.progressProperty().bind(bigtableQueryService.progressProperty());
+        codeArea.setOnMousePressed(this::onMousePressed);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(100))
@@ -145,4 +152,48 @@ public class QueryBoxController {
     }
 
     private void onInstanceChanged() { queryResult.clear(); }
+
+    private void onMousePressed(@NotNull MouseEvent event) {
+        if (event.getButton() == MouseButton.SECONDARY) {
+            codeArea.setContextMenu(getOrCreateContextMenu());
+        } else {
+            codeArea.hideContextMenu();
+        }
+    }
+
+    @NotNull
+    private ContextMenu getOrCreateContextMenu() {
+        ContextMenu contextMenu = codeArea.getContextMenu();
+        if (contextMenu == null) {
+            contextMenu = new ContextMenu();
+            contextMenu.setAutoHide(true);
+            contextMenu.setHideOnEscape(true);
+            contextMenu.getItems().addAll(getCutMenuItem(), getCopyMenuItem(), getPastMenuItem());
+        }
+        return contextMenu;
+    }
+
+    @NotNull
+    private MenuItem getPastMenuItem() {
+        var paste = new MenuItem("Paste");
+        paste.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.PASTE));
+        paste.setOnAction(e -> codeArea.paste());
+        return paste;
+    }
+
+    @NotNull
+    private MenuItem getCopyMenuItem() {
+        var copy = new MenuItem("Copy");
+        copy.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.COPY));
+        copy.setOnAction(e -> codeArea.copy());
+        return copy;
+    }
+
+    @NotNull
+    private MenuItem getCutMenuItem() {
+        var cut = new MenuItem("Cut");
+        cut.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.CUT));
+        cut.setOnAction(e -> codeArea.cut());
+        return cut;
+    }
 }

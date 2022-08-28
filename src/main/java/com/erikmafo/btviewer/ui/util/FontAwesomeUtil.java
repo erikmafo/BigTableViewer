@@ -8,6 +8,8 @@ public class FontAwesomeUtil {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
 
     public static Glyph create(Enum<?> glyph) {
-        return fontAwesome.create(glyph);
+        var glyphNode = fontAwesome.create(glyph);
+        glyphNode.setStyle("-fx-font-family: FontAwesome;");
+        return glyphNode;
     }
 }

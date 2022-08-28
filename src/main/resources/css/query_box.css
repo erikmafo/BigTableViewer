@@ -1,5 +1,10 @@
 @import "main.css";
 
+.code-area {
+  -fx-font-size: 14;
+  -fx-font-weight: 690;
+}
+
 .keyword {
   -fx-fill: blue;
   -fx-font-weight: bold;
@@ -25,4 +30,8 @@
 
 .paragraph-box:has-caret {
   -fx-background-color: #f2f9fc;
+}
+
+.controls {
+  -fx-padding: 5;
 }
