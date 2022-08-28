@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class ContextMenuUtil {
 
     @NotNull
-    public static ContextMenu createMenu(MenuItem... items) {
+    public static ContextMenu createContextMenu(MenuItem... items) {
         var contextMenu = new ContextMenu();
         contextMenu.setStyle("");
         contextMenu.setAutoHide(true);

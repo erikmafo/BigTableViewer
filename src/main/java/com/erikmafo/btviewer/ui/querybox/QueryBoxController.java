@@ -9,7 +9,6 @@ import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.ui.timer.TimerView;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
 import com.erikmafo.btviewer.ui.util.ContextMenuUtil;
-import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -21,13 +20,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.jetbrains.annotations.NotNull;
@@ -166,7 +163,7 @@ public class QueryBoxController {
     private ContextMenu getOrCreateContextMenu() {
         ContextMenu contextMenu = codeArea.getContextMenu();
         if (contextMenu == null) {
-            contextMenu = ContextMenuUtil.createMenu(
+            contextMenu = ContextMenuUtil.createContextMenu(
                     ContextMenuUtil.createCutMenuItem(e -> codeArea.cut()),
                     ContextMenuUtil.createCopyMenuItem(e -> codeArea.copy()),
                     ContextMenuUtil.createPasteMenuItem(e -> codeArea.paste()));
