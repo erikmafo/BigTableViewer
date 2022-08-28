@@ -8,12 +8,14 @@ import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.table.LoadTableSettingsService;
 import com.erikmafo.btviewer.services.table.SaveTableSettingsService;
+import com.erikmafo.btviewer.ui.util.ContextMenuUtil;
 import com.erikmafo.btviewer.ui.util.DialogLoaderUtil;
 import com.erikmafo.btviewer.ui.dialogs.tablesettings.TableSettingsDialogController;
 import com.erikmafo.btviewer.ui.queryresult.cell.CellTimestampDisplayMode;
 import com.erikmafo.btviewer.ui.queryresult.cell.CellView;
 import com.erikmafo.btviewer.ui.queryresult.rowkey.RowKeyView;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.erikmafo.btviewer.ui.util.OperatingSystemUtil;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -30,6 +32,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,8 +135,7 @@ public class QueryResultViewController {
     private ContextMenu createTableViewContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.setAutoHide(true);
-        MenuItem copy = new MenuItem("Copy");
-        copy.setOnAction(actionEvent -> copySelectedCellsToClipboard());
+        MenuItem copy = ContextMenuUtil.createCopyMenuItem(e -> copySelectedCellsToClipboard());
         contextMenu.getItems().add(copy);
         return contextMenu;
     }

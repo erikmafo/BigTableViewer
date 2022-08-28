@@ -8,6 +8,7 @@ import com.erikmafo.btviewer.sql.SqlParser;
 import com.erikmafo.btviewer.sql.SqlQuery;
 import com.erikmafo.btviewer.ui.timer.TimerView;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.ContextMenuUtil;
 import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.erikmafo.btviewer.util.StringUtil;
 import javafx.application.Platform;
@@ -165,35 +166,11 @@ public class QueryBoxController {
     private ContextMenu getOrCreateContextMenu() {
         ContextMenu contextMenu = codeArea.getContextMenu();
         if (contextMenu == null) {
-            contextMenu = new ContextMenu();
-            contextMenu.setAutoHide(true);
-            contextMenu.setHideOnEscape(true);
-            contextMenu.getItems().addAll(getCutMenuItem(), getCopyMenuItem(), getPastMenuItem());
+            contextMenu = ContextMenuUtil.createMenu(
+                    ContextMenuUtil.createCutMenuItem(e -> codeArea.cut()),
+                    ContextMenuUtil.createCopyMenuItem(e -> codeArea.copy()),
+                    ContextMenuUtil.createPasteMenuItem(e -> codeArea.paste()));
         }
         return contextMenu;
-    }
-
-    @NotNull
-    private MenuItem getPastMenuItem() {
-        var paste = new MenuItem("Paste");
-        paste.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.PASTE));
-        paste.setOnAction(e -> codeArea.paste());
-        return paste;
-    }
-
-    @NotNull
-    private MenuItem getCopyMenuItem() {
-        var copy = new MenuItem("Copy");
-        copy.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.COPY));
-        copy.setOnAction(e -> codeArea.copy());
-        return copy;
-    }
-
-    @NotNull
-    private MenuItem getCutMenuItem() {
-        var cut = new MenuItem("Cut");
-        cut.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.CUT));
-        cut.setOnAction(e -> codeArea.cut());
-        return cut;
     }
 }

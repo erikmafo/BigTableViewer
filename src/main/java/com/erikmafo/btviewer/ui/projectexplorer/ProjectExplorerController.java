@@ -5,6 +5,7 @@ import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.services.instance.SaveInstanceService;
 import com.erikmafo.btviewer.services.project.RemoveProjectService;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.google.inject.Provider;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
+import org.controlsfx.glyphfont.FontAwesome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,11 +111,13 @@ public class ProjectExplorerController {
         ContextMenu menu = null;
         if (item.isProject()) {
             var addInstance = new MenuItem("Add instance");
+            addInstance.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.PLUS));
             addInstance.setOnAction(actionEvent ->
                     AddInstanceDialog
                             .displayAndAwaitResult(item.getProjectId())
                             .whenComplete(this::handleAddInstanceResult));
             var removeProject = new MenuItem("Remove");
+            removeProject.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REMOVE));
             removeProject.setOnAction(actionEvent -> {
                 removeProjectService.setProjectId(item.getProjectId());
                 removeProjectService.setOnSucceeded(event -> ((RootTreeItem)treeView.getRoot()).removeProject((item.getProjectId())));
@@ -124,6 +128,7 @@ public class ProjectExplorerController {
             menu = new ContextMenu(addInstance, removeProject);
         } else if (item.isInstance()) {
             var refreshTables = new MenuItem("Refresh tables");
+            refreshTables.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REFRESH));
             refreshTables.setOnAction(e -> ((InstanceTreeItem)item.getTreeItem()).loadChildren());
             menu = new ContextMenu(refreshTables);
         }
