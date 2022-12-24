@@ -144,7 +144,7 @@ public class TableSettingsDialogController implements DialogController<BigtableT
         configureProtoObjectButton.disableProperty().bind(choiceBox.valueProperty().isNotEqualTo("Proto"));
         observableCell.setProtoObjectDefinition(cellDefinition.getProtoObjectDefinition());
 
-        Button removeSchemaRowButton = new Button(null, FontAwesomeUtil.create(FontAwesome.Glyph.REMOVE));
+        Button removeSchemaRowButton = new Button(null, FontAwesomeUtil.create(FontAwesome.Glyph.TRASH));
         removeSchemaRowButton.getStyleClass().add("btn-danger");
 
         var hbox = new HBox();

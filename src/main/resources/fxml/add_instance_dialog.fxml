@@ -5,12 +5,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
-<fx:root type="DialogPane"
-         xmlns:fx="http://javafx.com/fxml"
-         headerText="Add Bigtable Instance"
-         prefHeight="250.0"
-         prefWidth="450.0"
-         stylesheets="/css/main.css">
+<DialogPane
+        fx:controller="com.erikmafo.btviewer.ui.dialogs.addinstance.AddInstanceDialogController"
+        xmlns:fx="http://javafx.com/fxml"
+        headerText="Add Bigtable Instance"
+        prefHeight="250.0"
+        prefWidth="450.0"
+        stylesheets="/css/main.css">
 
     <content>
         <GridPane vgap="20" hgap="10">
@@ -25,4 +26,4 @@
         <ButtonType text="OK" buttonData="OK_DONE"/>
         <ButtonType text="Cancel" buttonData="CANCEL_CLOSE"/>
     </buttonTypes>
-</fx:root>
+</DialogPane>

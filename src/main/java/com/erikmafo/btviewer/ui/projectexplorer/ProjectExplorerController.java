@@ -4,7 +4,9 @@ import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.services.instance.SaveInstanceService;
 import com.erikmafo.btviewer.services.project.RemoveProjectService;
+import com.erikmafo.btviewer.ui.dialogs.addinstance.AddInstanceDialogController;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
+import com.erikmafo.btviewer.ui.util.DialogLoaderUtil;
 import com.erikmafo.btviewer.ui.util.FontAwesomeUtil;
 import com.google.inject.Provider;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -52,6 +54,7 @@ public class ProjectExplorerController {
     @FXML
     public void initialize() {
         treeView.setRoot(rootTreeItemProvider.get());
+        treeView.setContextMenu(new ContextMenu(getAddInstanceMenuItem(null)));
 
         treeView.setCellFactory(tableInfoTreeView -> new TreeCell<>() {
             @Override
@@ -104,14 +107,14 @@ public class ProjectExplorerController {
     public ContextMenu createContextMenu(@NotNull TreeItemData item){
         ContextMenu menu = null;
         if (item.isProject()) {
-            menu = new ContextMenu(getAddInstanceMenuItem(item), getRemoveProjectMenuItem(item));
+            menu = new ContextMenu(getAddInstanceMenuItem(item.getProjectId()), getRemoveProjectMenuItem(item));
         } else if (item.isInstance()) {
             var refreshTables = new MenuItem("Refresh tables");
             refreshTables.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REFRESH));
             refreshTables.setOnAction(e -> ((InstanceTreeItem)item.getTreeItem()).loadChildren());
             menu = new ContextMenu(refreshTables);
         } else if (item.isRoot()) {
-            menu = new ContextMenu(getAddInstanceMenuItem(item));
+            menu = new ContextMenu(getAddInstanceMenuItem(item.getProjectId()));
         }
 
         return menu;
@@ -120,7 +123,7 @@ public class ProjectExplorerController {
     @NotNull
     private MenuItem getRemoveProjectMenuItem(@NotNull TreeItemData item) {
         var removeProject = new MenuItem("Remove");
-        removeProject.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.REMOVE));
+        removeProject.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.TRASH));
         removeProject.setOnAction(actionEvent -> {
             removeProjectService.setProjectId(item.getProjectId());
             removeProjectService.setOnSucceeded(event -> ((RootTreeItem)treeView.getRoot()).removeProject((item.getProjectId())));
@@ -131,12 +134,12 @@ public class ProjectExplorerController {
     }
 
     @NotNull
-    private MenuItem getAddInstanceMenuItem(@NotNull TreeItemData item) {
+    private MenuItem getAddInstanceMenuItem(String projectId) {
         var addInstance = new MenuItem("Add instance");
         addInstance.setGraphic(FontAwesomeUtil.create(FontAwesome.Glyph.PLUS));
         addInstance.setOnAction(actionEvent ->
-                AddInstanceDialog
-                        .displayAndAwaitResult(item.getProjectId())
+                DialogLoaderUtil
+                        .displayDialogAndAwaitResult(new BigtableInstance(projectId, null), AddInstanceDialogController.FXML)
                         .whenComplete(this::handleAddInstanceResult));
         return addInstance;
     }

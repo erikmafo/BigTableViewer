@@ -49,9 +49,13 @@ public class DialogLoaderUtil {
             return null;
         });
         dialog.setOnHidden(ignore -> {
-            var resultValue = controller.getResult();
-            if (resultValue == null || controller.validateResult(resultValue)) {
-                completableFuture.complete(resultValue);
+            try {
+                var resultValue = controller.getResult();
+                if (resultValue == null || controller.validateResult(resultValue)) {
+                    completableFuture.complete(resultValue);
+                }
+            } catch (Exception ex) {
+                completableFuture.completeExceptionally(ex);
             }
         });
         return dialog;

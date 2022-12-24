@@ -2,7 +2,7 @@ package com.erikmafo.btviewer.ui;
 
 import com.erikmafo.btviewer.MainApp;
 import com.erikmafo.btviewer.config.AppConfig;
-import com.erikmafo.btviewer.ui.projectexplorer.AddInstanceDialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.Test;
@@ -36,6 +36,6 @@ public class MainAppTest extends ApplicationTest {
         clickOn("#addInstanceButton", MouseButton.PRIMARY);
 
         // then:
-        verifyThat(lookup(".dialog-pane").queryAs(AddInstanceDialog.class), isVisible());
+        verifyThat(lookup(".dialog-pane").queryAs(DialogPane.class), isVisible());
     }
 }
