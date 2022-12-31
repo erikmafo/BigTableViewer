@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.ui;
 
-import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.sql.query.SqlQueryUtil;
 import com.erikmafo.btviewer.ui.menubar.MenuBarController;
 import com.erikmafo.btviewer.ui.projectexplorer.ProjectExplorerController;
 import com.erikmafo.btviewer.ui.querybox.QueryBoxController;
@@ -32,6 +32,6 @@ public class MainController {
         projectExplorerController
                 .selectedTableProperty()
                 .addListener((obs, prev, current) ->
-                        queryBoxController.setQuery(SqlQuery.getDefaultSqlQuery(current.getTableId())));
+                        queryBoxController.setQuery(SqlQueryUtil.getDefaultSqlQuery(current.getTableId())));
     }
 }

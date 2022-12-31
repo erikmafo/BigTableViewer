@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.erikmafo.btviewer.ui.timer.TimerView?>
+<?import com.erikmafo.btviewer.ui.querybox.timer.TimerView?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.HBox?>

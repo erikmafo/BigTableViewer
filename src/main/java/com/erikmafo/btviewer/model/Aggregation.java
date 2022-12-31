@@ -1,18 +1,18 @@
 package com.erikmafo.btviewer.model;
 
-import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+import com.erikmafo.btviewer.sql.query.AggregationType;
 import com.erikmafo.btviewer.util.Check;
 import org.jetbrains.annotations.NotNull;
 
 public class Aggregation {
 
-    private final AggregationExpression.Type type;
+    private final AggregationType type;
     private final String fieldName;
 
     private int count;
     private double sum;
 
-    public Aggregation(AggregationExpression.Type type, String fieldName) {
+    public Aggregation(AggregationType type, String fieldName) {
         Check.notNull(type, "type");
         Check.notNullOrEmpty(fieldName, "fieldName");
 

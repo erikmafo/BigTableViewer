@@ -1,6 +1,6 @@
 package com.erikmafo.btviewer.model;
 
-import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+import com.erikmafo.btviewer.sql.query.AggregationType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -11,9 +11,9 @@ public class AggregationTest {
     @Test
     public void shouldIncrementCount() {
         //given
-        var first = createAggregation(AggregationExpression.Type.COUNT);
+        var first = createAggregation(AggregationType.COUNT);
         first.setCount(1);
-        var second = createAggregation(AggregationExpression.Type.COUNT);
+        var second = createAggregation(AggregationType.COUNT);
         second.setCount(1);
 
         //when
@@ -26,9 +26,9 @@ public class AggregationTest {
     @Test
     public void shouldAddSums() {
         //given
-        var first = createAggregation(AggregationExpression.Type.SUM);
+        var first = createAggregation(AggregationType.SUM);
         first.setSum(1.0);
-        var second = createAggregation(AggregationExpression.Type.SUM);
+        var second = createAggregation(AggregationType.SUM);
         second.setSum(2.5);
 
         //when
@@ -41,10 +41,10 @@ public class AggregationTest {
     @Test
     public void shouldComputeAverage() {
         //given
-        var first = createAggregation(AggregationExpression.Type.AVG);
+        var first = createAggregation(AggregationType.AVG);
         first.setCount(3);
         first.setSum(1);
-        var second = createAggregation(AggregationExpression.Type.AVG);
+        var second = createAggregation(AggregationType.AVG);
         second.setCount(1);
         second.setSum(3);
 
@@ -56,7 +56,7 @@ public class AggregationTest {
     }
 
     @NotNull
-    private Aggregation createAggregation(AggregationExpression.Type type) {
-        return new Aggregation(type, "foo");
+    private com.erikmafo.btviewer.model.Aggregation createAggregation(AggregationType type) {
+        return new com.erikmafo.btviewer.model.Aggregation(type, "foo");
     }
 }
