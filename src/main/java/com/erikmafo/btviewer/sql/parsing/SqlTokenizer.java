@@ -58,7 +58,7 @@ public class SqlTokenizer {
      * @return a {@link SqlToken}, or null if there are no more tokens.
      */
     public SqlToken next() {
-        return getNextToken(
+        return readNextToken(
                 this::ignoreWhitespace,
                 this::readQuotedString,
                 this::readOpeningParentheses,
@@ -72,7 +72,7 @@ public class SqlTokenizer {
 
     @SafeVarargs
     @Nullable
-    private SqlToken getNextToken(@NotNull java.util.function.Function<String, SqlToken>... tokenReaders) {
+    private SqlToken readNextToken(@NotNull java.util.function.Function<String, SqlToken>... tokenReaders) {
 
         if (position >= sql.length()) {
             return null;
@@ -136,7 +136,7 @@ public class SqlTokenizer {
     private SqlToken readNumber(@NotNull String remainingSql) {
         var matcher = INTEGER_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.NUMBER);
+            return getRemainingToken(remainingSql, matcher.start(), matcher.end(), SqlTokenType.NUMBER);
         }
         return null;
     }
@@ -145,7 +145,7 @@ public class SqlTokenizer {
     private SqlToken readBool(@NotNull String remainingSql) {
         var matcher = BOOL_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.BOOL);
+            return getRemainingToken(remainingSql, matcher.start(), matcher.end(), SqlTokenType.BOOL);
         }
         return null;
     }
@@ -154,7 +154,7 @@ public class SqlTokenizer {
     private SqlToken readIdentifier(@NotNull String remainingSql) {
         var matcher = IDENTIFIER_PATTERN.matcher(remainingSql);
         if (matcher.find()) {
-            return next(remainingSql, matcher.start(), matcher.end(), SqlTokenType.IDENTIFIER);
+            return getRemainingToken(remainingSql, matcher.start(), matcher.end(), SqlTokenType.IDENTIFIER);
         }
         return null;
     }
@@ -186,7 +186,7 @@ public class SqlTokenizer {
             position = sql.length();
             return new SqlToken(remainingSql, SqlTokenType.INVALID, position, null, String.format("Expected a matching '%s'", QUOTE));
         }
-        return next(sql, position, indexOfNextQuote + 1, SqlTokenType.QUOTED_STRING);
+        return getRemainingToken(sql, position, indexOfNextQuote + 1, SqlTokenType.QUOTED_STRING);
     }
 
     @Contract("_ -> new")
@@ -197,14 +197,6 @@ public class SqlTokenizer {
             return new SqlToken(word.value(), SqlTokenType.INVALID, position, null, String.format("'%s' is not supported", word.value()));
         }
         return new SqlToken(word.value(), word.tokenType(), position);
-    }
-
-    @Contract("_, _, _, _ -> new")
-    @NotNull
-    private SqlToken next(@NotNull String remainingSql, int start, int end, SqlTokenType tokenType) {
-        var token = remainingSql.substring(start, end);
-        position += token.length();
-        return new SqlToken(token, tokenType, position);
     }
 
     @NotNull
@@ -243,5 +235,13 @@ public class SqlTokenizer {
         }
 
         return sql.substring(0, index + 1);
+    }
+
+    @Contract("_, _, _, _ -> new")
+    @NotNull
+    private SqlToken getRemainingToken(@NotNull String remainingSql, int start, int end, SqlTokenType tokenType) {
+        var token = remainingSql.substring(start, end);
+        position += token.length();
+        return new SqlToken(token, tokenType, position);
     }
 }
