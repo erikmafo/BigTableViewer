@@ -70,12 +70,8 @@ public class ByteStringUtil {
             return false;
         }
 
-        if (equals(range.getStart(), range.getEnd()) &&
-                (range.getStartBound() == Range.BoundType.OPEN || range.getEndBound() == Range.BoundType.OPEN)) {
-            return false;
-        }
-
-        return true;
+        return !equals(range.getStart(), range.getEnd()) ||
+                (range.getStartBound() != Range.BoundType.OPEN && range.getEndBound() != Range.BoundType.OPEN);
     }
 
     private static boolean isIncludedByStartBound(@NotNull Range.ByteStringRange range, ByteString byteString) {

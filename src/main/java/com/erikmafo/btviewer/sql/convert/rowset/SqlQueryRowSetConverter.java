@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
  */
 public class SqlQueryRowSetConverter {
 
-    public SqlQueryRowSetConverter() {}
-
     /**
      * Creates a BigtableRowSet that covers a part of the given sql query that involves the row key.
      * @param sqlQuery a sql query
