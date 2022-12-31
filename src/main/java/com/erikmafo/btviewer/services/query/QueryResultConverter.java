@@ -4,9 +4,9 @@ import com.erikmafo.btviewer.model.Aggregation;
 import com.erikmafo.btviewer.model.BigtableCell;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
 import com.erikmafo.btviewer.model.QueryResultRow;
-import com.erikmafo.btviewer.sql.Field;
-import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.sql.functions.AggregationExpression;
+import com.erikmafo.btviewer.sql.query.Field;
+import com.erikmafo.btviewer.sql.query.SqlQuery;
+import com.erikmafo.btviewer.sql.query.AggregationExpression;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import org.jetbrains.annotations.Contract;
@@ -55,7 +55,7 @@ public class QueryResultConverter {
                 .reduce(this::combineAggregationEntries)
                 .map(QueryResultRow::new)
                 .stream()
-                .limit(sqlQuery.getLimit())
+                .limit(sqlQuery.limit())
                 .collect(Collectors.toList());
     }
 
@@ -82,11 +82,11 @@ public class QueryResultConverter {
 
     @NotNull
     private Aggregation[] toAggregationEntries(@NotNull Row row) {
-        var noOfAggregations = sqlQuery.getAggregations().size();
+        var noOfAggregations = sqlQuery.aggregationExpressions().size();
         var entries = new Aggregation[noOfAggregations];
 
         for (var i=0; i < noOfAggregations; i++) {
-            entries[i] = createAggregationEntry(row, sqlQuery.getAggregations().get(i));
+            entries[i] = createAggregationEntry(row, sqlQuery.aggregationExpressions().get(i));
         }
 
         return entries;
@@ -102,9 +102,9 @@ public class QueryResultConverter {
 
     @NotNull
     private Aggregation createAggregationEntry(@NotNull Row row, @NotNull AggregationExpression aggregationExpression) {
-        return getCells(row, aggregationExpression.getField())
+        return getCells(row, aggregationExpression.field())
                 .stream()
-                .filter(c -> matches(aggregationExpression.getField(), c))
+                .filter(c -> matches(aggregationExpression.field(), c))
                 .findFirst()
                 .map(rowCell -> createAggregationEntry(aggregationExpression, rowCell))
                 .orElseGet(() -> createAggregationEntry(aggregationExpression));
@@ -113,13 +113,13 @@ public class QueryResultConverter {
     @Contract("_ -> new")
     @NotNull
     private Aggregation createAggregationEntry(@NotNull AggregationExpression aggregationExpression) {
-        return new Aggregation(aggregationExpression.getType(), aggregationExpression.getField().getName());
+        return new Aggregation(aggregationExpression.type(), aggregationExpression.field().name());
     }
 
     @NotNull
     private Aggregation createAggregationEntry(AggregationExpression aggregationExpression, RowCell cell) {
         var entry = createAggregationEntry(aggregationExpression);
-        switch (aggregationExpression.getType()) {
+        switch (aggregationExpression.type()) {
             case AVG:
                 entry.setSum(getDouble(BigtableCell.from(cell)));
                 entry.setCount(1);
@@ -132,7 +132,7 @@ public class QueryResultConverter {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        String.format("aggregation type: %s is not supported", aggregationExpression.getType()));
+                        String.format("aggregation type: %s is not supported", aggregationExpression.type()));
         }
         return entry;
     }

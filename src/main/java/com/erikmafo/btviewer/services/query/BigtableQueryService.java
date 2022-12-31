@@ -3,12 +3,12 @@ package com.erikmafo.btviewer.services.query;
 import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.BigtableValueConverter;
-import com.erikmafo.btviewer.model.ByteStringConverterImpl;
+import com.erikmafo.btviewer.model.FieldValueByteStringConverterImpl;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.internal.AppDataStorage;
 import com.erikmafo.btviewer.services.internal.BigtableSettingsProvider;
-import com.erikmafo.btviewer.sql.QueryConverter;
-import com.erikmafo.btviewer.sql.SqlQuery;
+import com.erikmafo.btviewer.sql.convert.QueryConverter;
+import com.erikmafo.btviewer.sql.query.SqlQuery;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import javafx.concurrent.Service;
@@ -48,16 +48,16 @@ public class BigtableQueryService extends Service<List<QueryResultRow>> {
     protected Task<List<QueryResultRow>> createTask() {
         var instance = this.instance;
         var sqlQuery = this.query;
-        var tableId = sqlQuery.getTableName();
+        var tableId = sqlQuery.tableName();
 
         return new Task<>() {
 
             @Override
             protected List<QueryResultRow> call() throws Exception {
                 var tableSettings = storage.getTableSettings(new BigtableTable(instance, tableId));
-                var queryConverter = new QueryConverter(sqlQuery, new ByteStringConverterImpl(tableSettings));
+                var queryConverter = new QueryConverter(new FieldValueByteStringConverterImpl(tableSettings));
                 var valueConverter = new BigtableValueConverter(tableSettings.getCellDefinitions());
-                var btQuery = queryConverter.toBigtableQuery();
+                var btQuery = queryConverter.convert(sqlQuery);
                 var rows = getOrCreateNewClient(instance).readRows(btQuery);
                 var rowStream = StreamSupport.stream(rows.spliterator(), true);
                 return new QueryResultConverter(sqlQuery, valueConverter).toQueryResultRows(rowStream);

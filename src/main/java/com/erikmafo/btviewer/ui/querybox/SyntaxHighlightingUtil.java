@@ -1,8 +1,8 @@
 package com.erikmafo.btviewer.ui.querybox;
 
-import com.erikmafo.btviewer.sql.SqlToken;
-import com.erikmafo.btviewer.sql.SqlTokenType;
-import com.erikmafo.btviewer.sql.SqlTokenizer;
+import com.erikmafo.btviewer.sql.parsing.SqlToken;
+import com.erikmafo.btviewer.sql.parsing.SqlTokenType;
+import com.erikmafo.btviewer.sql.parsing.SqlTokenizer;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.jetbrains.annotations.NotNull;

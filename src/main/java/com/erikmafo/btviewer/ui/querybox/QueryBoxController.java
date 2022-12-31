@@ -4,9 +4,9 @@ import com.erikmafo.btviewer.model.BigtableInstance;
 import com.erikmafo.btviewer.model.BigtableTable;
 import com.erikmafo.btviewer.model.QueryResultRow;
 import com.erikmafo.btviewer.services.query.BigtableQueryService;
-import com.erikmafo.btviewer.sql.SqlParser;
-import com.erikmafo.btviewer.sql.SqlQuery;
-import com.erikmafo.btviewer.ui.timer.TimerView;
+import com.erikmafo.btviewer.sql.parsing.SqlParser;
+import com.erikmafo.btviewer.sql.query.SqlQuery;
+import com.erikmafo.btviewer.ui.querybox.timer.TimerView;
 import com.erikmafo.btviewer.ui.util.AlertUtil;
 import com.erikmafo.btviewer.ui.util.ContextMenuUtil;
 import com.erikmafo.btviewer.util.StringUtil;
@@ -105,7 +105,7 @@ public class QueryBoxController {
     public void onExecuteQueryButtonPressed(ActionEvent actionEvent) {
         try {
             queryResult.clear();
-            query.set(new SqlParser().parse(codeArea.getText()).ensureValid());
+            query.set(new SqlParser().parse(codeArea.getText()));
             bigtableQueryService.setInstance(instance.get());
             bigtableQueryService.setQuery(query.get());
             bigtableQueryService.setOnSucceeded(event -> queryResult.setAll(bigtableQueryService.getValue()));
@@ -143,8 +143,8 @@ public class QueryBoxController {
     private BigtableTable createTable() {
         var instance = this.instance.get();
         var query = this.query.get();
-        if (instance != null && query != null && query.getTableName() != null) {
-            return new BigtableTable(instance, query.getTableName());
+        if (instance != null && query != null && query.tableName() != null) {
+            return new BigtableTable(instance, query.tableName());
         }
         return null;
     }

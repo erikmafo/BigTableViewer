@@ -1,5 +1,6 @@
 package com.erikmafo.btviewer.ui.timer;
 
+import com.erikmafo.btviewer.ui.querybox.timer.TimerView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Test;
