@@ -203,7 +203,7 @@
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-bigtable-emulator</artifactId>
-            <version>0.148.2</version>
+            <version>0.156.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
